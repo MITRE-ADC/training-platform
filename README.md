@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Workflows
+
+- Create a new issue for each feature you are adding.
+- Use checkboxes and check off tasks as they are completed.
+- Create branches from the issues and merge when finished.
+- Wait for Luke or Patrick to review your pull request before merging.
+- Use rebase to update a branch from main.
 
 ## Getting Started
 
