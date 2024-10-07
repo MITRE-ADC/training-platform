@@ -5,6 +5,7 @@
 - Create branches from the issues and merge when finished.
 - Wait for Luke or Patrick to review your pull request before merging.
 - Use rebase to update a branch from main.
+- PLEASE USE PNPM
 
 ## Getting Started
 
