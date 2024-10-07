@@ -1,4 +1,4 @@
-## Workflows
+## Workflow
 
 - Create a new issue for each feature you are adding.
 - Use checkboxes and check off tasks as they are completed.
