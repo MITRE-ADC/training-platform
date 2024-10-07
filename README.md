@@ -5,7 +5,12 @@
 - Create branches from the issues and merge when finished.
 - Wait for Luke or Patrick to review your pull request before merging.
 - Use rebase to update a branch from main.
-- PLEASE USE PNPM
+- Use the following commands to install dependencies:
+  - `pnpm install` to install all dependencies.
+  - `pnpm add <package>` to add a new package.
+  - `pnpm remove <package>` to remove a package.
+  - `pnpm update` to update all packages.
+  - `pnpm update <package>` to update a specific package.
 
 ## Getting Started
 
