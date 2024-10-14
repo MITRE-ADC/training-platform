@@ -1,5 +1,5 @@
 import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
-import {eq, or } from "drizzle-orm"
+import { eq, or } from "drizzle-orm";
 
 export interface User {
   id: number;
@@ -8,7 +8,8 @@ export interface User {
   last_name: string;
 }
 
-export const locateUser = (user: User) => or(eq(users.id, user.id), eq(users.email, user.email))
+export const locateUser = (user: User) =>
+  or(eq(users.id, user.id), eq(users.email, user.email));
 
 export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

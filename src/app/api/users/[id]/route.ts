@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-
-interface UserModel {
-  email: string;
-  first_name: string;
-  last_name: string;
-}
+import { locateUser, User, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
 
 export async function processCreateUserRequest(request: NextRequest) {
   const user_email = request.nextUrl.searchParams?.get("user_email");
@@ -13,14 +10,28 @@ export async function processCreateUserRequest(request: NextRequest) {
 
   // TODO: password: special finagling with auth
   // Pick out (only) initialization data for use
-  const body: Pick<UserModel, "email" | "first_name" | "last_name"> =
-    await request.json();
-  console.log(body);
+  const user: Pick<User, "email" | "first_name" | "last_name"> =
+    (await request.json()) || { email: user_email };
+  console.log(user);
 
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
+  return await db
+    .insert(users)
+    .values(user)
+    .returning()
+    .catch(reason =>
+      NextResponse.json(
+        {
+          message: `Error inserting user ${user} into database: \n\t${reason}`,
+        },
+        { status: HttpStatusCode.InternalServerError }
+      )
+    )
+    .then(user =>
+      NextResponse.json(
+        { message: `Succesfully inserted: \n\t${user}` },
+        { status: HttpStatusCode.Created }
+      )
+    );
 }
 
 // Get data for a single user -- detailed
@@ -45,11 +56,14 @@ export async function POST(request: NextRequest) {
   const user_email = request.nextUrl.searchParams?.get("user_email");
   console.log(user_email);
 
-  const body: UserModel = await request.json();
+  const body: User = await request.json();
   console.log(body);
 
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
+  const exists =
+    (await db.selectDistinct().from(users).where(eq(users.email, body.email)))
+      .length > 0;
+
+  if (!exists) return processCreateUserRequest(request);
+
+  db.update(users).set(body).where(locateUser(body));
 }

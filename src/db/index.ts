@@ -1,24 +1,17 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/connect';
-import { usersTable } from './schema';
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
 
-export const connect = async () => await drizzle("node-postgres", process.env.DATABASE_URL!);
+const client = new Client({
+  host: "localhost",
+  port: 5432,
+  user: "postgres",
+  password: "root",
+  database: "tutorial-db",
+});
 
-async function main() {
-    const db = await connect();
+export const connectDB = async () => await client.connect();
 
-    const user: typeof usersTable.$inferInsert = {
-        first_name: 'administrator',
-        last_name: 'administrator',
-        email: 'admin@mitre.email.domain.com'
-    }
+export const db = drizzle(client);
 
-    // TEMP
-    console.log("Creating users table");
-    await db.insert(usersTable).values(user);
-}
-
-// TEMP
-main();
-
-
+connectDB();
