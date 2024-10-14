@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navigation({ name }: { name: string }) {
   return (
@@ -15,7 +11,7 @@ export default function Navigation({ name }: { name: string }) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64">
-          <div className="flex w-full h-full flex-col gap-4">
+          <div className="flex h-full w-full flex-col gap-4">
             {/* TODO: have differing menus based on user type? */}
             <div>{name}</div>
             <div>

@@ -6,7 +6,7 @@ function DashboardHeader({ name }: { name: string }) {
   return (
     <div>
       <p className="ml-1">{name}</p>
-      <Separator orientation="horizontal" className="w-full bg-black"/>
+      <Separator orientation="horizontal" className="w-full bg-black" />
     </div>
   );
 }
@@ -14,9 +14,9 @@ function DashboardHeader({ name }: { name: string }) {
 function DashboardFilter() {
   return (
     <div className="w-1/3">
-      <DashboardHeader name="Filter"/>
+      <DashboardHeader name="Filter" />
       <div className="w-full p-2">
-        <FilterForm/>
+        <FilterForm />
       </div>
     </div>
   );
@@ -25,7 +25,7 @@ function DashboardFilter() {
 function DashboardList() {
   return (
     <div className="w-1/3">
-      <DashboardHeader name="Employees"/>
+      <DashboardHeader name="Employees" />
     </div>
   );
 }
@@ -33,24 +33,24 @@ function DashboardList() {
 function DashboardInfo() {
   return (
     <div className="w-1/3">
-      <DashboardHeader name="Name"/>
+      <DashboardHeader name="Name" />
     </div>
   );
 }
 
 export default function AdminDashBoard() {
   return (
-    <div className="mt-4 ml-4">
+    <div className="ml-4 mt-4">
       <Navigation name="Admin"></Navigation>
-      <div className="flex justify-center mr-4">
-        <div className="w-4/5 flex min-h-[90vh]">
-          <Separator orientation="vertical" className="h-full bg-black"/>
-          <DashboardFilter/>
-          <Separator orientation="vertical" className="h-full bg-black"/>
-          <DashboardList/>
-          <Separator orientation="vertical" className="h-full bg-black"/>
-          <DashboardInfo/>
-          <Separator orientation="vertical" className="h-full bg-black"/>
+      <div className="mr-4 flex justify-center">
+        <div className="flex min-h-[90vh] w-4/5">
+          <Separator orientation="vertical" className="h-full bg-black" />
+          <DashboardFilter />
+          <Separator orientation="vertical" className="h-full bg-black" />
+          <DashboardList />
+          <Separator orientation="vertical" className="h-full bg-black" />
+          <DashboardInfo />
+          <Separator orientation="vertical" className="h-full bg-black" />
         </div>
       </div>
     </div>
