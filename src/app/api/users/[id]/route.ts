@@ -18,7 +18,7 @@ export async function processCreateUserRequest(request: NextRequest) {
     .insert(users)
     .values(user)
     .returning()
-    .catch(reason =>
+    .catch((reason) =>
       NextResponse.json(
         {
           message: `Error inserting user ${user} into database: \n\t${reason}`,
@@ -26,7 +26,7 @@ export async function processCreateUserRequest(request: NextRequest) {
         { status: HttpStatusCode.InternalServerError }
       )
     )
-    .then(user =>
+    .then((user) =>
       NextResponse.json(
         { message: `Succesfully inserted: \n\t${user}` },
         { status: HttpStatusCode.Created }
