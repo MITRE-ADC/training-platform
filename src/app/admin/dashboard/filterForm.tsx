@@ -21,71 +21,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ControllerRenderProps, UseFormReturn, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { FormEvent } from "react";
+import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DateRangeForm } from "@/components/ui/datePicker";
 
-/** Buffer for form inputs that have been marked as changed (via `markChange`) */
-const changedForms: HTMLElement[] = [];
-
-/**
- * Denotes that a form input field as been changed, but those changes have not yet been applied
- * Does this by appending a * in front of the label
- * @param ele Label to change. If it is not a label, will first search siblings then children for a label element
- * @param hasChange Whether or not to mark the field as having changed
- * @see changedForms for storage of inputs that have been marked
- */
-function markChange(ele: HTMLElement, hasChange: boolean = true) {
-  // TODO: this is not maintained when opening/closing accordion
-  let label: HTMLElement | null = null;
-
-  if (ele.tagName != "LABEL") {
-    if (!ele.parentElement) {
-      console.warn(
-        "Attempting to mark form input as changed, but input does not have a parent element."
-      );
-      return;
-    }
-
-    const n = ele.parentElement.childElementCount!;
-
-    // .querySelector and .contains search recursively; we only want direct children
-    for (let i = 0; i < n; i++) {
-      const c = ele.parentElement.children[i]!;
-
-      if (c.tagName == "LABEL") {
-        label = c as HTMLElement;
-        break;
-      }
-    }
-
-    if (!label) label = ele.querySelector("label");
-  } else label = ele;
-
-  if (!label) {
-    console.warn(
-      "Attempting to mark form input as changed, but there is no associated label."
-    );
-    return;
-  }
-
-  if (!label.textContent) return;
-
-  // now mark change
-  if (hasChange) {
-    if (!label.textContent.startsWith("* ")) {
-      changedForms.push(ele);
-      label.textContent = "* " + label.textContent;
-    }
-  } else label.textContent = label.textContent.replace("*", "")!;
-}
-
-/**
- * Due to the parent-child structure of react, it is easier to have the parent control all form data
- * rather than having each child be their separate form and then coordinate the two together from parent
- * While this is much easier implementation-wise (no prop/state spam), it means we have to package all
- * form data into a single schema
- */
 const dashboardFilterSchema = z.object({
   // user info
   userName: z.string().optional(),
@@ -96,10 +35,30 @@ const dashboardFilterSchema = z.object({
   // course info
   courseExcludeCompleted: z.boolean().optional(),
   courseName: z.string().optional(),
-  courseDateRange: z.string().optional(),
+  courseDateRange: z
+    .object({
+      from: z.string().optional(),
+      to: z.string().optional(),
+    })
+    .optional(),
 });
 
 export default function FilterForm() {
+  function onSubmit(values: z.infer<typeof dashboardFilterSchema>) {
+    setPrefixes(new Map());
+    console.log(values);
+  }
+
+  function addPrefix(id: string) {
+    setPrefixes((p) => {
+      return { ...p, [id]: "* " };
+    });
+  }
+
+  const [prefixes, setPrefixes] = useState<Map<string, string>>(
+    new Map<string, string>()
+  );
+
   const form = useForm<z.infer<typeof dashboardFilterSchema>>({
     resolver: zodResolver(dashboardFilterSchema),
     defaultValues: {
@@ -110,16 +69,15 @@ export default function FilterForm() {
 
       courseExcludeCompleted: false,
       courseName: "",
-      courseDateRange: "~ _ ~",
+      courseDateRange: { from: "", to: "" },
     },
   });
 
-  function onSubmit(values: z.infer<typeof dashboardFilterSchema>) {
-    changedForms.forEach((e) => markChange(e, false));
-    changedForms.length = 0;
-
-    console.log(values);
-  }
+  const req = {
+    form: form,
+    addPrefix: addPrefix,
+    prefixes: prefixes,
+  };
 
   return (
     <>
@@ -145,25 +103,25 @@ export default function FilterForm() {
               <AccordionContent>
                 <div className="ml-4 flex flex-col gap-2">
                   <Field
-                    form={form}
+                    {...req}
                     type="input"
                     id="userName"
                     displayName="Name"
                   />
                   <Field
-                    form={form}
+                    {...req}
                     type="input"
                     id="userEmail"
                     displayName="Email"
                   />
                   <Field
-                    form={form}
+                    {...req}
                     type="input"
                     id="userPosition"
                     displayName="Position"
                   />
                   <Field
-                    form={form}
+                    {...req}
                     type="textArea"
                     id="userNotes"
                     displayName="Notes"
@@ -176,20 +134,20 @@ export default function FilterForm() {
               <AccordionContent>
                 <div className="ml-4 flex flex-col gap-2">
                   <Field
-                    form={form}
+                    {...req}
                     type="toggle"
                     id="courseExcludeCompleted"
                     displayName="Exclude Completed"
                   />
                   <Field
-                    form={form}
+                    {...req}
                     type="input"
                     id="courseName"
                     displayName="Has Course"
                     placeholder="Name ..."
                   />
                   <Field
-                    form={form}
+                    {...req}
                     type="dateRange"
                     id="courseDateRange"
                     displayName="Date Range"
@@ -212,9 +170,19 @@ interface formFieldProps {
   displayName: string;
   placeholder?: string;
   type: formFieldType;
+  prefixes: Map<string, string>;
+  addPrefix: (id: string) => void;
 }
 
-function Field({ form, id, displayName, type, placeholder }: formFieldProps) {
+function Field({
+  form,
+  id,
+  displayName,
+  type,
+  placeholder,
+  prefixes,
+  addPrefix,
+}: formFieldProps) {
   if (!placeholder) placeholder = displayName + " ...";
 
   return (
@@ -222,13 +190,15 @@ function Field({ form, id, displayName, type, placeholder }: formFieldProps) {
       control={form.control}
       name={id}
       render={({ field }) => (
-        <FormItem>
+        <FormItem onChange={() => addPrefix(id)}>
           <div className="flex flex-wrap items-center">
             <FormLabel className="min-w-[40%] text-nowrap">
+              {/* For some arcane reason prefixes (type Map) may sometimes be passed down as generic object (dictionary) */}
+              {prefixes instanceof Map ? prefixes.get(id) : prefixes[id]}
               {displayName}:{" "}
             </FormLabel>
             <FormControl>
-              {getFieldType(type, id, placeholder!, field)}
+              {getFieldType(type, placeholder!, field, () => addPrefix(id))}
             </FormControl>
           </div>
         </FormItem>
@@ -239,55 +209,40 @@ function Field({ form, id, displayName, type, placeholder }: formFieldProps) {
 
 function getFieldType(
   type: formFieldType,
-  id: string,
   placeholder: string,
-  field: ControllerRenderProps
+  field: ControllerRenderProps,
+  setPrefix: () => void
 ) {
   const defaultAttr = {
     placeholder: placeholder!,
-    onChangeCapture: (e: FormEvent) =>
-      markChange(e.currentTarget as HTMLElement),
+    ...field,
   };
 
   switch (type) {
     default:
     case "input":
-      return <Input className="w-auto flex-grow" {...defaultAttr} {...field} />;
+      return <Input className="w-auto flex-grow" {...defaultAttr} />;
     case "textArea":
       return (
         <>
           <hr className="hidden w-full"></hr>
-          <Textarea
-            className="is-form-input ml-2 mt-2"
-            {...defaultAttr}
-            {...field}
-          />
+          <Textarea className="is-form-input ml-2 mt-2" {...defaultAttr} />
         </>
       );
     case "toggle":
-      // annoyingly, checkbox does not make the native click event visible to us (unlike all other interactive
-      // elements). See https://github.com/radix-ui/primitives/issues/734
-      // the only solutions seem to be to either to convert it to its own pseudo form element (i think?)
-      // or wrap it in a controller
-      // its just a lot easier to .querySelector for the checkbox id though, so hence the below system
       return (
-        <>
-          <Checkbox
-            id={id}
-            checked={field.value}
-            onCheckedChange={(c) => {
-              const e = document.querySelector("#" + id);
-              if (e) markChange(e as HTMLElement);
-              field.onChange(c);
-            }}
-          />
-        </>
+        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
       );
     case "dateRange":
+      // for some reason, this onChange does not produce an onChange event that can be captured by the <FormItem> onChange
+      // which means we have to pass the prefix state setter all the way down here
       return (
-        <>
-          <DateRangeForm field={field} />
-        </>
+        <DateRangeForm
+          onChange={(e) => {
+            field.onChange(e);
+            setPrefix();
+          }}
+        />
       );
   }
 }

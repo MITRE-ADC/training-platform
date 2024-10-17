@@ -2,7 +2,6 @@
 
 // see https://ui.shadcn.com/docs/components/date-picker#date-range-picker
 
-import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
@@ -15,25 +14,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ControllerRenderProps } from "react-hook-form";
+import { useState } from "react";
 
-const dateFormat = "LLL dd";
-
-export function DateRangeForm({ field }: { field: ControllerRenderProps }) {
-  function rangeToStr(range: DateRange | undefined) {
-    return (
-      (range?.from ? format(range.from, "P") : "~") +
-      " _ " +
-      (range?.to ? format(range.to, "P") : "~")
-    );
-  }
-
+export function DateRangeForm({
+  onChange,
+}: {
+  onChange: (d: { from: string; to: string }) => void;
+}) {
   function propagateDate(date: DateRange | undefined) {
     setDate(date);
-    field.onChange(rangeToStr(date));
+
+    onChange({
+      from: date?.from ? format(date.from, "P") : "",
+      to: date?.to ? format(date.to, "P") : "",
+    });
   }
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
   });
@@ -50,18 +47,19 @@ export function DateRangeForm({ field }: { field: ControllerRenderProps }) {
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, dateFormat)} -{" "}
-                  {format(date.to, dateFormat)}
-                </>
+            <i>
+              {date?.from ? (
+                date.to ? (
+                  <>
+                    {format(date.from, "LLL dd")} - {format(date.to, "LLL dd")}
+                  </>
+                ) : (
+                  format(date.from, "LLL dd")
+                )
               ) : (
-                format(date.from, dateFormat)
-              )
-            ) : (
-              <i className="text-[#777777]">Select Range ... </i>
-            )}
+                <i className="text-[#777777]">Select Range ... </i>
+              )}
+            </i>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
