@@ -5,8 +5,7 @@ import { users } from "@/db/schema";
 
 await db.insert(users).values([
   {
-    first_name: "Administrator",
-    last_name: "Administrator",
+    name: "Administrator",
     email: "admin@mitre.domain.com",
   },
 ]);
