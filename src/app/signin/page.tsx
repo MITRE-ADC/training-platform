@@ -7,21 +7,21 @@ import { Button } from "@/components/ui/button";
 import styles from "./signin.module.css";
 
 export default function SignInPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
-    username: false,
+    email: false,
     password: false,
   });
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignIn = () => {
     const errors = {
-      username: false,
+      email: false,
       password: false,
     };
 
-    if (!username) errors.username = true;
+    if (!email) errors.email = true;
     if (!password) errors.password = true;
 
     setFieldErrors(errors);
@@ -35,24 +35,25 @@ export default function SignInPage() {
   };
 
   return (
-    <div className={styles.centered}>
-      <Card className={`${styles.accountCard} ${styles.marginBottom}`}>
+    <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+      <Card className="text-left mb-4">
         <CardHeader>
-          <CardTitle>Recover Password</CardTitle>
+          <CardTitle>Sign In</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.username ? styles.errorBorder : ""}`}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              className={`mb-4 ${fieldErrors.email ? 'border-2 border-rose-600' : ""}`}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.password ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.password ? 'border-2 border-rose-600' : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -60,21 +61,18 @@ export default function SignInPage() {
               required
             />
           </div>
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
           <p>
             <a href="/recover_password">Forgot Password?</a>
           </p>
           <br />
-          <Button className={styles.fullWidth} onClick={handleSignIn}>
+          <Button className='w-full' onClick={handleSignIn}>
             Sign In
           </Button>
         </CardContent>
       </Card>
       <p>
-        New User?{" "}
-        <a href="/signup">
-          <b>Sign up now!</b>
-        </a>
+        New User?{" "}<a href="/signup"><b>Sign up now!</b></a>
       </p>
     </div>
   );

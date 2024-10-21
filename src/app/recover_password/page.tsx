@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import styles from "./signin.module.css";
 
 export default function RecoverPasswordPage() {
   const [email, setEmail] = useState("");
@@ -31,15 +30,15 @@ export default function RecoverPasswordPage() {
   };
 
   return (
-    <div className={styles.centered}>
-      <Card className={`${styles.accountCard} ${styles.marginBottom}`}>
+    <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+      <Card className="text-left mb-4">
         <CardHeader>
           <CardTitle>Recover Password</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.email ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.email ? 'border-2 border-rose-600' : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -47,18 +46,15 @@ export default function RecoverPasswordPage() {
               required
             />
           </div>
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
           <br />
-          <Button className={styles.fullWidth} onClick={handleReset}>
+          <Button className='w-full' onClick={handleReset}>
             Get Code
           </Button>
         </CardContent>
       </Card>
       <p>
-        Back to{" "}
-        <a href="/signin">
-          <b>sign in</b>
-        </a>
+        Back to{" "}<a href="/signin"><b>sign in</b></a>
       </p>
     </div>
   );

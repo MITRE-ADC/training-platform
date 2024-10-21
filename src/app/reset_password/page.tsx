@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import styles from "./signup.module.css";
 
 export default function SignUpPage() {
   const [code, setCode] = useState("");
@@ -46,15 +45,15 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className={styles.centered}>
-      <Card className={`${styles.accountCard} ${styles.marginBottom}`}>
+    <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+      <Card className="text-left mb-4">
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.code ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.code ? 'border-2 border-rose-600' : ""}`}
               placeholder="Code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -63,7 +62,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.password ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.password ? 'border-2 border-rose-600' : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -73,7 +72,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.confirmPassword ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.confirmPassword ? 'border-2 border-rose-600' : ""}`}
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -82,19 +81,16 @@ export default function SignUpPage() {
             />
           </div>
 
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
 
           <br />
-          <Button className={styles.fullWidth} onClick={handleReset}>
+          <Button className='w-full' onClick={handleReset}>
             Reset Password
           </Button>
         </CardContent>
       </Card>
       <p>
-        Back to{" "}
-        <a href="/signin">
-          <b>sign in</b>
-        </a>
+        Back to{" "}<a href="/signin"><b>sign in</b></a>
       </p>
     </div>
   );

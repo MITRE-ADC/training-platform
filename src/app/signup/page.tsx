@@ -4,13 +4,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import styles from "./signup.module.css";
 
 export default function SignUpPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -19,7 +17,6 @@ export default function SignUpPage() {
     firstName: false,
     lastName: false,
     email: false,
-    username: false,
     password: false,
     confirmPassword: false,
   });
@@ -29,7 +26,6 @@ export default function SignUpPage() {
       firstName: false,
       lastName: false,
       email: false,
-      username: false,
       password: false,
       confirmPassword: false,
     };
@@ -37,7 +33,6 @@ export default function SignUpPage() {
     if (!firstName) errors.firstName = true;
     if (!lastName) errors.lastName = true;
     if (!email) errors.email = true;
-    if (!username) errors.username = true;
     if (!password) errors.password = true;
     if (!confirmPassword) errors.confirmPassword = true;
 
@@ -58,15 +53,15 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className={styles.centered}>
-      <Card className={`${styles.accountCard} ${styles.marginBottom}`}>
+    <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+      <Card className="text-left mb-4">
         <CardHeader>
           <CardTitle>Welcome</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.firstName ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.firstName ? 'border-2 border-rose-600' : ""}`}
               placeholder="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -75,7 +70,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.lastName ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.lastName ? 'border-2 border-rose-600' : ""}`}
               placeholder="Last name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -84,7 +79,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.email ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.email ? 'border-2 border-rose-600' : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -94,16 +89,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.username ? styles.errorBorder : ""}`}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex gap-4">
-            <Input
-              className={`${styles.marginBottom} ${fieldErrors.password ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.password ? 'border-2 border-rose-600' : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -113,7 +99,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`${styles.marginBottom} ${fieldErrors.confirmPassword ? styles.errorBorder : ""}`}
+              className={`mb-4 ${fieldErrors.confirmPassword ? 'border-2 border-rose-600' : ""}`}
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -122,19 +108,16 @@ export default function SignUpPage() {
             />
           </div>
 
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
 
           <br />
-          <Button className={styles.fullWidth} onClick={handleSignUp}>
+          <Button className='w-full' onClick={handleSignUp}>
             Sign Up
           </Button>
         </CardContent>
       </Card>
       <p>
-        Already have an account?
-        <a href="/signin">
-          <b>Sign in!</b>
-        </a>
+        Already have an account?{" "}<a href="/signin"><b>Sign in!</b></a>
       </p>
     </div>
   );
