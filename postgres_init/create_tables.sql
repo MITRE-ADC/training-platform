@@ -1,14 +1,13 @@
 CREATE TABLE Users (
     user_id SERIAL PRIMARY KEY,
-    first_name VARCHAR(20),
-    last_name VARCHAR(20),
-    email VARCHAR(30),
-    pass VARCHAR(50)
+    name VARCHAR(100),
+    email VARCHAR(100),
+    pass VARCHAR(100)
 );
 
 CREATE TABLE Courses (
     course_id SERIAL PRIMARY KEY,
-    course_name VARCHAR(20)
+    course_name VARCHAR(100)
 );
 
 CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
@@ -24,7 +23,7 @@ CREATE TABLE User_Courses (
 
 CREATE TABLE Assignments (
     assignment_id SERIAL PRIMARY KEY,
-    assignment_name VARCHAR(20),
+    assignment_name VARCHAR(100),
     course_id int REFERENCES Courses(course_id),
     webgoat_info VARCHAR(200)
 );
