@@ -1,0 +1,36 @@
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    email VARCHAR(30),
+    pass VARCHAR(50)
+);
+
+CREATE TABLE Courses (
+    course_id SERIAL PRIMARY KEY,
+    course_name VARCHAR(20)
+);
+
+CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
+
+CREATE TABLE User_Courses (
+    user_id int REFERENCES Users(user_id),
+    course_id int REFERENCES Courses(course_id),
+--    course_status ENUM('Not Started', 'In Progress', 'Completed'),
+    course_status c_status,
+    due_date Date,
+    assigned_date DATE
+);
+
+CREATE TABLE Assignments (
+    assignment_id SERIAL PRIMARY KEY,
+    assignment_name VARCHAR(20),
+    course_id int REFERENCES Courses(course_id),
+    webgoat_info VARCHAR(200)
+);
+
+CREATE TABLE User_Assignments (
+    user_id int REFERENCES Users(user_id),
+    assignment_id int REFERENCES Assignments(assignment_id),
+    completed BOOLEAN
+);

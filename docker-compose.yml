@@ -1,0 +1,24 @@
+services:
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mitre_db
+      POSTGRES_USER: mitre_admin
+      POSTGRES_PASSWORD: changeme
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./postgres_init:/docker-entrypoint-initdb.d
+  # web-app:
+  #   # we will change this after we have the gitlab ci stuff so that it uses that image name
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   image: web-app
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /usr/bin/docker:/usr/bin/docker
+  #   # finish this shit later when we figure out ports
