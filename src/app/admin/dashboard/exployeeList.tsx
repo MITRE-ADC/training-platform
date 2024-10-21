@@ -1,21 +1,30 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/dataTable";
 import { ColumnDef } from "@tanstack/react-table";
+import EmployeePopup from "./employeePopup";
 
-type employeeTasks = {
+export type employeeTasks = {
   overdue: number;
   completed: number;
   todo: number;
 };
 
-type employee = {
+export type employeeAssignment = {
+  course: string;
+  assignment: string;
+  assigned: string;
+  due: string;
+  status: "done" | "todo" | "overdue";
+};
+
+export type employee = {
   firstName: string;
   lastName: string;
   email: string;
   roles: string[];
   tasks: employeeTasks;
+  assignments: employeeAssignment[];
 };
 
 const columns: ColumnDef<employee>[] = [
@@ -38,15 +47,7 @@ const columns: ColumnDef<employee>[] = [
   {
     accessorKey: "roles",
     header: "Roles",
-    cell: ({ row }) => {
-      const r = row.getValue("roles") as string[];
-
-      if (r.length == 0) {
-        return <span className="italic text-gray-500">No Assigned Role</span>;
-      } else {
-        return <span>{r.join(", ")}</span>;
-      }
-    },
+    cell: ({ row }) => roleToSpan(row.getValue("roles")),
   },
   {
     accessorKey: "tasks",
@@ -72,11 +73,17 @@ const columns: ColumnDef<employee>[] = [
   },
   {
     id: "expand",
-    cell: () => {
-      return <Button variant="outline">Expand</Button>;
-    },
+    cell: ({ row }) => <EmployeePopup row={row} />,
   },
 ];
+
+export function roleToSpan(roles: string[]) {
+  if (roles.length == 0) {
+    return <span className="italic text-neutral-700">No Assigned Role</span>;
+  } else {
+    return <span>{roles.join(", ")}</span>;
+  }
+}
 
 function getData(): employee[] {
   return [
@@ -90,6 +97,29 @@ function getData(): employee[] {
         completed: 1,
         todo: 2,
       },
+      assignments: [
+        {
+          course: "Introduction",
+          assignment: "WebWolf - Your Mailbox",
+          assigned: "9/01/2024",
+          due: "11/01/2024",
+          status: "done",
+        },
+        {
+          course: "Introduction",
+          assignment: "WebWolf - Sub Assignment",
+          assigned: "9/01/2024",
+          due: "10/01/2024",
+          status: "overdue",
+        },
+        {
+          course: "Course",
+          assignment: "Assignment - Sub Assignment",
+          assigned: "9/01/2024",
+          due: "",
+          status: "todo",
+        },
+      ],
     },
     {
       firstName: "Jane",
@@ -101,6 +131,7 @@ function getData(): employee[] {
         completed: 5,
         todo: 0,
       },
+      assignments: [],
     },
     {
       firstName: "Emilia",
@@ -112,6 +143,15 @@ function getData(): employee[] {
         completed: 1,
         todo: 2,
       },
+      assignments: [
+        {
+          course: "Introduction",
+          assignment: "WebWolf - Your Mailbox",
+          assigned: "9/01/2024",
+          due: "11/01/2024",
+          status: "done",
+        },
+      ],
     },
     {
       firstName: "Will",
@@ -123,6 +163,7 @@ function getData(): employee[] {
         completed: 10,
         todo: 0,
       },
+      assignments: [],
     },
     {
       firstName: "Ibraheem",
@@ -134,6 +175,7 @@ function getData(): employee[] {
         completed: 4,
         todo: 6,
       },
+      assignments: [],
     },
   ];
 }
@@ -143,7 +185,7 @@ export default function EmployeeList() {
 
   return (
     <>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} alternate />
     </>
   );
 }
