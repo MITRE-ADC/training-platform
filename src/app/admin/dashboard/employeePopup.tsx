@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { DataTable } from "@/components/ui/dataTable";
 import { Close } from "@radix-ui/react-dialog";
+import DatePopup from "./datePopup";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -27,6 +28,15 @@ const columns: ColumnDef<employeeAssignment>[] = [
     accessorKey: "due",
     header: "Date Due",
     cell: ({ row }) => {
+      const but = (
+        <Button
+          variant="secondary"
+          className="ml-2 h-5 px-2 py-1 text-xs outline outline-1 outline-black"
+        >
+          Edit
+        </Button>
+      );
+
       return (
         <>
           {row.getValue("due") ? (
@@ -34,12 +44,7 @@ const columns: ColumnDef<employeeAssignment>[] = [
           ) : (
             <span className="italic text-neutral-700">None</span>
           )}
-          <Button
-            variant="secondary"
-            className="ml-2 h-5 px-2 py-1 text-xs outline outline-1 outline-black"
-          >
-            Edit
-          </Button>
+          <DatePopup title="Assign Due Date" open={but} />
         </>
       );
     },

@@ -23,7 +23,7 @@ import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DateRangeForm } from "@/components/ui/datePicker";
+import { DateRangeForm } from "@/components/ui/datePickerRange";
 
 const dashboardFilterSchema = z.object({
   // user info
