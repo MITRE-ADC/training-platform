@@ -1,6 +1,7 @@
 import Navigation from "@/components/ui/custom/nav";
 import { Separator } from "@/components/ui/separator";
 import FilterForm from "./filterForm";
+import EmployeeList from "./exployeeList";
 
 function DashboardHeader({ name }: { name: string }) {
   return (
@@ -13,7 +14,7 @@ function DashboardHeader({ name }: { name: string }) {
 
 function DashboardFilter() {
   return (
-    <div className="w-1/3">
+    <div className="w-[30%]">
       <DashboardHeader name="Filter" />
       <div className="w-full p-2">
         <FilterForm />
@@ -24,15 +25,16 @@ function DashboardFilter() {
 
 function DashboardList() {
   return (
-    <div className="w-1/3">
+    <div className="w-[30%]">
       <DashboardHeader name="Employees" />
+      <EmployeeList />
     </div>
   );
 }
 
 function DashboardInfo() {
   return (
-    <div className="w-1/3">
+    <div className="w-[60%]">
       <DashboardHeader name="Name" />
     </div>
   );
@@ -42,8 +44,8 @@ export default function AdminDashBoard() {
   return (
     <div className="ml-4 mt-4">
       <Navigation name="Admin"></Navigation>
-      <div className="mr-4 flex justify-center">
-        <div className="flex min-h-[90vh] w-4/5">
+      <div className="mr-4 mt-4 flex justify-center">
+        <div className="flex min-h-[90vh] w-[90%]">
           <Separator orientation="vertical" className="h-full bg-black" />
           <DashboardFilter />
           <Separator orientation="vertical" className="h-full bg-black" />
