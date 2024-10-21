@@ -1,9 +1,12 @@
 "use client";
 
 import {
+  Column,
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -15,6 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useState } from "react";
+import { Button } from "./button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -22,15 +27,41 @@ interface DataTableProps<TData, TValue> {
   alternate?: boolean;
 }
 
+export function SortableColumn<TData, TValue>({
+  column,
+  title,
+}: {
+  column: Column<TData, TValue>;
+  title: string;
+}) {
+  return (
+    <>
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        {title}
+      </Button>
+    </>
+  );
+}
+
 export function DataTable<TData, TValue>({
   columns,
   data,
   alternate,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   });
 
   return (

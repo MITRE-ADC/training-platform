@@ -34,6 +34,7 @@ const columns: ColumnDef<employee>[] = [
   },
   {
     accessorKey: "firstName",
+    /*header: ({ column }) => <SortableColumn column={column} title="First Name"/>*/
     header: "First Name",
   },
   {
