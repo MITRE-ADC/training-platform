@@ -1,21 +1,53 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/dataTable";
 import { ColumnDef } from "@tanstack/react-table";
 
 type employeeTasks = {
   overdue: number;
-  warning: number;
   completed: number;
   todo: number;
 };
 
 type employee = {
-  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  roles: string[];
   tasks: employeeTasks;
 };
 
 const columns: ColumnDef<employee>[] = [
+  {
+    id: "buffer",
+    cell: () => <div className="w-4"></div>,
+  },
+  {
+    accessorKey: "firstName",
+    header: "First Name",
+  },
+  {
+    accessorKey: "lastName",
+    header: "Last Name",
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    accessorKey: "roles",
+    header: "Roles",
+    cell: ({ row }) => {
+      const r = row.getValue("roles") as string[];
+
+      if (r.length == 0) {
+        return <span className="italic text-gray-500">No Assigned Role</span>;
+      } else {
+        return <span>{r.join(", ")}</span>;
+      }
+    },
+  },
   {
     accessorKey: "tasks",
     header: "Status",
@@ -23,16 +55,12 @@ const columns: ColumnDef<employee>[] = [
       return (
         <div className="flex">
           <div className="mr-1 min-w-9">
-            <i className="ri-error-warning-fill mr-1 text-rose-500"></i>
-            <span>{(row.getValue("tasks") as employeeTasks)["overdue"]}</span>
-          </div>
-          <div className="mr-1 min-w-9">
-            <i className="ri-alert-fill mr-1 text-amber-400"></i>
-            <span>{(row.getValue("tasks") as employeeTasks)["warning"]}</span>
-          </div>
-          <div className="mr-1 min-w-9">
             <i className="ri-checkbox-circle-fill mr-1 text-green-600"></i>
             <span>{(row.getValue("tasks") as employeeTasks)["completed"]}</span>
+          </div>
+          <div className="mr-1 min-w-9">
+            <i className="ri-error-warning-fill mr-1 text-rose-500"></i>
+            <span>{(row.getValue("tasks") as employeeTasks)["overdue"]}</span>
           </div>
           <div className="mr-1 min-w-9">
             <i className="ri-circle-fill mr-1 text-neutral-500"></i>
@@ -43,54 +71,66 @@ const columns: ColumnDef<employee>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Employee",
+    id: "expand",
+    cell: () => {
+      return <Button variant="outline">Expand</Button>;
+    },
   },
 ];
 
 function getData(): employee[] {
   return [
     {
-      name: "John Doe",
+      firstName: "John",
+      lastName: "Doe",
+      roles: ["Project Manager", "Cybersecurity Engineer"],
+      email: "leowang@terpmail.umd.edu",
       tasks: {
         overdue: 2,
-        warning: 1,
         completed: 1,
         todo: 2,
       },
     },
     {
-      name: "Jane Doe",
+      firstName: "Jane",
+      lastName: "Doe",
+      roles: ["Software Engineer"],
+      email: "helloworld@mitre.company.csec",
       tasks: {
         overdue: 1,
-        warning: 4,
         completed: 5,
         todo: 0,
       },
     },
     {
-      name: "Emilia Oneal",
+      firstName: "Emilia",
+      lastName: "Oneal",
+      roles: [],
+      email: "helloworld@mitre.company.csec",
       tasks: {
         overdue: 0,
-        warning: 0,
         completed: 1,
         todo: 2,
       },
     },
     {
-      name: "Will Zamora",
+      firstName: "Will",
+      lastName: "Zamora",
+      roles: [],
+      email: "helloworld@mitre.company.csec",
       tasks: {
         overdue: 0,
-        warning: 0,
         completed: 10,
         todo: 0,
       },
     },
     {
-      name: "Ibraheem White",
+      firstName: "Ibraheem",
+      lastName: "White",
+      roles: [],
+      email: "helloworld@mitre.company.csec",
       tasks: {
         overdue: 0,
-        warning: 3,
         completed: 4,
         todo: 6,
       },

@@ -3,11 +3,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navigation({ name }: { name: string }) {
   return (
-    <>
+    <div className="flex items-center">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost">
-            <i className="ri-menu-fill ri-lg"></i>
+            <i className="ri-menu-fill ri-2x"></i>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64">
@@ -26,7 +26,9 @@ export default function Navigation({ name }: { name: string }) {
           </div>
         </SheetContent>
       </Sheet>
-      <span className="ml-2">Admin</span>
-    </>
+      <span className="ml-2 text-center font-sans text-4xl font-[375]">
+        Training Platform
+      </span>
+    </div>
   );
 }

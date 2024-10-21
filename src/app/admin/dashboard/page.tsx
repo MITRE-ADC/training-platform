@@ -1,58 +1,25 @@
 import Navigation from "@/components/ui/custom/nav";
-import { Separator } from "@/components/ui/separator";
-import FilterForm from "./filterForm";
 import EmployeeList from "./exployeeList";
-
-function DashboardHeader({ name }: { name: string }) {
-  return (
-    <div>
-      <p className="ml-1">{name}</p>
-      <Separator orientation="horizontal" className="w-full bg-black" />
-    </div>
-  );
-}
-
-function DashboardFilter() {
-  return (
-    <div className="w-[30%]">
-      <DashboardHeader name="Filter" />
-      <div className="w-full p-2">
-        <FilterForm />
-      </div>
-    </div>
-  );
-}
-
-function DashboardList() {
-  return (
-    <div className="w-[30%]">
-      <DashboardHeader name="Employees" />
-      <EmployeeList />
-    </div>
-  );
-}
-
-function DashboardInfo() {
-  return (
-    <div className="w-[60%]">
-      <DashboardHeader name="Name" />
-    </div>
-  );
-}
 
 export default function AdminDashBoard() {
   return (
-    <div className="ml-4 mt-4">
-      <Navigation name="Admin"></Navigation>
-      <div className="mr-4 mt-4 flex justify-center">
-        <div className="flex min-h-[90vh] w-[90%]">
-          <Separator orientation="vertical" className="h-full bg-black" />
-          <DashboardFilter />
-          <Separator orientation="vertical" className="h-full bg-black" />
-          <DashboardList />
-          <Separator orientation="vertical" className="h-full bg-black" />
-          <DashboardInfo />
-          <Separator orientation="vertical" className="h-full bg-black" />
+    <div>
+      <div className="m-6">
+        <Navigation name="Admin"></Navigation>
+      </div>
+      <div className="h-8"></div>
+      <div className="flex h-[825px] w-screen items-center justify-center">
+        <div className="flex h-full w-[1711px] justify-center outline outline-1 outline-black">
+          <div className="flex h-full w-full flex-col">
+            <div className="ml-16 mt-12 font-sans text-3xl font-[375]">
+              Manage Employees
+            </div>
+            <div className="h-16"></div>
+            <div className="mb-14 ml-16 mr-16 h-full outline outline-1 outline-black">
+              <EmployeeList />
+            </div>
+          </div>
+          <div className="h-full w-[69px] outline outline-1 outline-black"></div>
         </div>
       </div>
     </div>

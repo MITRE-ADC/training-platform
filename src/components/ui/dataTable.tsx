@@ -32,14 +32,17 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border">
+    <div>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="py-2 font-bold text-black"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -54,10 +57,11 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row, ind) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
+                className={ind % 2 == 0 ? "bg-[#D9D9D9]" : "bg-white"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
