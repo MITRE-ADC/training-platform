@@ -1,5 +1,5 @@
 import Navigation from "@/components/ui/custom/nav";
-import EmployeeList from "./exployeeList";
+import EmployeeList from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2 } from "@/components/ui/custom/text";

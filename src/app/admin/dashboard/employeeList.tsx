@@ -1,6 +1,6 @@
 "use client";
 
-import { DataTable } from "@/components/ui/dataTable";
+import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import EmployeePopup from "./employeePopup";
 import { _DATA, employee, employeeTasks } from "./employeeDefinitions";
@@ -13,25 +13,28 @@ const columns: ColumnDef<employee>[] = [
   },
   {
     accessorKey: "firstName",
-    /*header: ({ column }) => <SortableColumn column={column} title="First Name"/>*/
-    header: "First Name",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="First Name" />
+    ),
   },
   {
     accessorKey: "lastName",
-    header: "Last Name",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Last Name" />
+    ),
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => <SortableColumn column={column} title="Email" />,
   },
   {
     accessorKey: "roles",
-    header: "Roles",
+    header: ({ column }) => <SortableColumn column={column} title="Roles" />,
     cell: ({ row }) => roleToSpan(row.getValue("roles")),
   },
   {
     accessorKey: "tasks",
-    header: "Status",
+    header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       return (
         <div className="flex gap-1">
@@ -66,5 +69,7 @@ export function roleToSpan(roles: string[]) {
 }
 
 export default function EmployeeList() {
-  return <DataTable columns={columns} data={_DATA} alternate />;
+  return (
+    <DataTable columns={columns} data={_DATA} defaultSort="tasks" alternate />
+  );
 }

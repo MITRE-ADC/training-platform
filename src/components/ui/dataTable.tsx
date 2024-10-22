@@ -6,7 +6,6 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -25,6 +24,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   alternate?: boolean;
+  defaultSort?: string;
 }
 
 export function SortableColumn<TData, TValue>({
@@ -34,13 +34,27 @@ export function SortableColumn<TData, TValue>({
   column: Column<TData, TValue>;
   title: string;
 }) {
+  const sort = column.getIsSorted();
+
   return (
     <>
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="py-2 pl-0 text-base font-bold text-black hover:bg-white"
+        onClick={() => column.toggleSorting(sort === "asc")} // TOOD: hook up to backend!
       >
         {title}
+        <span className="pl-2 font-medium">
+          {sort ? (
+            sort == "asc" ? (
+              <i className="ri-arrow-up-s-line"></i>
+            ) : (
+              <i className="ri-arrow-down-s-line"></i>
+            )
+          ) : (
+            <i className="ri-expand-up-down-line"></i>
+          )}
+        </span>
       </Button>
     </>
   );
@@ -50,18 +64,24 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   alternate,
+  defaultSort,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: defaultSort ? defaultSort : "",
+      desc: true,
+    },
+  ]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
     },
+    manualSorting: true, // NOTE: we expect sorting to be done server side!
   });
 
   return (

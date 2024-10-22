@@ -2,11 +2,11 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
-import { DataTable } from "@/components/ui/dataTable";
+import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { Close } from "@radix-ui/react-dialog";
 import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import { employeeAssignment, employee } from "./employeeDefinitions";
-import { roleToSpan } from "./exployeeList";
+import { roleToSpan } from "./employeeList";
 import { H2, Text } from "@/components/ui/custom/text";
 
 const columns: ColumnDef<employeeAssignment>[] = [
@@ -16,19 +16,23 @@ const columns: ColumnDef<employeeAssignment>[] = [
   },
   {
     accessorKey: "course",
-    header: "Course",
+    header: ({ column }) => <SortableColumn column={column} title="Course" />,
   },
   {
     accessorKey: "assignment",
-    header: "Assignment",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Assignment" />
+    ),
   },
   {
     accessorKey: "assigned",
-    header: "Date Assigned",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Date Assigned" />
+    ),
   },
   {
     accessorKey: "due",
-    header: "Date Due",
+    header: ({ column }) => <SortableColumn column={column} title="Date Due" />,
     cell: ({ row }) => {
       const but = (
         <Button
@@ -51,7 +55,7 @@ const columns: ColumnDef<employeeAssignment>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       const v = row.getValue("status");
       return v == "done" ? (
@@ -130,7 +134,11 @@ export default function EmployeePopup({ row }: { row: Row<employee> }) {
               </div>
             </div>
             <div className="main-outline w-full flex-grow">
-              <DataTable columns={columns} data={row.original.assignments} />
+              <DataTable
+                columns={columns}
+                data={row.original.assignments}
+                defaultSort="status"
+              />
             </div>
             <div className="flex justify-end gap-4 font-sans">
               <Close asChild>
