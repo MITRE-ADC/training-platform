@@ -1,11 +1,13 @@
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { employee, employeeAssignment, roleToSpan } from "./exployeeList";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { DataTable } from "@/components/ui/dataTable";
 import { Close } from "@radix-ui/react-dialog";
-import DatePopup from "./datePopup";
+import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
+import { employeeAssignment, employee } from "./employeeDefinitions";
+import { roleToSpan } from "./exployeeList";
+import { H2, Text } from "@/components/ui/custom/text";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -31,19 +33,17 @@ const columns: ColumnDef<employeeAssignment>[] = [
       const but = (
         <Button
           variant="secondary"
-          className="ml-2 h-5 px-2 py-1 text-xs outline outline-1 outline-black"
+          className="main-outline ml-2 h-5 px-2 py-1 text-xs"
         >
           Edit
         </Button>
       );
 
+      const v: undefined | string = row.getValue("due");
+
       return (
         <>
-          {row.getValue("due") ? (
-            row.getValue("due")
-          ) : (
-            <span className="italic text-neutral-700">None</span>
-          )}
+          <Text disabled={!v}>{v ? v : "None"}</Text>
           <DatePopup title="Assign Due Date" open={but} />
         </>
       );
@@ -53,14 +53,14 @@ const columns: ColumnDef<employeeAssignment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      switch (row.getValue("status")) {
-        case "done":
-          return <span className="text-green-600">Completed</span>;
-        case "todo":
-          return <span className="text-neutral-700">Incomplete</span>;
-        case "overdue":
-          return <span className="text-rose-500">Overdue</span>;
-      }
+      const v = row.getValue("status");
+      return v == "done" ? (
+        <Text status="good">Completed</Text>
+      ) : v == "overdue" ? (
+        <Text status="alert">Overdue</Text>
+      ) : (
+        <Text>Incomplete</Text>
+      );
     },
   },
   {
@@ -68,6 +68,25 @@ const columns: ColumnDef<employeeAssignment>[] = [
     cell: () => <i className="ri-delete-bin-2-line"></i>,
   },
 ];
+
+function EmployeeInfo({
+  title,
+  value,
+  children,
+}: {
+  title: string;
+  value: string | JSX.Element;
+  children: React.ReactNode;
+}) {
+  return (
+    <TableRow className="border-b-0">
+      <TableCell className="p-0 pr-6 text-lg font-bold">{title}</TableCell>
+      <TableCell className="p-0 pr-6">{value}</TableCell>
+      <TableCell className="p-0 pr-6">{children}</TableCell>
+      <TableCell className="w-full"></TableCell>
+    </TableRow>
+  );
+}
 
 export default function EmployeePopup({ row }: { row: Row<employee> }) {
   return (
@@ -78,78 +97,39 @@ export default function EmployeePopup({ row }: { row: Row<employee> }) {
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
           <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">
-            <div className="font-sans text-3xl font-[400]">
-              Employee Information
-            </div>
+            <H2>Employee Information</H2>
             <div className="h-4"></div>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
-                <TableRow className="border-b-0">
-                  <TableCell className="p-0 pr-6 text-lg font-bold">
-                    Name
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    {row.getValue("firstName") + " " + row.getValue("lastName")}
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    <Button
-                      variant="secondary"
-                      className="h-6 px-3 py-0 font-semibold"
-                    >
-                      Edit
-                    </Button>
-                  </TableCell>
-                  <TableCell className="w-full"></TableCell>
-                </TableRow>
-                <TableRow className="border-b-0">
-                  <TableCell className="p-0 pr-6 text-lg font-bold">
-                    Email
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    {row.getValue("email")}
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    <Button
-                      variant="secondary"
-                      className="h-6 px-3 py-0 font-semibold"
-                    >
-                      Edit
-                    </Button>
-                  </TableCell>
-                </TableRow>
-                <TableRow className="border-b-0">
-                  <TableCell className="p-0 pr-6 text-lg font-bold">
-                    Role
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    {roleToSpan(row.getValue("roles"))}
-                  </TableCell>
-                  <TableCell className="p-0 pr-6">
-                    <Button
-                      variant="secondary"
-                      className="h-6 px-3 py-0 font-semibold"
-                    >
-                      Edit
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                <EmployeeInfo
+                  title="Name"
+                  value={
+                    row.getValue("firstName") + " " + row.getValue("lastName")
+                  }
+                >
+                  <StringPopup title="Update Name" />
+                </EmployeeInfo>
+                <EmployeeInfo title="Email" value={row.getValue("email")}>
+                  <StringPopup title="Update Email" />
+                </EmployeeInfo>
+                <EmployeeInfo
+                  title="Role"
+                  value={roleToSpan(row.getValue("roles"))}
+                >
+                  <StringPopup title="Set Roles" />
+                </EmployeeInfo>
               </TableBody>
             </Table>
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
-              <div className="font-sans text-3xl font-[400]">
-                Employee Courses
-              </div>
+              <H2>Employee Courses</H2>
               <div className="gap-4 font-sans">
-                <Button variant="ghost" className="text-md align-text-bottom">
-                  + Add Plan
-                </Button>
                 <Button variant="ghost" className="text-md align-text-bottom">
                   + Add Course
                 </Button>
               </div>
             </div>
-            <div className="w-full flex-grow outline outline-1 outline-black">
+            <div className="main-outline w-full flex-grow">
               <DataTable columns={columns} data={row.original.assignments} />
             </div>
             <div className="flex justify-end gap-4 font-sans">

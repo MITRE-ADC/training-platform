@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 className={
-                  (alternate && ind % 2 == 1 ? "bg-white" : "bg-[#D9D9D9]") +
+                  (alternate && ind % 2 == 1 ? "bg-white" : "bg-secondary") +
                   " h-full"
                 }
               >

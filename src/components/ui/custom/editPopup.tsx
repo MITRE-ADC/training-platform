@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/datePickerSingle";
 import {
   Dialog,
   DialogContent,
@@ -8,22 +7,37 @@ import {
 } from "@/components/ui/dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Close } from "@radix-ui/react-dialog";
+import { Input } from "@/components/ui/input";
+import { DatePicker } from "../datePickerSingle";
 
-export default function DatePopup({
+function EditPopup({
   title,
-  open,
+  openBut,
+  children,
 }: {
   title: string;
-  open: JSX.Element | string;
+  openBut?: JSX.Element | string;
+  children: React.ReactNode;
 }) {
+  let but: JSX.Element;
+  if (openBut) {
+    if (openBut instanceof String)
+      but = <DialogTrigger>{openBut}</DialogTrigger>;
+    else but = <DialogTrigger asChild>{openBut}</DialogTrigger>;
+  } else {
+    but = (
+      <DialogTrigger asChild>
+        <Button variant="secondary" className="h-6 px-3 py-0 font-semibold">
+          Edit
+        </Button>
+      </DialogTrigger>
+    );
+  }
+
   return (
     <>
       <Dialog>
-        {open instanceof String ? (
-          <DialogTrigger>{open}</DialogTrigger>
-        ) : (
-          <DialogTrigger asChild>{open}</DialogTrigger>
-        )}
+        {but}
         <DialogContent className="w-[400px]">
           <VisuallyHidden.Root>
             <DialogHeader>{title}</DialogHeader>
@@ -31,7 +45,7 @@ export default function DatePopup({
           <DialogHeader>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
               <p className="text-lg font-bold">{title}</p>
-              <DatePicker />
+              {children}
               <div className="flex justify-between">
                 <Close asChild>
                   <Button
@@ -55,5 +69,33 @@ export default function DatePopup({
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+export function StringPopup({
+  title,
+  open,
+}: {
+  title: string;
+  open?: JSX.Element | string;
+}) {
+  return (
+    <EditPopup title={title} openBut={open}>
+      <Input placeholder="New Value ..." />
+    </EditPopup>
+  );
+}
+
+export function DatePopup({
+  title,
+  open,
+}: {
+  title: string;
+  open?: JSX.Element | string;
+}) {
+  return (
+    <EditPopup title={title} openBut={open}>
+      <DatePicker />
+    </EditPopup>
   );
 }

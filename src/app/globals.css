@@ -49,4 +49,16 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  .main-outline {
+    @apply outline outline-1 outline-black;
+  }
+  .text-neutral {
+    @apply text-neutral-700;
+  }
+  .text-alert {
+    @apply text-rose-500;
+  }
+  .text-good {
+    @apply text-green-600;
+  }
 }

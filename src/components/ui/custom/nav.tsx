@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { H1 } from "./text";
 
 export default function Navigation({ name }: { name: string }) {
   return (
@@ -26,9 +27,7 @@ export default function Navigation({ name }: { name: string }) {
           </div>
         </SheetContent>
       </Sheet>
-      <span className="ml-2 text-center font-sans text-4xl font-[375]">
-        Training Platform
-      </span>
+      <H1>Training Platform</H1>
     </div>
   );
 }
