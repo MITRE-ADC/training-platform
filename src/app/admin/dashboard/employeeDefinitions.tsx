@@ -1,3 +1,5 @@
+import { AccordionData } from "@/components/ui/custom/accordionPopup";
+
 export type employeeTasks = {
   overdue: number;
   completed: number;
@@ -111,5 +113,48 @@ export const _DATA: employee[] = [
       todo: 6,
     },
     assignments: [],
+  },
+];
+
+export const _COURSEDATA: AccordionData[] = [
+  {
+    name: "Course 1",
+    children: [
+      { name: "Course 1 Child 1" },
+      { name: "Course 1 Child 2" },
+      { name: "Course 1 Child 3" },
+    ],
+  },
+  {
+    name: "Course 2",
+    children: [{ name: "Course 2 Child 1" }],
+  },
+  {
+    name: "Course 3",
+    children: [
+      { name: "Course 3 Child 1" },
+      { name: "Course 3 Child 2" },
+      { name: "Course 3 Child 3" },
+      { name: "Course 3 Child 4" },
+      { name: "Course 3 Child 5" },
+      { name: "Course 3 Child 6" },
+    ],
+  },
+  {
+    name: "Course 4",
+    children: [
+      { name: "Course 4 Child 1" },
+      { name: "Course 4 Child 2" },
+      { name: "Course 4 Child 3" },
+      { name: "Course 4 Child 4" },
+      { name: "Course 4 Child 5" },
+      { name: "Course 4 Child 6" },
+      { name: "Course 4 Child 7" },
+      { name: "Course 4 Child 8" },
+      { name: "Course 4 Child 9" },
+      { name: "Course 4 Child 10" },
+      { name: "Course 4 Child 11" },
+      { name: "Course 4 Child 12" },
+    ],
   },
 ];

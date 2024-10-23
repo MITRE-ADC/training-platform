@@ -22,7 +22,7 @@ export default function AdminDashBoard() {
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-12">
                 <H2>Manage Employees</H2>
                 <div className="relative mb-6 mt-6 w-[500px]">
-                  <Input
+                  <Input // TODO: throw this into own file?
                     placeholder="Search Employees"
                     className="flex justify-end rounded-full py-2"
                   />

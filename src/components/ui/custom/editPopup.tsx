@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
@@ -40,7 +41,7 @@ function EditPopup({
         {but}
         <DialogContent className="w-[400px]">
           <VisuallyHidden.Root>
-            <DialogHeader>{title}</DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
           </VisuallyHidden.Root>
           <DialogHeader>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">

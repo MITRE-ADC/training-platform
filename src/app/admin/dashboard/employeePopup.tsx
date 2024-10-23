@@ -5,9 +5,14 @@ import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { Close } from "@radix-ui/react-dialog";
 import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
-import { employeeAssignment, employee } from "./employeeDefinitions";
+import {
+  employeeAssignment,
+  employee,
+  _COURSEDATA,
+} from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
 import { H2, Text } from "@/components/ui/custom/text";
+import AccordionPopup from "@/components/ui/custom/accordionPopup";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -127,11 +132,11 @@ export default function EmployeePopup({ row }: { row: Row<employee> }) {
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <div className="gap-4 font-sans">
-                <Button variant="ghost" className="text-md align-text-bottom">
+              <AccordionPopup title="Add Course" data={_COURSEDATA}>
+                <Button variant="ghost" className="text-md font-sans">
                   + Add Course
                 </Button>
-              </div>
+              </AccordionPopup>
             </div>
             <div className="main-outline w-full flex-grow">
               <DataTable
