@@ -4,25 +4,29 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import styles from "./signin.module.css";
 
-export default function SignInPage() {
-  const [email, setEmail] = useState("");
+export default function SignUpPage() {
+  const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({
-    email: false,
-    password: false,
-  });
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignIn = () => {
+  const [fieldErrors, setFieldErrors] = useState({
+    code: false,
+    password: false,
+    confirmPassword: false,
+  });
+
+  const handleReset = () => {
     const errors = {
-      email: false,
+      code: false,
       password: false,
+      confirmPassword: false,
     };
 
-    if (!email) errors.email = true;
+    if (!code) errors.code = true;
     if (!password) errors.password = true;
+    if (!confirmPassword) errors.confirmPassword = true;
 
     setFieldErrors(errors);
 
@@ -31,23 +35,28 @@ export default function SignInPage() {
       return;
     }
 
-    setErrorMessage("");
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+
+      setFieldErrors({ ...errors, password: true, confirmPassword: true });
+    } else {
+      setErrorMessage("");
+    }
   };
 
   return (
     <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
       <Card className="text-left mb-4">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle>Reset Password</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? 'border-2 border-rose-600' : ""}`}
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              className={`mb-4 ${fieldErrors.code ? 'border-2 border-rose-600' : ""}`}
+              placeholder="Code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
               required
             />
           </div>
@@ -61,18 +70,27 @@ export default function SignInPage() {
               required
             />
           </div>
+          <div className="flex gap-4">
+            <Input
+              className={`mb-4 ${fieldErrors.confirmPassword ? 'border-2 border-rose-600' : ""}`}
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+
           {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
-          <p>
-            <a href="/recover_password">Forgot Password?</a>
-          </p>
+
           <br />
-          <Button className='w-full' onClick={handleSignIn}>
-            Sign In
+          <Button className='w-full' onClick={handleReset}>
+            Reset Password
           </Button>
         </CardContent>
       </Card>
       <p>
-        New User?{" "}<a href="/signup"><b>Sign up now!</b></a>
+        Back to{" "}<a href="/signin"><b>sign in</b></a>
       </p>
     </div>
   );

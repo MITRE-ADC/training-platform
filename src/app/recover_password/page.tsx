@@ -4,25 +4,20 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import styles from "./signin.module.css";
 
-export default function SignInPage() {
+export default function RecoverPasswordPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
     email: false,
-    password: false,
   });
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignIn = () => {
+  const handleReset = () => {
     const errors = {
       email: false,
-      password: false,
     };
 
     if (!email) errors.email = true;
-    if (!password) errors.password = true;
 
     setFieldErrors(errors);
 
@@ -38,7 +33,7 @@ export default function SignInPage() {
     <div className="absolute w-1/2 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
       <Card className="text-left mb-4">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle>Recover Password</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
@@ -51,28 +46,15 @@ export default function SignInPage() {
               required
             />
           </div>
-          <div className="flex gap-4">
-            <Input
-              className={`mb-4 ${fieldErrors.password ? 'border-2 border-rose-600' : ""}`}
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
           {errorMessage && <p className='text-rose-600 mb-4'>{errorMessage}</p>}
-          <p>
-            <a href="/recover_password">Forgot Password?</a>
-          </p>
           <br />
-          <Button className='w-full' onClick={handleSignIn}>
-            Sign In
+          <Button className='w-full' onClick={handleReset}>
+            Get Code
           </Button>
         </CardContent>
       </Card>
       <p>
-        New User?{" "}<a href="/signup"><b>Sign up now!</b></a>
+        Back to{" "}<a href="/signin"><b>sign in</b></a>
       </p>
     </div>
   );
