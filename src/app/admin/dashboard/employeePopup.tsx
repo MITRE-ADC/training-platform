@@ -1,5 +1,5 @@
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { ColumnDef, Row } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
@@ -8,11 +8,11 @@ import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
-  _COURSEDATA,
+  getCourseData,
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
 import { H2, Text } from "@/components/ui/custom/text";
-import AccordionPopup from "@/components/ui/custom/accordionPopup";
+import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -97,7 +97,7 @@ function EmployeeInfo({
   );
 }
 
-export default function EmployeePopup({ row }: { row: Row<employee> }) {
+export default function EmployeePopup({ data }: { data: employee }) {
   return (
     <>
       <Sheet>
@@ -112,19 +112,14 @@ export default function EmployeePopup({ row }: { row: Row<employee> }) {
               <TableBody className="whitespace-nowrap font-sans">
                 <EmployeeInfo
                   title="Name"
-                  value={
-                    row.getValue("firstName") + " " + row.getValue("lastName")
-                  }
+                  value={data["firstName"] + " " + data["lastName"]}
                 >
                   <StringPopup title="Update Name" />
                 </EmployeeInfo>
-                <EmployeeInfo title="Email" value={row.getValue("email")}>
+                <EmployeeInfo title="Email" value={data["email"]}>
                   <StringPopup title="Update Email" />
                 </EmployeeInfo>
-                <EmployeeInfo
-                  title="Role"
-                  value={roleToSpan(row.getValue("roles"))}
-                >
+                <EmployeeInfo title="Role" value={roleToSpan(data["roles"])}>
                   <StringPopup title="Set Roles" />
                 </EmployeeInfo>
               </TableBody>
@@ -132,16 +127,16 @@ export default function EmployeePopup({ row }: { row: Row<employee> }) {
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <AccordionPopup title="Add Course" data={_COURSEDATA}>
+              <CourseSelectorPopup title="Add Course" data={getCourseData()}>
                 <Button variant="ghost" className="text-md font-sans">
                   + Add Course
                 </Button>
-              </AccordionPopup>
+              </CourseSelectorPopup>
             </div>
             <div className="main-outline w-full flex-grow">
               <DataTable
                 columns={columns}
-                data={row.original.assignments}
+                data={data["assignments"]}
                 defaultSort="status"
               />
             </div>

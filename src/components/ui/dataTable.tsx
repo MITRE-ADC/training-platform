@@ -30,9 +30,11 @@ interface DataTableProps<TData, TValue> {
 export function SortableColumn<TData, TValue>({
   column,
   title,
+  callback,
 }: {
   column: Column<TData, TValue>;
   title: string;
+  callback?: () => void;
 }) {
   const sort = column.getIsSorted();
 
@@ -41,7 +43,10 @@ export function SortableColumn<TData, TValue>({
       <Button
         variant="ghost"
         className="py-2 pl-0 text-base font-bold text-black hover:bg-white"
-        onClick={() => column.toggleSorting(sort === "asc")} // TOOD: hook up to backend!
+        onClick={() => {
+          column.toggleSorting(sort === "asc");
+          if (callback) callback();
+        }}
       >
         {title}
         <span className="pl-2 font-medium">

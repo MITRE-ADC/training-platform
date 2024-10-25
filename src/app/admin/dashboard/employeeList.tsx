@@ -3,10 +3,15 @@
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import EmployeePopup from "./employeePopup";
-import { _DATA, employee, employeeTasks } from "./employeeDefinitions";
+import {
+  employeeOverview,
+  employeeTasks,
+  getEmployeeData,
+  getManageEmployees,
+} from "./employeeDefinitions";
 import { Text } from "@/components/ui/custom/text";
 
-const columns: ColumnDef<employee>[] = [
+const columns: ColumnDef<employeeOverview>[] = [
   {
     id: "buffer",
     cell: () => <div className="w-4"></div>,
@@ -56,7 +61,14 @@ const columns: ColumnDef<employee>[] = [
   },
   {
     id: "expand",
-    cell: ({ row }) => <EmployeePopup row={row} />,
+    cell: ({ row }) => {
+      const data = getEmployeeData(row.getValue("email"));
+      if (data) return <EmployeePopup data={data} />;
+      else
+        console.error(
+          "Unable to find matching employee with email " + row.getValue("email")
+        );
+    },
   },
 ];
 
@@ -70,6 +82,11 @@ export function roleToSpan(roles: string[]) {
 
 export default function EmployeeList() {
   return (
-    <DataTable columns={columns} data={_DATA} defaultSort="tasks" alternate />
+    <DataTable
+      columns={columns}
+      data={getManageEmployees()}
+      defaultSort="tasks"
+      alternate
+    />
   );
 }
