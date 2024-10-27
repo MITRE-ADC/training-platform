@@ -9,7 +9,6 @@ import {
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Close } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
-import { DatePicker } from "../datePickerSingle";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import {
@@ -21,6 +20,14 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns/format";
+import { Calendar } from "../calendar";
 
 interface controlledOpen {
   open: boolean;
@@ -30,6 +37,12 @@ interface controlledOpen {
 const stringSchema = z.object({
   value: z.string({
     message: "Please enter a value.",
+  }),
+});
+
+const dateSchema = z.object({
+  value: z.date({
+    message: "Please select a date.",
   }),
 });
 
@@ -153,14 +166,89 @@ export function StringPopup({
 
 export function DatePopup({
   title,
-  open,
+  openBut,
+  handle,
 }: {
   title: string;
-  open?: JSX.Element | string;
+  openBut?: JSX.Element | string;
+  handle?: (v: z.infer<typeof dateSchema>) => void;
 }) {
+  const form = useForm<z.infer<typeof dateSchema>>({
+    resolver: zodResolver(dateSchema),
+  });
+
+  const [open, setOpen] = useState(false);
+
   return (
-    <EditPopup title={title} openBut={open}>
-      <DatePicker />
+    <EditPopup
+      title={title}
+      openBut={openBut}
+      control={{ open: open, setOpen: setOpen }}
+    >
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((v) => {
+            if (handle) handle(v);
+            else console.log(v);
+            setOpen(false);
+          })}
+        >
+          <FormField
+            control={form.control}
+            name="value"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Popover modal={true}>
+                    <PopoverTrigger asChild className="text-base">
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "h-8 w-full justify-start px-0 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <i className="ri-calendar-line ml-2 mr-2"></i>
+                        {field.value ? (
+                          format(field.value, "LLL dd")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between">
+            <Close asChild>
+              <Button variant="ghost" className="px-0 text-base hover:bg-white">
+                Cancel
+              </Button>
+            </Close>
+            <Button
+              variant="ghost"
+              className="px-0 text-base hover:bg-transparent"
+              type="submit"
+            >
+              Done
+            </Button>
+          </div>
+        </form>
+      </Form>
     </EditPopup>
   );
 }

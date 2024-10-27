@@ -53,7 +53,7 @@ const columns: ColumnDef<employeeAssignment>[] = [
       return (
         <>
           <Text disabled={!v}>{v ? v : "None"}</Text>
-          <DatePopup title="Assign Due Date" open={but} />
+          <DatePopup title="Assign Due Date" openBut={but} />
         </>
       );
     },
