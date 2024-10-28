@@ -13,13 +13,13 @@ export default function AdminDashBoard() {
       </div>
       <div className="h-8"></div>
       <div className="flex h-[825px] w-screen items-center justify-center">
-        <div className="main-outline flex h-full w-[1711px] justify-center">
+        <div className="main-outline flex h-full w-[90vw] justify-center">
           <Tabs
             defaultValue="employees"
             orientation="vertical"
             className="flex h-full w-full justify-between"
           >
-            <TabsContent value="employees" className="w-[1642px] flex-grow">
+            <TabsContent value="employees" className="w-[95%] flex-grow">
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-12">
                 <H2>Manage Employees</H2>
                 <div className="flex justify-between">
