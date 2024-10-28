@@ -1,0 +1,89 @@
+"use client";
+
+import { useState } from "react";
+import { Tag, TagInput } from "../tag/tag-input";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "../form";
+import { Button } from "../button";
+
+interface TagSelectorProps {
+  title: string;
+  tags: Tag[];
+}
+
+export function TagSelector({ title, tags }: TagSelectorProps) {
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
+  const schema = z.object({
+    values: z.array(
+      z.object({
+        id: z.string(),
+        text: z.string(),
+      })
+    ),
+  });
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      values: [],
+    },
+  });
+
+  return (
+    <div className="flex items-center">
+      <p className="mr-2 -translate-y-[1px] font-sans text-base font-bold">
+        {title}
+      </p>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((v) => console.log(v))}
+          className="flex"
+        >
+          <FormField
+            control={form.control}
+            name="values"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    tags={selectedTags}
+                    setTags={(t) => {
+                      setSelectedTags(t);
+                      form.setValue("values", t as [Tag, ...Tag[]]);
+                    }}
+                    activeTagIndex={activeTagIndex}
+                    setActiveTagIndex={setActiveTagIndex}
+                    autocompleteOptions={tags}
+                    size="sm"
+                    enableAutocomplete
+                    restrictTagsToAutocompleteOptions
+                    styleClasses={{
+                      autoComplete: {
+                        command: "bg-secondary",
+                        popoverTrigger: "bg-secondary",
+                        commandList: "list-none",
+                        commandGroup: "font-bold",
+                        commandItem: "cursor-pointer hover:bg-gray-100",
+                      },
+                      inlineTagsContainer: "bg-secondary",
+                      tag: {
+                        body: "flex items-center bg-white main-outline mx-[1px]",
+                        closeButton: "text-red-500 hover:text-red-600",
+                      },
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
+    </div>
+  );
+}

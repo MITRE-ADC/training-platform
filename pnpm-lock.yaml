@@ -79,6 +79,9 @@ importers:
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
+      react-easy-sort:
+        specifier: ^1.6.0
+        version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-hook-form:
         specifier: ^7.53.0
         version: 7.53.0(react@18.3.1)
@@ -1420,6 +1423,13 @@ packages:
         integrity: sha512-itaWrbYbqpGXkGhZPGUulwnhVf5Hpy1xiCFsGqyIGglbBxmG5vSjxQen3/WGOjPpNEv1RtBLKxbmVXm8HpJStQ==,
       }
     engines: { node: ">= 0.4" }
+
+  array-move@3.0.1:
+    resolution:
+      {
+        integrity: sha512-H3Of6NIn2nNU1gsVDqDnYKY/LCdWvCMMOWifNGhKcVQgiZ6nOek39aESOvro6zmueP07exSl93YLvkN4fZOkSg==,
+      }
+    engines: { node: ">=10" }
 
   array.prototype.findlast@1.2.5:
     resolution:
@@ -3151,6 +3161,16 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-easy-sort@1.6.0:
+    resolution:
+      {
+        integrity: sha512-zd9Nn90wVlZPEwJrpqElN87sf9GZnFR1StfjgNQVbSpR5QTSzCHjEYK6REuwq49Ip+76KOMSln9tg/ST2KLelg==,
+      }
+    engines: { node: ">=16" }
+    peerDependencies:
+      react: ">=16.4.0"
+      react-dom: ">=16.4.0"
+
   react-hook-form@7.53.0:
     resolution:
       {
@@ -3603,6 +3623,12 @@ packages:
     resolution:
       {
         integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==,
+      }
+
+  tslib@2.0.1:
+    resolution:
+      {
+        integrity: sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==,
       }
 
   tslib@2.7.0:
@@ -4689,6 +4715,8 @@ snapshots:
       es-object-atoms: 1.0.0
       get-intrinsic: 1.2.4
       is-string: 1.0.7
+
+  array-move@3.0.1: {}
 
   array.prototype.findlast@1.2.5:
     dependencies:
@@ -5844,6 +5872,13 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-easy-sort@1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      array-move: 3.0.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tslib: 2.0.1
+
   react-hook-form@7.53.0(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -6158,6 +6193,8 @@ snapshots:
       json5: 1.0.2
       minimist: 1.2.8
       strip-bom: 3.0.0
+
+  tslib@2.0.1: {}
 
   tslib@2.7.0: {}
 

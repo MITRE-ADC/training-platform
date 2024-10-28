@@ -78,7 +78,9 @@ function CourseSelectorAccordion({
   ind: number;
   form: UseFormReturn;
 }) {
-  const [childIsChecked, setChildIsChecked] = useState<boolean[]>([]);
+  const [childIsChecked, setChildIsChecked] = useState<boolean[]>(
+    Array(course.children.length).fill(false)
+  );
 
   function notify(value: boolean, ind: number) {
     const v = [...childIsChecked];

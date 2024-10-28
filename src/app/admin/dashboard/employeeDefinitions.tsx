@@ -1,4 +1,5 @@
 import { CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
+import { Tag } from "@/components/ui/tag/tag-input";
 
 export type employeeTasks = {
   overdue: number;
@@ -223,12 +224,12 @@ const _COURSEDATA: CourseSelectorData[] = [
     name: "Course 3",
     id: "3",
     children: [
-      { name: "Course 3 Child 1", id: "3 1" },
-      { name: "Course 3 Child 2", id: "3 2" },
-      { name: "Course 3 Child 3", id: "3 3" },
-      { name: "Course 3 Child 4", id: "3 4" },
-      { name: "Course 3 Child 5", id: "3 5" },
-      { name: "Course 3 Child 6", id: "3 6" },
+      { name: "Course 3 Child 1", id: "3_1" },
+      { name: "Course 3 Child 2", id: "3_2" },
+      { name: "Course 3 Child 3", id: "3_3" },
+      { name: "Course 3 Child 4", id: "3_4" },
+      { name: "Course 3 Child 5", id: "3_5" },
+      { name: "Course 3 Child 6", id: "3_6" },
     ],
   },
   {
@@ -248,5 +249,53 @@ const _COURSEDATA: CourseSelectorData[] = [
       { name: "Course 4 Child 11", id: "4 11" },
       { name: "Course 4 Child 12", id: "4 12" },
     ],
+  },
+];
+
+export const _ASSIGNMENTTAGS: Tag[] = [
+  {
+    id: "4 1",
+    text: "Course 4 Child 1",
+  },
+  {
+    id: "4 2",
+    text: "Course 4 Child 2",
+  },
+];
+
+export const _COURSETAGS: Tag[] = [
+  {
+    id: "4",
+    text: "Course 4",
+  },
+  {
+    id: "3",
+    text: "Course 3",
+  },
+];
+
+export const _ROLETAGS: Tag[] = [
+  {
+    id: "role1",
+    text: "Project Manager",
+  },
+  {
+    id: "role2",
+    text: "Intern",
+  },
+];
+
+export const _STATUSTAGS: Tag[] = [
+  {
+    id: "completed",
+    text: "Completed",
+  },
+  {
+    id: "overdue",
+    text: "Overdue",
+  },
+  {
+    id: "todo",
+    text: "In Progress",
   },
 ];

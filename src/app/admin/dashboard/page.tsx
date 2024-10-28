@@ -3,6 +3,7 @@ import EmployeeList from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2 } from "@/components/ui/custom/text";
+import { AdvancedDashboardFilters } from "./advFilters";
 
 export default function AdminDashBoard() {
   return (
@@ -21,12 +22,17 @@ export default function AdminDashBoard() {
             <TabsContent value="employees" className="w-[1642px] flex-grow">
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-12">
                 <H2>Manage Employees</H2>
-                <div className="relative mb-6 mt-6 w-[500px]">
-                  <Input // TODO: throw this into own file?
-                    placeholder="Search Employees"
-                    className="flex justify-end rounded-full py-2"
-                  />
-                  <span className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 transform"></span>
+                <div className="flex justify-between">
+                  <div className="relative mb-6 mt-6 w-[500px]">
+                    <Input
+                      placeholder="Search Employees"
+                      className="flex justify-end rounded-full py-2"
+                    />
+                    <span className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 transform"></span>
+                  </div>
+                  <div className="mb-2 flex flex-col justify-end">
+                    <AdvancedDashboardFilters />
+                  </div>
                 </div>
                 <div className="main-outline h-full">
                   <EmployeeList />
