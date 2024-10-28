@@ -1,20 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Tag, TagInput } from "../tag/tag-input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "../form";
-import { Button } from "../button";
 
 interface TagSelectorProps {
   title: string;
+  id: string;
   tags: Tag[];
+  selectedTags: Tag[];
+  setSelectedTags: Dispatch<SetStateAction<Tag[]>>;
 }
 
-export function TagSelector({ title, tags }: TagSelectorProps) {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+export function TagSelector({
+  title,
+  // eslint-disable-next-line
+  id,
+  tags,
+  selectedTags,
+  setSelectedTags,
+}: TagSelectorProps) {
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
   const schema = z.object({
@@ -81,7 +89,6 @@ export function TagSelector({ title, tags }: TagSelectorProps) {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
         </form>
       </Form>
     </div>
