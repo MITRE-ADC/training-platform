@@ -218,7 +218,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         modal={usePortal}
       >
         <div
-          className="relative flex h-full items-center bg-transparent pr-3"
+          className="relative flex h-full items-center bg-transparent"
           ref={triggerContainerRef}
         >
           {childrenWithProps}
@@ -228,14 +228,17 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
               size="icon"
               role="combobox"
               className={cn(
-                `hover:bg-transparent ${!inlineTags ? "ml-auto" : ""}`,
+                `flex hover:bg-transparent ${!inlineTags ? "ml-auto" : ""}`,
                 classStyleProps?.popoverTrigger
               )}
               onClick={() => {
                 setIsPopoverOpen(!isPopoverOpen);
               }}
             >
-              <i className="ri-add-line ri-lg font-[100]"></i>
+              <i className="ri-arrow-drop-left-fill ri-2x font-[100]"></i>
+              <p className="mr-2 -translate-y-[1px] font-sans text-base font-bold">
+                {classStyleProps?.popoverTriggerName}
+              </p>
             </Button>
           </PopoverTrigger>
         </div>

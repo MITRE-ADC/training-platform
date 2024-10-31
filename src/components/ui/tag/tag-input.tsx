@@ -43,6 +43,7 @@ export interface TagInputStyleClassesProps {
     commandList?: string;
     commandGroup?: string;
     commandItem?: string;
+    popoverTriggerName?: string;
   };
   tag?: {
     body?: string;
@@ -551,6 +552,8 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                 commandList: styleClasses?.autoComplete?.commandList,
                 commandGroup: styleClasses?.autoComplete?.commandGroup,
                 commandItem: styleClasses?.autoComplete?.commandItem,
+                popoverTriggerName:
+                  styleClasses?.autoComplete?.popoverTriggerName,
               }}
             >
               {!usePopoverForTags ? (

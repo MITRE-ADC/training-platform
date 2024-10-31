@@ -13,10 +13,6 @@ import { Text } from "@/components/ui/custom/text";
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
-    id: "buffer",
-    cell: () => <div className="w-4"></div>,
-  },
-  {
     accessorKey: "firstName",
     header: ({ column }) => (
       <SortableColumn column={column} title="First Name" />
@@ -63,7 +59,12 @@ const columns: ColumnDef<employeeOverview>[] = [
     id: "expand",
     cell: ({ row }) => {
       const data = getEmployeeData(row.getValue("email"));
-      if (data) return <EmployeePopup data={data} />;
+      if (data)
+        return (
+          <div className="flex w-full justify-end pr-2">
+            <EmployeePopup data={data} />
+          </div>
+        );
       else
         console.error(
           "Unable to find matching employee with email " + row.getValue("email")

@@ -42,10 +42,7 @@ export function TagSelector({
   });
 
   return (
-    <div className="flex items-center">
-      <p className="mr-2 -translate-y-[1px] font-sans text-base font-bold">
-        {title}
-      </p>
+    <div className="flex items-center justify-end">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((v) => console.log(v))}
@@ -73,10 +70,11 @@ export function TagSelector({
                     styleClasses={{
                       autoComplete: {
                         command: "bg-secondary",
-                        popoverTrigger: "bg-secondary",
+                        popoverTrigger: "bg-secondary w-fit",
                         commandList: "list-none",
                         commandGroup: "font-bold",
                         commandItem: "cursor-pointer hover:bg-gray-100",
+                        popoverTriggerName: title,
                       },
                       inlineTagsContainer: "bg-secondary",
                       tag: {

@@ -42,16 +42,16 @@ export default function AdminDashBoard() {
             <TabsContent value="course"></TabsContent>
             <TabsList className="flex h-full w-[69px] justify-between rounded-none bg-white p-0 [writing-mode:vertical-lr]">
               <TabsTrigger
-                value="employees"
-                className="h-1/2 w-full rounded-none border-b-[1px] border-l-[1px] border-black bg-secondary p-0 font-sans text-lg font-bold text-black data-[state=active]:border-l-0 data-[state=active]:bg-white"
-              >
-                Manage Employees
-              </TabsTrigger>
-              <TabsTrigger
                 value="course"
                 className="h-1/2 w-full rounded-none border-l-[1px] border-black bg-secondary p-0 font-sans text-lg font-bold text-black data-[state=active]:border-l-0 data-[state=active]:bg-white"
               >
                 Manage Courses
+              </TabsTrigger>
+              <TabsTrigger
+                value="employees"
+                className="h-1/2 w-full rounded-none border-l-[1px] border-t-[1px] border-black bg-secondary p-0 font-sans text-lg font-bold text-black data-[state=active]:border-l-0 data-[state=active]:bg-white"
+              >
+                Manage Employees
               </TabsTrigger>
             </TabsList>
           </Tabs>
