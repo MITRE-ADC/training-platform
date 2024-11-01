@@ -1,5 +1,5 @@
 CREATE TABLE Users (
-    user_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     email VARCHAR(100),
     pass VARCHAR(100)
@@ -13,7 +13,7 @@ CREATE TABLE Courses (
 CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
 
 CREATE TABLE User_Courses (
-    user_id int REFERENCES Users(user_id),
+    user_id int REFERENCES Users(id),
     course_id int REFERENCES Courses(course_id),
 --    course_status ENUM('Not Started', 'In Progress', 'Completed'),
     course_status c_status,
@@ -29,7 +29,7 @@ CREATE TABLE Assignments (
 );
 
 CREATE TABLE User_Assignments (
-    user_id int REFERENCES Users(user_id),
+    user_id int REFERENCES Users(id),
     assignment_id int REFERENCES Assignments(assignment_id),
     completed BOOLEAN
 );

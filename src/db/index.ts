@@ -5,9 +5,9 @@ import { Client } from "pg";
 export const client = new Client({
   host: "localhost",
   port: 5432,
-  user: "postgres",
-  password: "root",
-  database: "tutorial-db",
+  user: "mitre_admin",
+  password: "changme",
+  database: "mitre_db",
 });
 
 export const connectDB = async () => await client.connect();
