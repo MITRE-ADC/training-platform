@@ -1,58 +1,54 @@
-import { integer, pgTable, varchar, boolean, date, foreignKey } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  varchar,
+  boolean,
+  date,
+  // foreignKey,
+} from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
-import { LargeNumberLike } from "crypto";
 
 export interface User {
   user_id: number;
+  name: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  password: string;
+  pass: string;
 }
 
-export interface Courses {
-  user_id: number;
-  course_number: number;
-  status: string;
-  due_date: Date;
-  assigned_date: Date;
+export interface Course {
+  course_id: number;
+  course_name: string;
 }
 
-export interface Assignments {
-  webgoat_id: number;
+export interface Assignment {
+  assignment_id: number;
   assignment_name: string;
-  assignment_id: number;
   course_id: string;
+  webgoat_info: number;
 }
 
-export interface User_Assignments {
-  completed: boolean;
+export interface User_Assignment {
   user_id: number;
   assignment_id: number;
+  completed: boolean;
 }
 
-export interface User_Courses{
+export interface User_Course {
   user_id: number;
   course_id: number;
-  status: string;
+  course_status: string;
   due_date: Date;
   assigned_date: Date;
 }
-
-
-
-
 
 export const locateUser = (user: User) =>
   or(eq(users.user_id, user.user_id), eq(users.email, user.email));
 
-
 export const users = pgTable("users", {
   user_id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  first_name: varchar({ length: 255 }).notNull(),
-  last_name: varchar({ length: 255 }).notNull(),
+  name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
-  password: varchar({ length: 255 }).notNull(),
+  pass: varchar({ length: 255 }).notNull(),
 });
 
 export const courses = pgTable("courses", {
@@ -62,23 +58,31 @@ export const courses = pgTable("courses", {
 
 export const assignments = pgTable("assignments", {
   webgoat_id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  assignment_name: varchar({ length: 255}).notNull(),
+  assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  course_id: integer().notNull().references(() => courses.course_id),
+  course_id: integer()
+    .notNull()
+    .references(() => courses.course_id),
 });
 
 export const user_assignments = pgTable("user_assignments", {
   completed: boolean().notNull(),
-  user_id: integer().notNull().references(() => users.user_id), // Foreign key to users table
-  assignment_id: integer().notNull().references(() => assignments.assignment_id), // Foreign key to assignments table
+  user_id: integer()
+    .notNull()
+    .references(() => users.user_id), // Foreign key to users table
+  assignment_id: integer()
+    .notNull()
+    .references(() => assignments.assignment_id), // Foreign key to assignments table
 });
 
 export const user_courses = pgTable("user_courses", {
-  user_id: integer().notNull().references(() => users.user_id), 
-  course_id: integer().notNull().references(() => courses.course_id),
+  user_id: integer()
+    .notNull()
+    .references(() => users.user_id),
+  course_id: integer()
+    .notNull()
+    .references(() => courses.course_id),
   status: varchar({ length: 255 }).notNull(),
   due_date: date().notNull(),
-  assigned_date: date().notNull()
+  assigned_date: date().notNull(),
 });
-
-
