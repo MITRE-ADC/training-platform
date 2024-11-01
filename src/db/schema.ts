@@ -57,7 +57,6 @@ export async function locateUser(user: User) {
   return existingUsers.length > 0;
 }
 
-
 export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
@@ -65,7 +64,8 @@ export const users = pgTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),});
+  image: text("image"),
+});
 
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
