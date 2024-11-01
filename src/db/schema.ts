@@ -82,7 +82,7 @@ export const user_courses = pgTable("user_courses", {
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
-  status: varchar({ length: 255 }).notNull(),
+  course_status: varchar({ length: 255 }).notNull(),
   due_date: date().notNull(),
   assigned_date: date().notNull(),
 });
