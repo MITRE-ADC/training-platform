@@ -1,8 +1,11 @@
 CREATE TABLE Users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100),
-    pass VARCHAR(100)
+    -- id SERIAL PRIMARY KEY,
+    id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    pass VARCHAR(100) NOT NULL,
+    emailVerified TIMESTAMP,
+    image TEXT
 );
 
 CREATE TABLE Courses (
