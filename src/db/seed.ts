@@ -7,6 +7,7 @@ await db.insert(users).values([
   {
     name: "Administrator",
     email: "admin@mitre.domain.com",
+    pass: "changeme",
   },
 ]);
 

@@ -14,9 +14,10 @@ import { db } from "./index";
 type AdapterAccountType = "oauth" | "email" | "credentials";
 
 export interface User {
-  id: number;
+  user_id: number;
   email: string;
   name: string;
+  pass: string;
 }
 
 export async function locateUser(user: User) {
@@ -34,7 +35,8 @@ export const users = pgTable("users", {
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  pass: varchar({ length: 255 }).notNull(),
+  emailVerified: timestamp("emailverified", { mode: "date" }),
   image: text("image"),
 });
 
