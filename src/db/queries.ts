@@ -4,6 +4,7 @@ import {
   users,
   courses,
   User,
+  Course,
   Assignment,
   User_Assignment,
   User_Course,
@@ -61,25 +62,6 @@ export async function updateCourse(course: Course) {
     .where(eq(courses.course_id, course.course_id));
 }
 
-
-// Fetch all courses
-export async function getAllCourses() {
-  return await db.select().from(courses);
-}
-
-// Add a new course
-export async function addCourse(course: Course) {
-  return await db.insert(courses).values(course);
-}
-
-// Update a course
-export async function updateCourse(course: Course) {
-  return await db
-    .update(courses)
-    .set(course)
-    .where(eq(courses.course_id, course.course_id));
-}
-
 // Delete a user
 export async function deletecourse(id: number) {
   return await db.delete(courses).where(eq(courses.course_id, id));
@@ -96,8 +78,8 @@ export async function getCourse(courseId: number) {
 }
 
 // Update course
- //export async function updateCourse(courseId: number, updatedFields: Partial<Course>) {
-  //return await db.update(courses).set(updatedFields).where(eq(courses.course_id, courseId));
+//export async function updateCourse(courseId: number, updatedFields: Partial<Course>) {
+//return await db.update(courses).set(updatedFields).where(eq(courses.course_id, courseId));
 //}
 
 export async function deleteCourse(courseId: number) {
@@ -121,7 +103,7 @@ export async function addAssignment(assignment: Assignment) {
     course_id: assignment.course_id,
     assigntment_id: assignment.assignment_id,
     assignment_name: assignment.assignment_name,
-    webgoat_id: assignment.webgoat_id,
+    webgoat_info: assignment.webgoat_info,
   });
 }
 
@@ -191,9 +173,9 @@ export async function getCoursesByUser(userId: number) {
 
 export async function addUserCourse(userCourse: User_Course) {
   return await db.insert(user_courses).values({
-    user_id = userCourse.user_id,
-    course_id = userCourse.course_id,
-    course_status = userCourse.course_status
+    user_id: userCourse.user_id,
+    course_id: userCourse.course_id,
+    course_status: userCourse.course_status,
     due_date: userCourse.due_date.toISOString(),
     assigned_date: userCourse.assigned_date.toISOString(),
   });
@@ -206,7 +188,7 @@ export async function updateUserCourseStatus(
 ) {
   return await db
     .update(user_courses)
-    .set({ course_status })
+    .set({ course_status: status })
     .where(
       and(
         eq(user_courses.user_id, userId),

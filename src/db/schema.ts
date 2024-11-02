@@ -23,7 +23,7 @@ export interface Course {
 export interface Assignment {
   assignment_id: number;
   assignment_name: string;
-  course_id: string;
+  course_id: number;
   webgoat_info: number;
 }
 
@@ -57,7 +57,7 @@ export const courses = pgTable("courses", {
 });
 
 export const assignments = pgTable("assignments", {
-  webgoat_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  webgoat_info: integer().primaryKey().generatedAlwaysAsIdentity(),
   assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_id: integer()
