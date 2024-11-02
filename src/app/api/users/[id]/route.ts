@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   return await processCreateUserRequest(request);
 }
-
 // Modify user data -- detailed
 export async function POST(request: NextRequest) {
   const user_email = request.nextUrl.searchParams?.get("user_email");

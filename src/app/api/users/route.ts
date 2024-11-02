@@ -2,17 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 
 import { processCreateUserRequest } from "../util";
+import { getAllUsers } from "@/db/queries";
 
-// GET method for list of all users (undetailed?)
-export async function GET(request: NextRequest) {
-  // TEMP to sidestep linter :p
-  const s = request.body;
-  console.log(s);
-
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
+export async function GET() {
+  try {
+    return NextResponse.json(
+      { data: await getAllUsers() },
+      { status: HttpStatusCode.Ok }
+    );
+  } catch (ex) {
+    return NextResponse.json(
+      {
+        message: `Error: ${ex}\n`,
+      },
+      {
+        status: HttpStatusCode.InternalServerError,
+      }
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
