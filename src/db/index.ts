@@ -6,7 +6,7 @@ import * as schema from "./schema";
 
 export const client = new Client({
   host: "localhost",
-  port: 54320,
+  port: 5432,
   user: "mitre_admin",
   password: "changeme",
   database: "mitre_db",

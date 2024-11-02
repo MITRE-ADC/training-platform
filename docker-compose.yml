@@ -4,7 +4,7 @@ services:
     container_name: postgres_db
     restart: unless-stopped
     ports:
-      - "54320:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: mitre_db
       POSTGRES_USER: mitre_admin
