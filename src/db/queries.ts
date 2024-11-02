@@ -27,16 +27,16 @@ export async function updateUser(user: User) {
   return await db
     .update(users)
     .set(user)
-    .where(eq(users.user_id, user.user_id));
+    .where(eq(users.id, user.user_id));
 }
 
 // Delete a user
-export async function deleteUser(id: number) {
-  return await db.delete(users).where(eq(users.user_id, id));
+export async function deleteUser(id: string) {
+  return await db.delete(users).where(eq(users.id, id));
 }
 
-export async function userExists(id: number) {
-  return await db.select().from(users).where(eq(users.user_id, id));
+export async function userExists(id: string) {
+  return await db.select().from(users).where(eq(users.id, id));
 }
 
 export async function courseExists(id: number) {

@@ -7,19 +7,20 @@ import {
   timestamp,
   boolean,
   date,
-  // foreignKey,
+  serial,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
-// import { AdapterAccountType } from "next-auth/adapters"
 
 type AdapterAccountType = "oauth" | "email" | "credentials";
 
 export interface User {
-  user_id: number;
+  user_id: string;
   name: string;
   email: string;
   pass: string;
+  emailVerified: Date;
+  image: string;
 }
 
 export interface Course {
@@ -105,7 +106,7 @@ export const user_courses = pgTable("user_courses", {
 });
 
 export const accounts = pgTable(
-  "account",
+  "accounts",
   {
     userId: text("userId")
       .notNull()
