@@ -6,7 +6,7 @@ const client = new Client({
   host: "localhost",
   port: 5432,
   user: "mitre_admin",
-  password: "changme",
+  password: "changeme",
   database: "mitre_db",
 });
 

@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { HttpStatusCode } from "axios";
 import { NextRequest, NextResponse } from "next/server";
-import { User_Course, users, user_courses } from "@/db/schema";
-import { userExists, courseExists } from "@/db/queries";
+import { User_Course, users, user_courses, User } from "@/db/schema";
+import { userExists, getCourse } from "@/db/queries";
 
 export async function processLinkCourseRequest(request: NextRequest) {
   const user_id = request.nextUrl.searchParams?.get("user_id");
@@ -17,8 +17,6 @@ export async function processLinkCourseRequest(request: NextRequest) {
   if (course_id == null) _course_id = body.course_id;
   else _course_id = parseInt(course_id);
 
-  // TODO: password: special finagling with auth
-  // Pick out (only) initialization data for use
   if (_user_id == -1 || !userExists(_user_id))
     return NextResponse.json(
       {
@@ -29,9 +27,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
       }
     );
 
-  // TODO: password: special finagling with auth
-  // Pick out (only) initialization data for use
-  if (_course_id == -1 || !courseExists(_course_id))
+  if (_course_id == -1 || !getCourse(_course_id))
     return NextResponse.json(
       {
         message: `Error: user not found`,
@@ -65,9 +61,20 @@ export async function processLinkCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
-  const user_name = request.nextUrl.searchParams?.get("user_name");
-  const user_email = request.nextUrl.searchParams?.get("user_email");
-  const password_hash = request.nextUrl.searchParams?.get("pass");
+  let body: User | undefined = undefined;
+  try {
+    body = await request.json();
+  } catch (ex) {
+    console.log(
+      `Error reading request body; send JSON body of user to initialize: ${ex}`
+    );
+  }
+
+  const user_name =
+    body?.name || request.nextUrl.searchParams?.get("user_name");
+  const user_email =
+    body?.email || request.nextUrl.searchParams?.get("user_email");
+  const password_hash = body?.pass || request.nextUrl.searchParams?.get("pass");
 
   if (!user_name)
     return NextResponse.json(
