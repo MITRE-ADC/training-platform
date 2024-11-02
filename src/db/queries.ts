@@ -13,17 +13,15 @@ import {
   user_courses,
 } from "./schema";
 
-// Fetch all users
+// Users
 export async function getAllUsers() {
   return await db.select().from(users);
 }
 
-// Add a new user
 export async function addUser(user: User) {
-  return await db.insert(users).values(user);
+  return await db.insert(users).values(user).returning();
 }
 
-// Update a user
 export async function updateUser(user: User) {
   return await db
     .update(users)
@@ -31,7 +29,6 @@ export async function updateUser(user: User) {
     .where(eq(users.user_id, user.user_id));
 }
 
-// Delete a user
 export async function deleteUser(id: number) {
   return await db.delete(users).where(eq(users.user_id, id));
 }
@@ -40,21 +37,16 @@ export async function userExists(id: number) {
   return await db.select().from(users).where(eq(users.user_id, id));
 }
 
-export async function courseExists(id: number) {
-  return await db.select().from(courses).where(eq(courses.course_id, id));
-}
+// Courses
 
-// Fetch all courses
 export async function getAllCourses() {
   return await db.select().from(courses);
 }
 
-// Add a new course
 export async function addCourse(course: Course) {
-  return await db.insert(courses).values(course);
+  return await db.insert(courses).values(course).returning();
 }
 
-// Update a course
 export async function updateCourse(course: Course) {
   return await db
     .update(courses)
@@ -62,25 +54,9 @@ export async function updateCourse(course: Course) {
     .where(eq(courses.course_id, course.course_id));
 }
 
-// Delete a user
-export async function deletecourse(id: number) {
-  return await db.delete(courses).where(eq(courses.course_id, id));
-}
-
-// Courses
-
-export async function createCourse(courseName: string) {
-  return await db.insert(courses).values({ course_name: courseName });
-}
-
 export async function getCourse(courseId: number) {
   return await db.select().from(courses).where(eq(courses.course_id, courseId));
 }
-
-// Update course
-//export async function updateCourse(courseId: number, updatedFields: Partial<Course>) {
-//return await db.update(courses).set(updatedFields).where(eq(courses.course_id, courseId));
-//}
 
 export async function deleteCourse(courseId: number) {
   return await db.delete(courses).where(eq(courses.course_id, courseId));
@@ -99,12 +75,14 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function addAssignment(assignment: Assignment) {
-  return await db.insert(assignments).values({
-    course_id: assignment.course_id,
-    assigntment_id: assignment.assignment_id,
-    assignment_name: assignment.assignment_name,
-    webgoat_info: assignment.webgoat_info,
-  });
+  return await db
+    .insert(assignments)
+    .values({
+      course_id: assignment.course_id,
+      assignment_name: assignment.assignment_name,
+      webgoat_info: assignment.webgoat_info,
+    })
+    .returning();
 }
 
 export async function deleteAssignment(assignmentId: number) {
@@ -126,7 +104,7 @@ export async function getAssignmentsByUser(userId: number) {
 }
 
 export async function addUserAssignment(userAssignment: User_Assignment) {
-  return await db.insert(user_assignments).values([userAssignment]);
+  return await db.insert(user_assignments).values(userAssignment).returning();
 }
 
 export async function updateUserAssignment(
@@ -172,13 +150,16 @@ export async function getCoursesByUser(userId: number) {
 }
 
 export async function addUserCourse(userCourse: User_Course) {
-  return await db.insert(user_courses).values({
-    user_id: userCourse.user_id,
-    course_id: userCourse.course_id,
-    course_status: userCourse.course_status,
-    due_date: userCourse.due_date.toISOString(),
-    assigned_date: userCourse.assigned_date.toISOString(),
-  });
+  return await db
+    .insert(user_courses)
+    .values({
+      user_id: userCourse.user_id,
+      course_id: userCourse.course_id,
+      course_status: userCourse.course_status,
+      due_date: userCourse.due_date.toISOString(),
+      assigned_date: userCourse.assigned_date.toISOString(),
+    })
+    .returning();
 }
 
 export async function updateUserCourseStatus(

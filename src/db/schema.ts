@@ -1,11 +1,4 @@
-import {
-  integer,
-  pgTable,
-  varchar,
-  boolean,
-  date,
-  // foreignKey,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, boolean, date } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 
 export interface User {
@@ -24,7 +17,7 @@ export interface Assignment {
   assignment_id: number;
   assignment_name: string;
   course_id: number;
-  webgoat_info: number;
+  webgoat_info: string;
 }
 
 export interface User_Assignment {
@@ -57,7 +50,7 @@ export const courses = pgTable("courses", {
 });
 
 export const assignments = pgTable("assignments", {
-  webgoat_info: integer().primaryKey().generatedAlwaysAsIdentity(),
+  webgoat_info: varchar({ length: 255 }).notNull(),
   assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_id: integer()
