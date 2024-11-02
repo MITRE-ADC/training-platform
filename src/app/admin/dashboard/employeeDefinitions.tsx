@@ -54,6 +54,23 @@ export function getEmployeeData(email: string): employee | undefined {
   return out;
 }
 
+export const EMPTY_EMPLOYEE_TASK: employeeTasks = {
+  overdue: 0,
+  completed: 0,
+  todo: 0,
+};
+
+export const EMPTY_EMPLOYEE_ASSIGNMENT: employeeAssignment[] = [];
+
+export const EMPTY_EMPLOYEE: employee = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  roles: [],
+  tasks: EMPTY_EMPLOYEE_TASK,
+  assignments: EMPTY_EMPLOYEE_ASSIGNMENT,
+};
+
 const _DATA: employee[] = [
   {
     firstName: "John",

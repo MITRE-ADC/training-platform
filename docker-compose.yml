@@ -17,7 +17,7 @@ services:
     build: .
     container_name: web-app
     restart: unless-stopped
-    ports: 
+    ports:
       - "8080:8080"
   webgoat:
     image: webgoat/webgoat:latest
@@ -30,4 +30,3 @@ services:
       TZ: America/Boise
     tty: true
     command: /bin/bash -c webgoat/webgoat
-

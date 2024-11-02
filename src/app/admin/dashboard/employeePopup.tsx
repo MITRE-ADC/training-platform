@@ -9,10 +9,13 @@ import {
   employeeAssignment,
   employee,
   getCourseData,
+  getEmployeeData,
+  EMPTY_EMPLOYEE,
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
 import { H2, Text } from "@/components/ui/custom/text";
 import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
+import { useState } from "react";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -97,12 +100,24 @@ function EmployeeInfo({
   );
 }
 
-export default function EmployeePopup({ data }: { data: employee }) {
+export default function EmployeePopup({ employee }: { employee: string }) {
+  const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
+
+  function load() {
+    setTimeout(() => {
+      const d = getEmployeeData(employee);
+      if (d) setData(d);
+      else console.error("Trying to find unknown employee " + employee);
+    }, 500);
+  }
+
   return (
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline">Expand</Button>
+          <Button variant="outline" onClick={load}>
+            Expand
+          </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
           <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">

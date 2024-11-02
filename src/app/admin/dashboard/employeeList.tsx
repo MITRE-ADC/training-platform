@@ -6,10 +6,10 @@ import EmployeePopup from "./employeePopup";
 import {
   employeeOverview,
   employeeTasks,
-  getEmployeeData,
   getManageEmployees,
 } from "./employeeDefinitions";
 import { Text } from "@/components/ui/custom/text";
+import { useState } from "react";
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
@@ -61,14 +61,7 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     id: "expand",
-    cell: ({ row }) => {
-      const data = getEmployeeData(row.getValue("email"));
-      if (data) return <EmployeePopup data={data} />;
-      else
-        console.error(
-          "Unable to find matching employee with email " + row.getValue("email")
-        );
-    },
+    cell: ({ row }) => <EmployeePopup employee={row.getValue("email")} />,
   },
 ];
 
@@ -81,12 +74,11 @@ export function roleToSpan(roles: string[]) {
 }
 
 export default function EmployeeList() {
+  const [data, setData] = useState<employeeOverview[]>([]);
+
+  setTimeout(() => setData(getManageEmployees()), 500);
+
   return (
-    <DataTable
-      columns={columns}
-      data={getManageEmployees()}
-      defaultSort="tasks"
-      alternate
-    />
+    <DataTable columns={columns} data={data} defaultSort="tasks" alternate />
   );
 }

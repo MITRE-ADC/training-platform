@@ -61,7 +61,6 @@ export async function updateCourse(course: Course) {
     .where(eq(courses.course_id, course.course_id));
 }
 
-
 // Fetch all courses
 export async function getAllCourses() {
   return await db.select().from(courses);
@@ -96,8 +95,8 @@ export async function getCourse(courseId: number) {
 }
 
 // Update course
- //export async function updateCourse(courseId: number, updatedFields: Partial<Course>) {
-  //return await db.update(courses).set(updatedFields).where(eq(courses.course_id, courseId));
+//export async function updateCourse(courseId: number, updatedFields: Partial<Course>) {
+//return await db.update(courses).set(updatedFields).where(eq(courses.course_id, courseId));
 //}
 
 export async function deleteCourse(courseId: number) {
@@ -193,7 +192,7 @@ export async function addUserCourse(userCourse: User_Course) {
   return await db.insert(user_courses).values({
     user_id = userCourse.user_id,
     course_id = userCourse.course_id,
-    course_status = userCourse.course_status
+    course_status = userCourse.course_status,
     due_date: userCourse.due_date.toISOString(),
     assigned_date: userCourse.assigned_date.toISOString(),
   });
