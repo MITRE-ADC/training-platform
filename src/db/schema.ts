@@ -1,4 +1,10 @@
-import { integer, pgTable, varchar, boolean, timestamp} from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  varchar,
+  boolean,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 
 export interface User {
@@ -24,7 +30,7 @@ export interface Assignment {
 export type AddAssignment = Omit<Assignment, "assignment_id">;
 
 export interface User_Assignment {
-  user_assignment_id: number; 
+  user_assignment_id: number;
   user_id: number;
   assignment_id: number;
   completed: boolean;
@@ -32,7 +38,7 @@ export interface User_Assignment {
 export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
 
 export interface User_Course {
-  user_course_id: number; 
+  user_course_id: number;
   user_id: number;
   course_id: number;
   course_status: string;
@@ -70,10 +76,10 @@ export const user_assignments = pgTable("user_assignments", {
   completed: boolean().notNull(),
   user_id: integer()
     .notNull()
-    .references(() => users.user_id), 
+    .references(() => users.user_id),
   assignment_id: integer()
     .notNull()
-    .references(() => assignments.assignment_id), 
+    .references(() => assignments.assignment_id),
 });
 
 export const user_courses = pgTable("user_courses", {
@@ -85,6 +91,6 @@ export const user_courses = pgTable("user_courses", {
     .notNull()
     .references(() => courses.course_id),
   course_status: varchar({ length: 255 }).notNull(),
-  due_date: timestamp("due_date", {mode: "date"}).notNull(),
-  assigned_date: timestamp("due_date", {mode: "date"}).notNull(),
+  due_date: timestamp("due_date", { mode: "date" }).notNull(),
+  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
 });
