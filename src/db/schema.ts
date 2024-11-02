@@ -84,7 +84,7 @@ export const assignments = pgTable("assignments", {
 
 export const user_assignments = pgTable("user_assignments", {
   completed: boolean().notNull(),
-  user_id: integer()
+  user_id: text()
     .notNull()
     .references(() => users.id), // Foreign key to users table
   assignment_id: integer()
@@ -93,7 +93,7 @@ export const user_assignments = pgTable("user_assignments", {
 });
 
 export const user_courses = pgTable("user_courses", {
-  user_id: integer()
+  user_id: text()
     .notNull()
     .references(() => users.id),
   course_id: integer()

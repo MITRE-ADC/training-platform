@@ -16,9 +16,8 @@ CREATE TABLE Courses (
 CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
 
 CREATE TABLE User_Courses (
-    user_id int REFERENCES Users(id),
+    user_id TEXT REFERENCES Users(id),
     course_id int REFERENCES Courses(course_id),
---    course_status ENUM('Not Started', 'In Progress', 'Completed'),
     course_status c_status,
     due_date Date,
     assigned_date DATE
@@ -32,7 +31,21 @@ CREATE TABLE Assignments (
 );
 
 CREATE TABLE User_Assignments (
-    user_id int REFERENCES Users(id),
+    user_id TEXT REFERENCES Users(id),
     assignment_id int REFERENCES Assignments(assignment_id),
     completed BOOLEAN
 );
+
+CREATE TABLE Accounts (
+    userId TEXT REFERENCES Users(id) NOT NULL,
+    type TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    providerAccountId TEXT NOT NULL,
+    refresh_token TEXT,
+    access_token TEXT,
+    expires_at INT,
+    token_type TEXT,
+    scope TEXT,
+    id_token TEXT,
+    session_state TEXT
+)
