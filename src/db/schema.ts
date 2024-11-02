@@ -7,11 +7,13 @@ export interface User {
   email: string;
   pass: string;
 }
+export type AddUser = Omit<User, "user_id">;
 
 export interface Course {
   course_id: number;
   course_name: string;
 }
+export type AddCourse = Omit<Course, "course_id">;
 
 export interface Assignment {
   assignment_id: number;
@@ -19,6 +21,7 @@ export interface Assignment {
   course_id: number;
   webgoat_info: string;
 }
+export type AddAssignment = Omit<Assignment, "assignment_id">;
 
 export interface User_Assignment {
   user_id: number;

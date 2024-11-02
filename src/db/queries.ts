@@ -5,12 +5,14 @@ import {
   courses,
   User,
   Course,
-  Assignment,
   User_Assignment,
   User_Course,
   assignments,
   user_assignments,
   user_courses,
+  AddUser,
+  AddCourse,
+  AddAssignment,
 } from "./schema";
 
 // Users
@@ -18,7 +20,7 @@ export async function getAllUsers() {
   return await db.select().from(users);
 }
 
-export async function addUser(user: User) {
+export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
@@ -43,7 +45,7 @@ export async function getAllCourses() {
   return await db.select().from(courses);
 }
 
-export async function addCourse(course: Course) {
+export async function addCourse(course: AddCourse) {
   return await db.insert(courses).values(course).returning();
 }
 
@@ -74,15 +76,8 @@ export async function getAssignmentsByCourse(courseId: number) {
     .where(eq(assignments.course_id, courseId));
 }
 
-export async function addAssignment(assignment: Assignment) {
-  return await db
-    .insert(assignments)
-    .values({
-      course_id: assignment.course_id,
-      assignment_name: assignment.assignment_name,
-      webgoat_info: assignment.webgoat_info,
-    })
-    .returning();
+export async function addAssignment(assignment: AddAssignment) {
+  return await db.insert(assignments).values(assignment).returning();
 }
 
 export async function deleteAssignment(assignmentId: number) {
@@ -90,6 +85,7 @@ export async function deleteAssignment(assignmentId: number) {
     .delete(assignments)
     .where(eq(assignments.assignment_id, assignmentId));
 }
+
 
 // User assignment
 export async function getAllUserAssignments() {
