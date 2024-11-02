@@ -48,4 +48,4 @@ CREATE TABLE Accounts (
     scope TEXT,
     id_token TEXT,
     session_state TEXT
-)
+);
