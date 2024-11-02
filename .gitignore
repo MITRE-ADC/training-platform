@@ -2,8 +2,4 @@ node_modules
 package-lock.json
 .next
 .env.local
-<<<<<<< HEAD
 postgres_data/
-=======
-postgres_data
->>>>>>> afd486592e686e2d81d665f5edbd7fd7574e2328
