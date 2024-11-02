@@ -13,8 +13,8 @@ import {
   AddUser,
   AddCourse,
   AddAssignment,
-  AddUserCourse, 
-  AddUserAssignment
+  AddUserCourse,
+  AddUserAssignment,
 } from "./schema";
 
 // Users
@@ -153,8 +153,8 @@ export async function addUserCourse(userCourse: AddUserCourse) {
       user_id: userCourse.user_id,
       course_id: userCourse.course_id,
       course_status: userCourse.course_status,
-      due_date: userCourse.due_date.toISOString(),
-      assigned_date: userCourse.assigned_date.toISOString(),
+      due_date: userCourse.due_date,
+      assigned_date: userCourse.assigned_date,
     })
     .returning();
 }

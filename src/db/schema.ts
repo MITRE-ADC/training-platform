@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar, boolean, date } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, boolean, timestamp} from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 
 export interface User {
@@ -24,7 +24,7 @@ export interface Assignment {
 export type AddAssignment = Omit<Assignment, "assignment_id">;
 
 export interface User_Assignment {
-  user_assignment_id : number, // NEED TO PUT IN PG TABLE 
+  user_assignment_id: number; 
   user_id: number;
   assignment_id: number;
   completed: boolean;
@@ -32,7 +32,7 @@ export interface User_Assignment {
 export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
 
 export interface User_Course {
-  user_course_id : number // NEED TO PUT IN PG TABLE 
+  user_course_id: number; 
   user_id: number;
   course_id: number;
   course_status: string;
@@ -66,18 +66,18 @@ export const assignments = pgTable("assignments", {
 });
 
 export const user_assignments = pgTable("user_assignments", {
-  user_assignment_id : integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   completed: boolean().notNull(),
   user_id: integer()
     .notNull()
-    .references(() => users.user_id), // Foreign key to users table
+    .references(() => users.user_id), 
   assignment_id: integer()
     .notNull()
-    .references(() => assignments.assignment_id), // Foreign key to assignments table
+    .references(() => assignments.assignment_id), 
 });
 
 export const user_courses = pgTable("user_courses", {
-  user_course_id : integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   user_id: integer()
     .notNull()
     .references(() => users.user_id),
@@ -85,6 +85,6 @@ export const user_courses = pgTable("user_courses", {
     .notNull()
     .references(() => courses.course_id),
   course_status: varchar({ length: 255 }).notNull(),
-  due_date: date().notNull(),
-  assigned_date: date().notNull(),
+  due_date: timestamp("due_date", {mode: "date"}).notNull(),
+  assigned_date: timestamp("due_date", {mode: "date"}).notNull(),
 });
