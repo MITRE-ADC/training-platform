@@ -7,12 +7,10 @@ import {
   timestamp,
   boolean,
   date,
-  serial,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
-
-type AdapterAccountType = "oauth" | "email" | "credentials";
+import type { AdapterAccount } from "next-auth/adapters";
 
 export interface User {
   user_id: string;
@@ -111,7 +109,7 @@ export const accounts = pgTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccountType>().notNull(),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
     refresh_token: text("refresh_token"),
@@ -149,3 +147,22 @@ export const authenticators = pgTable(
     }),
   })
 );
+
+export const verificationTokens = pgTable(
+  "verificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expire: timestamp("expires", {mode: "date"}).notNull(),
+  },
+  (vt) => ({
+    compoundkey: primaryKey({columns: [vt.identifier, vt.token]}),
+  })
+);
+
+export const sessions = pgTable("session", {
+  sessionToken: text("sessionToken").notNull().primaryKey(),
+  userId: text("userId").notNull()
+    .references(() => users.id, {onDelete: "cascade"}),
+    expires: timestamp("expires", {mode: "date"}).notNull()
+});

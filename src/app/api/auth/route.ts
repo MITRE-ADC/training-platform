@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { signIn } from "@/db/auth";
+import { HttpStatusCode } from "axios";
 
-//adding a new user to the system
+// adding a new user to the system
 export async function POST(request: Request) {
-  // await request.json();
-  // return NextResponse.json({ msg: "Hello" });
-  return signIn(request);
+  console.log(signIn);
+  return NextResponse.json({message: "placeholder"}, {status: HttpStatusCode.Ok});
 }
