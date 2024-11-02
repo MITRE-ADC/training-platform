@@ -7,19 +7,20 @@ import {
   timestamp,
   boolean,
   date,
-  // foreignKey,
+  serial,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
-// import { AdapterAccountType } from "next-auth/adapters"
 
 type AdapterAccountType = "oauth" | "email" | "credentials";
 
 export interface User {
-  user_id: number;
+  user_id: string;
   name: string;
   email: string;
   pass: string;
+  emailVerified: Date;
+  image: string;
 }
 
 export interface Course {
@@ -84,7 +85,7 @@ export const assignments = pgTable("assignments", {
 
 export const user_assignments = pgTable("user_assignments", {
   completed: boolean().notNull(),
-  user_id: integer()
+  user_id: text()
     .notNull()
     .references(() => users.id), // Foreign key to users table
   assignment_id: integer()
@@ -93,7 +94,7 @@ export const user_assignments = pgTable("user_assignments", {
 });
 
 export const user_courses = pgTable("user_courses", {
-  user_id: integer()
+  user_id: text()
     .notNull()
     .references(() => users.id),
   course_id: integer()
@@ -105,7 +106,7 @@ export const user_courses = pgTable("user_courses", {
 });
 
 export const accounts = pgTable(
-  "account",
+  "accounts",
   {
     userId: text("userId")
       .notNull()

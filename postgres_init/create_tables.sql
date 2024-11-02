@@ -2,7 +2,7 @@ CREATE TABLE Users (
     -- id SERIAL PRIMARY KEY,
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
     pass VARCHAR(100) NOT NULL,
     emailVerified TIMESTAMP,
     image TEXT
@@ -36,3 +36,31 @@ CREATE TABLE User_Assignments (
     assignment_id int REFERENCES Assignments(assignment_id),
     completed BOOLEAN
 );
+
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccountType>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  })
+);
+
+CREATE TABLE Accounts (
+    user_id 
+)

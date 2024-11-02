@@ -6,15 +6,14 @@ import * as schema from "./schema";
 
 export const client = new Client({
   host: "localhost",
-  port: 5432,
+  port: 54320,
   user: "mitre_admin",
-  password: "changme",
+  password: "changeme",
   database: "mitre_db",
 });
 
 export const connectDB = async () => await client.connect();
 
 export const db = drizzle(client, { schema });
-// export const db = drizzle({schema: {users, accounts}})
 
 connectDB();
