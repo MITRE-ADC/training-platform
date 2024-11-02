@@ -29,7 +29,7 @@ export interface Course {
 export interface Assignment {
   assignment_id: number;
   assignment_name: string;
-  course_id: string;
+  course_id: number;
   webgoat_info: number;
 }
 

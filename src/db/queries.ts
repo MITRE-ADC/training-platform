@@ -7,6 +7,7 @@ import {
   Assignment,
   User_Assignment,
   User_Course,
+  Course,
   assignments,
   user_assignments,
   user_courses,
@@ -126,9 +127,9 @@ export async function userEmailExists(email: string) {
 // export async function addAssignment(assignment: Assignment) {
 //   return await db.insert(assignments).values({
 //     course_id: assignment.course_id,
-//     assigntment_id: assignment.assignment_id,
 //     assignment_name: assignment.assignment_name,
-//     webgoat_id: assignment.webgoat_id,
+//     webgoat_id: assignment.webgoat_info,
+//     assignment_id: assignment.assignment_id,
 //   });
 // }
 
