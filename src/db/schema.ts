@@ -24,18 +24,22 @@ export interface Assignment {
 export type AddAssignment = Omit<Assignment, "assignment_id">;
 
 export interface User_Assignment {
+  user_assignment_id : number, // NEED TO PUT IN PG TABLE 
   user_id: number;
   assignment_id: number;
   completed: boolean;
 }
+export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
 
 export interface User_Course {
+  user_course_id : number // NEED TO PUT IN PG TABLE 
   user_id: number;
   course_id: number;
   course_status: string;
   due_date: Date;
   assigned_date: Date;
 }
+export type AddUserCourse = Omit<User_Course, "user_course_id">;
 
 export const locateUser = (user: User) =>
   or(eq(users.user_id, user.user_id), eq(users.email, user.email));
@@ -62,6 +66,7 @@ export const assignments = pgTable("assignments", {
 });
 
 export const user_assignments = pgTable("user_assignments", {
+  user_assignment_id : integer().primaryKey().generatedAlwaysAsIdentity(),
   completed: boolean().notNull(),
   user_id: integer()
     .notNull()
@@ -72,6 +77,7 @@ export const user_assignments = pgTable("user_assignments", {
 });
 
 export const user_courses = pgTable("user_courses", {
+  user_course_id : integer().primaryKey().generatedAlwaysAsIdentity(),
   user_id: integer()
     .notNull()
     .references(() => users.user_id),
