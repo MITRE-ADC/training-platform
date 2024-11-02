@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 
-// TODO: move to api lib file somewhere?
-import { processCreateUserRequest } from "./[id]/route";
+import { processCreateUserRequest } from "../util";
 
 // GET method for list of all users (undetailed?)
 export async function GET(request: NextRequest) {
