@@ -12,11 +12,11 @@ import {
 import {
   courseNameExists,
   userIdExists,
-  getCourse,
   addUserCourse,
   addCourse,
   courseIdExists,
   userCourseExists,
+  userEmailExists,
 } from "@/db/queries";
 
 function error(message: string, status: number = HttpStatusCode.BadRequest) {
@@ -58,16 +58,6 @@ export async function processLinkCourseRequest(request: NextRequest) {
   if (await userCourseExists(_course_id, _user_id))
     return error("Record already exists!");
 
-  if (_course_id == -1 || !getCourse(_course_id))
-    return NextResponse.json(
-      {
-        message: `Error: user not found`,
-      },
-      {
-        status: HttpStatusCode.BadRequest,
-      }
-    );
-
   const [first] = await addUserCourse({
     user_id: _user_id,
     course_id: _course_id,
@@ -95,30 +85,24 @@ export async function processCreateUserRequest(request: NextRequest) {
   const password_hash = body?.pass || request.nextUrl.searchParams?.get("pass");
 
   if (!user_name)
-    return NextResponse.json(
-      {
-        error:
-          "Please provide query paramater user_name for the created account\n",
-      },
-      { status: HttpStatusCode.BadRequest }
+    return error(
+      "Please provide query paramater user_name for the created account\n"
     );
 
   if (!user_email)
-    return NextResponse.json(
-      {
-        error:
-          "Please provide query parameter user_email for the created account\n",
-      },
-      { status: HttpStatusCode.BadRequest }
+    return error(
+      "Please provide query parameter user_email for the created account\n"
     );
 
   if (!password_hash)
-    return NextResponse.json(
-      {
-        error:
-          "Please provide a hashed password as query paramter pass to associate with the created account\n",
-      },
-      { status: HttpStatusCode.BadRequest }
+    return error(
+      "Please provide a hashed password as query paramter pass to associate with the created account\n"
+    );
+
+  if (await userEmailExists(user_email))
+    return error(
+      "User with this email already exists",
+      HttpStatusCode.Conflict
     );
 
   // TODO: password: special finagling with auth

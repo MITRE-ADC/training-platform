@@ -43,6 +43,12 @@ export async function userIdExists(id: number) {
     (await db.$count(db.select().from(users).where(eq(users.user_id, id)))) > 0
   );
 }
+export async function userEmailExists(email: string) {
+  return (
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
+  );
+}
+
 export async function userNameExists(name: string) {
   return (
     (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
