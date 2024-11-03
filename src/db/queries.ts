@@ -103,6 +103,13 @@ export async function assignmentIdExists(id: number) {
     )) > 0
   );
 }
+export async function assignmentNameExists(name: string) {
+  return (
+    (await db.$count(
+      db.select().from(assignments).where(eq(assignments.assignment_name, name))
+    )) > 0
+  );
+}
 
 export async function userAssignmentIdExists(id: number) {
   return (

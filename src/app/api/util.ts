@@ -8,6 +8,7 @@ import {
   User,
   AddUserCourse,
   AddCourse,
+  AddAssignment,
 } from "@/db/schema";
 import {
   courseNameExists,
@@ -17,6 +18,8 @@ import {
   courseIdExists,
   userCourseExists,
   userEmailExists,
+  addAssignment,
+  assignmentNameExists,
 } from "@/db/queries";
 
 function error(message: string, status: number = HttpStatusCode.BadRequest) {
@@ -151,6 +154,47 @@ export async function processCreateCourseRequest(request: NextRequest) {
 
   const [first] = await addCourse({
     course_name: _course_name,
+  });
+  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+}
+
+export async function processCreateAssignmentRequest(request: NextRequest) {
+  const course_id = request.nextUrl.searchParams?.get("course_id");
+  const webgoat_info = request.nextUrl.searchParams?.get("webgoat_info");
+  const assignment_name = request.nextUrl.searchParams?.get("assignment_name");
+
+  let body: AddAssignment | undefined = undefined;
+  try {
+    body = await request.json();
+  } catch (ex) {
+    console.log(`Error reading request body: ${ex}`);
+  }
+
+  if (
+    (!assignment_name || !course_id || !webgoat_info) &&
+    (!body || !body.assignment_name || !body.webgoat_info || !body.course_id)
+  )
+    return error(
+      `Request requires assignment_name, course_id, webgoat_info in body or request parameters`
+    );
+
+  const _assignment_name = body?.assignment_name ?? assignment_name!;
+  const _webgoat_info = body?.webgoat_info ?? webgoat_info!;
+  const _course_id = body?.course_id ?? parseInt(course_id!);
+
+  if (!(await courseIdExists(_course_id)))
+    return error("Course does not exist", HttpStatusCode.NotFound);
+
+  if (await assignmentNameExists(_assignment_name))
+    return error(
+      "Assignment with same name already exists",
+      HttpStatusCode.Conflict
+    );
+
+  const [first] = await addAssignment({
+    course_id: _course_id,
+    assignment_name: _assignment_name,
+    webgoat_info: _webgoat_info,
   });
   return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
 }
