@@ -16,6 +16,7 @@ import {
   addUserCourse,
   addCourse,
   courseIdExists,
+  userCourseExists,
 } from "@/db/queries";
 
 function error(message: string, status: number = HttpStatusCode.BadRequest) {
@@ -52,8 +53,10 @@ export async function processLinkCourseRequest(request: NextRequest) {
     body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
 
   if (!(await userIdExists(_user_id))) return error("User not found");
-
   if (!(await courseIdExists(_course_id))) return error("Course not found");
+
+  if (await userCourseExists(_course_id, _user_id))
+    return error("Record already exists!");
 
   if (_course_id == -1 || !getCourse(_course_id))
     return NextResponse.json(
