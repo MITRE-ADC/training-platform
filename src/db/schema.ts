@@ -1,9 +1,9 @@
 import {
+  timestamp,
   integer,
   pgTable,
   varchar,
   boolean,
-  timestamp,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 
@@ -92,5 +92,5 @@ export const user_courses = pgTable("user_courses", {
     .references(() => courses.course_id),
   course_status: varchar({ length: 255 }).notNull(),
   due_date: timestamp("due_date", { mode: "date" }).notNull(),
-  assigned_date: timestamp("due_date", { mode: "date" }).notNull(),
+  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
 });

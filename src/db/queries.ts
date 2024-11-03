@@ -38,11 +38,19 @@ export async function deleteUser(id: number) {
 }
 
 export async function userExists(id: number) {
-  return await db.select().from(users).where(eq(users.user_id, id));
+  return (await db.$count(users, eq(users.user_id, id))) > 1;
+}
+
+export async function courseExists(id: number) {
+  return (await db.$count(courses, eq(courses.course_id, id))) > 1;
+}
+
+export async function courseNameExists(name: string) {
+  // https://orm.drizzle.team/docs/query-utils
+  return (await db.$count(courses, eq(courses.course_name, name))) > 1;
 }
 
 // Courses
-
 export async function getAllCourses() {
   return await db.select().from(courses);
 }
