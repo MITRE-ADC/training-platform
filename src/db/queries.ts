@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { users, User } from "./schema";
-
 // Fetch all users
 export async function getAllUsers() {
   return await db.select().from(users);
