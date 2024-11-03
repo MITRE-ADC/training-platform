@@ -9,6 +9,7 @@ import {
   AddUserCourse,
   AddCourse,
   AddAssignment,
+  AddUserAssignment,
 } from "@/db/schema";
 import {
   courseNameExists,
@@ -20,6 +21,9 @@ import {
   userEmailExists,
   addAssignment,
   assignmentNameExists,
+  userAssignmentExists,
+  addUserAssignment,
+  assignmentIdExists,
 } from "@/db/queries";
 
 function error(message: string, status: number = HttpStatusCode.BadRequest) {
@@ -27,6 +31,43 @@ function error(message: string, status: number = HttpStatusCode.BadRequest) {
     { error: `Error: ${message}\n` },
     { status: status }
   );
+}
+
+export async function processLinkAssignmentRequest(request: NextRequest) {
+  const user_id = request.nextUrl.searchParams?.get("user_id");
+  const assignment_id = request.nextUrl.searchParams?.get("assignment_id");
+
+  let body: AddUserAssignment | undefined = undefined;
+  try {
+    body = await request.json();
+  } catch (ex) {
+    console.log(`Error reading request body: ${ex}`);
+  }
+
+  if (
+    (!user_id || !assignment_id) &&
+    (!body || !body.user_id || !body.assignment_id)
+  )
+    return error(
+      `Request requires user_id and course_id in body or request parameters`
+    );
+
+  const _user_id = body?.user_id ?? parseInt(user_id!);
+  const _assignment_id = body?.assignment_id ?? parseInt(assignment_id!);
+
+  if (!(await userIdExists(_user_id))) return error("User not found");
+  if (!(await assignmentIdExists(_assignment_id)))
+    return error("Assignment not found");
+
+  if (await userAssignmentExists(_assignment_id, _user_id))
+    return error("Record already exists!");
+
+  const [first] = await addUserAssignment({
+    user_id: _user_id,
+    assignment_id: _assignment_id,
+    completed: false,
+  });
+  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
 }
 
 export async function processLinkCourseRequest(request: NextRequest) {
