@@ -58,7 +58,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const [first] = await addUserCourse({
     user_id: _user_id,
     course_id: _course_id,
-    course_status: "NOT STARTED",
+    course_status: "Not Started",
     assigned_date: new Date(),
     due_date: new Date(),
   });

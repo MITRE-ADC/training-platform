@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   timestamp,
   integer,
@@ -9,36 +9,6 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
-
-export interface User {
-  user_id: number;
-  name: string;
-  email: string;
-  pass: string;
-}
-export type AddUser = Omit<User, "user_id">;
-
-export interface Course {
-  course_id: number;
-  course_name: string;
-}
-export type AddCourse = Omit<Course, "course_id">;
-
-export interface Assignment {
-  assignment_id: number;
-  assignment_name: string;
-  course_id: number;
-  webgoat_info: string;
-}
-export type AddAssignment = Omit<Assignment, "assignment_id">;
-
-export interface User_Assignment {
-  user_assignment_id: number;
-  user_id: number;
-  assignment_id: number;
-  completed: boolean;
-}
-export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
 
 export const locateUser = (user: User) =>
   or(eq(users.user_id, user.user_id), eq(users.email, user.email));
@@ -50,10 +20,18 @@ export const users = pgTable("users", {
   pass: varchar({ length: 255 }).notNull(),
 });
 
+export const selectUsersSchema = createSelectSchema(users);
+export type User = z.infer<typeof selectUsersSchema>;
+export type AddUser = Omit<User, "user_id">;
+
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_name: varchar({ length: 255 }).notNull(),
 });
+
+export const selectCoursesSchema = createSelectSchema(courses);
+export type Course = z.infer<typeof selectCoursesSchema>;
+export type AddCourse = Omit<Course, "course_id">;
 
 export const assignments = pgTable("assignments", {
   webgoat_info: varchar({ length: 255 }).notNull(),
@@ -63,6 +41,11 @@ export const assignments = pgTable("assignments", {
     .notNull()
     .references(() => courses.course_id),
 });
+
+export const selectAssignmentsSchema = createSelectSchema(assignments);
+export const insertAssignmentsSchema = createInsertSchema(assignments);
+export type Assignment = z.infer<typeof selectAssignmentsSchema>;
+export type AddAssignment = Omit<Assignment, "assignment_id">;
 
 export const user_assignments = pgTable("user_assignments", {
   user_assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -74,6 +57,10 @@ export const user_assignments = pgTable("user_assignments", {
     .notNull()
     .references(() => assignments.assignment_id),
 });
+
+export const selectUserAssignmentsSchema = createSelectSchema(user_assignments);
+export type User_Assignment = z.infer<typeof selectUserAssignmentsSchema>;
+export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
 
 const statusEnum = pgEnum("c_status", [
   "Not Started",
