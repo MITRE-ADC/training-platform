@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { getAllCourses } from "@/db/queries";
+import { processCreateCourseRequest } from "@/app/api/util";
 import { HttpStatusCode } from "axios";
+import { NextRequest, NextResponse } from "next/server";
 
-import { processCreateUserRequest } from "../util";
-import { getAllUsers } from "@/db/queries";
-
+// GET assignment info
 export async function GET() {
   try {
     return NextResponse.json(
-      { data: await getAllUsers() },
+      { data: await getAllCourses() },
       { status: HttpStatusCode.Ok }
     );
   } catch (ex) {
@@ -23,5 +23,5 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  return await processCreateUserRequest(request);
+  return await processCreateCourseRequest(request);
 }

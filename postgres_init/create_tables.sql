@@ -18,7 +18,7 @@ CREATE TABLE User_Courses (
     course_id int REFERENCES Courses(course_id),
 --    course_status ENUM('Not Started', 'In Progress', 'Completed'),
     course_status c_status,
-    due_date DATE,
+    due_date Date,
     assigned_date DATE
 );
 

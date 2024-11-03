@@ -1,13 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
+import { getAllUserAssignments } from "@/db/queries";
 
-import { processCreateUserRequest } from "../util";
-import { getAllUsers } from "@/db/queries";
-
+// GET method for all trainings
 export async function GET() {
   try {
     return NextResponse.json(
-      { data: await getAllUsers() },
+      { data: await getAllUserAssignments() },
       { status: HttpStatusCode.Ok }
     );
   } catch (ex) {
@@ -20,8 +19,4 @@ export async function GET() {
       }
     );
   }
-}
-
-export async function POST(request: NextRequest) {
-  return await processCreateUserRequest(request);
 }

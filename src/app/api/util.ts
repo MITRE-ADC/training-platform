@@ -62,7 +62,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
     assigned_date: new Date(),
     due_date: new Date(),
   });
-  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+  return first;
 }
 
 export async function processCreateUserRequest(request: NextRequest) {

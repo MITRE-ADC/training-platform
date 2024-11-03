@@ -8,8 +8,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
-
+RUN corepack enable pnpm && pnpm i --no-frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -35,7 +34,7 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+#COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
