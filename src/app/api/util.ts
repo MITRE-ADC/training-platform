@@ -1,31 +1,49 @@
 import { db } from "@/db";
 import { HttpStatusCode } from "axios";
 import { NextRequest, NextResponse } from "next/server";
-import { User_Course, users, user_courses, User } from "@/db/schema";
-import { userExists, getCourse } from "@/db/queries";
+import {
+  // User_Course,
+  users,
+  // user_courses,
+  User,
+  AddUserCourse,
+  AddCourse,
+} from "@/db/schema";
+import {
+  courseNameExists,
+  userExists,
+  getCourse,
+  addUserCourse,
+  addCourse,
+} from "@/db/queries";
+
+function error(message: string, status: number = HttpStatusCode.BadRequest) {
+  return NextResponse.json(
+    { error: `Error: ${message}\n` },
+    { status: status }
+  );
+}
 
 export async function processLinkCourseRequest(request: NextRequest) {
   const user_id = request.nextUrl.searchParams?.get("user_id");
   const course_id = request.nextUrl.searchParams?.get("course_id");
 
-  const body: User_Course = await request.json();
-  let _user_id = -1;
-  if (user_id == null) _user_id = body.user_id;
-  else _user_id = parseInt(user_id);
+  let body: AddUserCourse | undefined = undefined;
+  try {
+    body = await request.json();
+  } catch (ex) {
+    console.log(`Error reading request body: ${ex}`);
+  }
 
-  let _course_id = -1;
-  if (course_id == null) _course_id = body.course_id;
-  else _course_id = parseInt(course_id);
-
-  if (_user_id == -1 || !userExists(_user_id))
-    return NextResponse.json(
-      {
-        message: `Error: user not found`,
-      },
-      {
-        status: HttpStatusCode.BadRequest,
-      }
+  if ((!user_id || !course_id) && (!body || !body.user_id || !body.course_id))
+    return error(
+      `Request requires user_id and course_id in body or request parameters`
     );
+
+  const _user_id = body?.user_id ?? parseInt(user_id!);
+  const _course_id = body?.course_id ?? parseInt(course_id!);
+
+  if (!userExists(_user_id)) return error("User not found");
 
   if (_course_id == -1 || !getCourse(_course_id))
     return NextResponse.json(
@@ -37,27 +55,14 @@ export async function processLinkCourseRequest(request: NextRequest) {
       }
     );
 
-  body.user_id = _user_id;
-  body.course_id = _course_id;
-
-  return await db
-    .insert(user_courses)
-    .values(body)
-    .returning()
-    .catch((reason) =>
-      NextResponse.json(
-        {
-          message: `Error inserting ${body} into database: \n\t${reason}`,
-        },
-        { status: HttpStatusCode.InternalServerError }
-      )
-    )
-    .then((result) =>
-      NextResponse.json(
-        { message: `Succesfully inserted: \n\t${result}` },
-        { status: HttpStatusCode.Created }
-      )
-    );
+  const [first] = await addUserCourse({
+    user_id: _user_id,
+    course_id: _course_id,
+    course_status: "NOT STARTED",
+    assigned_date: new Date(),
+    due_date: new Date(),
+  });
+  return first;
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
@@ -128,4 +133,27 @@ export async function processCreateUserRequest(request: NextRequest) {
         { status: HttpStatusCode.Created }
       )
     );
+}
+
+export async function processCreateCourseRequest(request: NextRequest) {
+  const course_name = request.nextUrl.searchParams?.get("course_name");
+
+  let body: AddCourse | undefined = undefined;
+  try {
+    body = await request.json();
+  } catch (ex) {
+    console.log(`Error reading request body: ${ex}`);
+  }
+
+  if (!course_name && (!body || !body.course_name))
+    return error(`Request requires course_name in body or request parameters`);
+
+  const _course_name = body?.course_name ?? course_name!;
+
+  if (await courseNameExists(_course_name)) return error("Course exists");
+
+  const [first] = await addCourse({
+    course_name: _course_name,
+  });
+  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
 }
