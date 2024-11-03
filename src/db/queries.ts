@@ -15,6 +15,7 @@ import {
   AddAssignment,
   AddUserCourse,
   AddUserAssignment,
+  statusEnumSchema,
 } from "./schema";
 
 // Users
@@ -155,22 +156,13 @@ export async function getCoursesByUser(userId: number) {
 }
 
 export async function addUserCourse(userCourse: AddUserCourse) {
-  return await db
-    .insert(user_courses)
-    .values({
-      user_id: userCourse.user_id,
-      course_id: userCourse.course_id,
-      course_status: userCourse.course_status,
-      due_date: userCourse.due_date,
-      assigned_date: userCourse.assigned_date,
-    })
-    .returning();
+  return await db.insert(user_courses).values(userCourse).returning();
 }
 
 export async function updateUserCourseStatus(
   userId: number,
   courseId: number,
-  status: string
+  status: typeof statusEnumSchema._type
 ) {
   return await db
     .update(user_courses)
