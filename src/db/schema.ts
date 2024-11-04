@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   integer,
   pgTable,
@@ -7,45 +9,11 @@ import {
   timestamp,
   boolean,
   date,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
 import type { AdapterAccount } from "next-auth/adapters";
-
-export interface User {
-  user_id: string;
-  name: string;
-  email: string;
-  pass: string;
-  emailVerified: Date;
-  image: string;
-}
-
-export interface Course {
-  course_id: number;
-  course_name: string;
-}
-
-export interface Assignment {
-  assignment_id: number;
-  assignment_name: string;
-  course_id: number;
-  webgoat_info: number;
-}
-
-export interface User_Assignment {
-  user_id: number;
-  assignment_id: number;
-  completed: boolean;
-}
-
-export interface User_Course {
-  user_id: number;
-  course_id: number;
-  course_status: string;
-  due_date: Date;
-  assigned_date: Date;
-}
 
 export async function locateUser(user: User) {
   const existingUsers = await db
@@ -67,13 +35,21 @@ export const users = pgTable("users", {
   image: text("image"),
 });
 
+export const selectUsersSchema = createSelectSchema(users);
+export type User = z.infer<typeof selectUsersSchema>;
+export type AddUser = Omit<User, "user_id">;
+
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_name: varchar({ length: 255 }).notNull(),
 });
 
+export const selectCoursesSchema = createSelectSchema(courses);
+export type Course = z.infer<typeof selectCoursesSchema>;
+export type AddCourse = Omit<Course, "course_id">;
+
 export const assignments = pgTable("assignments", {
-  webgoat_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  webgoat_info: varchar({ length: 255 }).notNull(),
   assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_id: integer()
@@ -81,88 +57,45 @@ export const assignments = pgTable("assignments", {
     .references(() => courses.course_id),
 });
 
+export const selectAssignmentsSchema = createSelectSchema(assignments);
+export const insertAssignmentsSchema = createInsertSchema(assignments);
+export type Assignment = z.infer<typeof selectAssignmentsSchema>;
+export type AddAssignment = Omit<Assignment, "assignment_id">;
+
 export const user_assignments = pgTable("user_assignments", {
+  user_assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   completed: boolean().notNull(),
   user_id: text()
     .notNull()
     .references(() => users.id), // Foreign key to users table
   assignment_id: integer()
     .notNull()
-    .references(() => assignments.assignment_id), // Foreign key to assignments table
+    .references(() => assignments.assignment_id),
 });
 
+export const selectUserAssignmentsSchema = createSelectSchema(user_assignments);
+export type User_Assignment = z.infer<typeof selectUserAssignmentsSchema>;
+export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
+
+const statusEnum = pgEnum("c_status", [
+  "Not Started",
+  "In Progress",
+  "Completed",
+]);
+
+// https://github.com/drizzle-team/drizzle-orm/discussions/1914
+export const statusEnumSchema = z.enum(statusEnum.enumValues);
+
 export const user_courses = pgTable("user_courses", {
-  user_id: text()
-    .notNull()
-    .references(() => users.id),
+  user_id: text(),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
-  course_status: varchar({ length: 255 }).notNull(),
-  due_date: date().notNull(),
-  assigned_date: date().notNull(),
+  course_status: statusEnum(),
+  due_date: timestamp("due_date", { mode: "date" }).notNull(),
+  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
 });
 
-export const accounts = pgTable(
-  "accounts",
-  {
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccount["type"]>().notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
-    id_token: text("id_token"),
-    session_state: text("session_state"),
-  },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-  })
-);
-
-export const authenticators = pgTable(
-  "authenticator",
-  {
-    credentialID: text("credentialID").notNull().unique(),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    providerAccountId: text("providerAccountId").notNull(),
-    credentialPublicKey: text("credentialPublicKey").notNull(),
-    counter: integer("counter").notNull(),
-    credentialDeviceType: text("credentialDeviceType").notNull(),
-    credentialBackedUp: boolean("credentialBackedUp").notNull(),
-    transports: text("transports"),
-  },
-  (authenticator) => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  })
-);
-
-export const verificationTokens = pgTable(
-  "verificationToken",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expire: timestamp("expires", {mode: "date"}).notNull(),
-  },
-  (vt) => ({
-    compoundkey: primaryKey({columns: [vt.identifier, vt.token]}),
-  })
-);
-
-export const sessions = pgTable("session", {
-  sessionToken: text("sessionToken").notNull().primaryKey(),
-  userId: text("userId").notNull()
-    .references(() => users.id, {onDelete: "cascade"}),
-    expires: timestamp("expires", {mode: "date"}).notNull()
-});
+export const selectUserCoursesSchema = createSelectSchema(user_courses);
+export type User_Course = z.infer<typeof selectUserCoursesSchema>;
+export type AddUserCourse = Omit<User_Course, "user_course_id">;

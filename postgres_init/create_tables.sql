@@ -19,7 +19,7 @@ CREATE TABLE User_Courses (
     user_id TEXT REFERENCES Users(id),
     course_id int REFERENCES Courses(course_id),
     course_status c_status,
-    due_date Date,
+    due_date DATE,
     assigned_date DATE
 );
 

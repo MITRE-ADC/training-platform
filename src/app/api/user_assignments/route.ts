@@ -1,12 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
+import { getAllUserAssignments } from "@/db/queries";
+import { processLinkAssignmentRequest } from "../util";
 
 // GET method for all trainings
-export async function GET(request: NextRequest) {
-  console.log(request.body);
+export async function GET() {
+  try {
+    return NextResponse.json(
+      { data: await getAllUserAssignments() },
+      { status: HttpStatusCode.Ok }
+    );
+  } catch (ex) {
+    return NextResponse.json(
+      {
+        message: `Error: ${ex}\n`,
+      },
+      {
+        status: HttpStatusCode.InternalServerError,
+      }
+    );
+  }
+}
 
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
+export async function POST(request: NextRequest) {
+  return processLinkAssignmentRequest(request);
 }

@@ -99,3 +99,5 @@ INSERT INTO User_Assignments (user_id, assignment_id, completed)
 
 INSERT INTO User_Assignments (user_id, assignment_id, completed)
     VALUES (3, 2, FALSE);
+
+
