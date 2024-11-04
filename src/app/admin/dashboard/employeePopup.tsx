@@ -102,7 +102,7 @@ export default function EmployeePopup({ data }: { data: employee }) {
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline">Expand</Button>
+          <Button variant="default">Expand</Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
           <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">
