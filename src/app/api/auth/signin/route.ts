@@ -27,7 +27,8 @@ export async function POST(req: Request) {
       }
       return NextResponse.json({error: "wrong pass lil bro"}, {status: HttpStatusCode.BadRequest});
     } catch (error) {
-      console.log('random error')
+      console.log('random error');
+      console.log(error);
       return NextResponse.json({error: "User Creation Failed"}, {status: HttpStatusCode.BadRequest});
     }
   } else {

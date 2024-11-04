@@ -41,6 +41,10 @@ export async function userEmailExists(email: string) {
     where: eq(users.email, email),
   });}
 
+  // export async function userEmailExists(email: string) {
+  //   return await db.select().from(users).where(eq(users.email, email)).limit(1);
+  // }
+
 // export async function updateUser(user: User) {
 //   return await db
 //     .update(users)

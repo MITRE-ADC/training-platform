@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { HttpStatusCode } from "axios";
 
 export default function SignUpPage() {
   const [firstName, setFirstName] = useState("");
@@ -48,7 +49,20 @@ export default function SignUpPage() {
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
     } else {
-      setErrorMessage("");
+      console.log('starting sending');
+      const response = fetch("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify({ name: firstName + " " + lastName, email: email, password: password }),
+      });
+      
+      response.then(function(res) {
+        if (res.status != HttpStatusCode.Ok) {
+          setErrorMessage("wrong stuff bro");
+          return;
+        } else {
+          setErrorMessage("It worked bro");
+          return;
+        }});
     }
   };
 
