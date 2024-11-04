@@ -1,38 +1,14 @@
-import { integer, pgTable, varchar, boolean, date } from "drizzle-orm/pg-core";
+import { z } from "zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import {
+  timestamp,
+  integer,
+  pgTable,
+  varchar,
+  boolean,
+  pgEnum,
+} from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
-
-export interface User {
-  user_id: number;
-  name: string;
-  email: string;
-  pass: string;
-}
-
-export interface Course {
-  course_id: number;
-  course_name: string;
-}
-
-export interface Assignment {
-  assignment_id: number;
-  assignment_name: string;
-  course_id: number;
-  webgoat_info: string;
-}
-
-export interface User_Assignment {
-  user_id: number;
-  assignment_id: number;
-  completed: boolean;
-}
-
-export interface User_Course {
-  user_id: number;
-  course_id: number;
-  course_status: string;
-  due_date: Date;
-  assigned_date: Date;
-}
 
 export const locateUser = (user: User) =>
   or(eq(users.user_id, user.user_id), eq(users.email, user.email));
@@ -44,10 +20,18 @@ export const users = pgTable("users", {
   pass: varchar({ length: 255 }).notNull(),
 });
 
+export const selectUsersSchema = createSelectSchema(users);
+export type User = z.infer<typeof selectUsersSchema>;
+export type AddUser = Omit<User, "user_id">;
+
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   course_name: varchar({ length: 255 }).notNull(),
 });
+
+export const selectCoursesSchema = createSelectSchema(courses);
+export type Course = z.infer<typeof selectCoursesSchema>;
+export type AddCourse = Omit<Course, "course_id">;
 
 export const assignments = pgTable("assignments", {
   webgoat_info: varchar({ length: 255 }).notNull(),
@@ -58,24 +42,48 @@ export const assignments = pgTable("assignments", {
     .references(() => courses.course_id),
 });
 
+export const selectAssignmentsSchema = createSelectSchema(assignments);
+export const insertAssignmentsSchema = createInsertSchema(assignments);
+export type Assignment = z.infer<typeof selectAssignmentsSchema>;
+export type AddAssignment = Omit<Assignment, "assignment_id">;
+
 export const user_assignments = pgTable("user_assignments", {
+  user_assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   completed: boolean().notNull(),
   user_id: integer()
     .notNull()
-    .references(() => users.user_id), // Foreign key to users table
+    .references(() => users.user_id),
   assignment_id: integer()
     .notNull()
-    .references(() => assignments.assignment_id), // Foreign key to assignments table
+    .references(() => assignments.assignment_id),
 });
 
+export const selectUserAssignmentsSchema = createSelectSchema(user_assignments);
+export type User_Assignment = z.infer<typeof selectUserAssignmentsSchema>;
+export type AddUserAssignment = Omit<User_Assignment, "user_assignment_id">;
+
+const statusEnum = pgEnum("c_status", [
+  "Not Started",
+  "In Progress",
+  "Completed",
+]);
+
+// https://github.com/drizzle-team/drizzle-orm/discussions/1914
+export const statusEnumSchema = z.enum(statusEnum.enumValues);
+
 export const user_courses = pgTable("user_courses", {
+  user_course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   user_id: integer()
     .notNull()
     .references(() => users.user_id),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
-  course_status: varchar({ length: 255 }).notNull(),
-  due_date: date().notNull(),
-  assigned_date: date().notNull(),
+  course_status: statusEnum(),
+  due_date: timestamp("due_date", { mode: "date" }).notNull(),
+  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
 });
+
+export const selectUserCoursesSchema = createSelectSchema(user_courses);
+export type User_Course = z.infer<typeof selectUserCoursesSchema>;
+export type AddUserCourse = Omit<User_Course, "user_course_id">;

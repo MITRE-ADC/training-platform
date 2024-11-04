@@ -1,6 +1,7 @@
 import { getAllAssignments } from "@/db/queries";
 import { HttpStatusCode } from "axios";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { processCreateAssignmentRequest } from "../util";
 
 // GET all assignments info
 export async function GET() {
@@ -19,4 +20,8 @@ export async function GET() {
       }
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+  return processCreateAssignmentRequest(request);
 }

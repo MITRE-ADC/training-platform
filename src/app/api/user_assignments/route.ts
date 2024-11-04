@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { getAllUserAssignments } from "@/db/queries";
+import { processLinkAssignmentRequest } from "../util";
 
 // GET method for all trainings
 export async function GET() {
@@ -19,4 +20,8 @@ export async function GET() {
       }
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+  return processLinkAssignmentRequest(request);
 }
