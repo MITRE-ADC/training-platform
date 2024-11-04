@@ -9,6 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        highlight: '#E5E7EB',
+        highlight2: "#CBD5E1",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -77,6 +79,9 @@ const config: Config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+        inter: ['var(--font-inter)']
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

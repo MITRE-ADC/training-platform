@@ -61,4 +61,10 @@ body {
   .text-good {
     @apply text-green-600;
   }
+  .tab-selected {
+    @apply h-full w-full p-0 rounded-t-md rounded-b-none border-highlight border-[1px] border-b-0;
+  }
+  .tab-unselected {
+    @apply h-[calc(100%-4px)] w-full p-0 rounded-md border-highlight border-[1px] shadow-md;
+  }
 }
