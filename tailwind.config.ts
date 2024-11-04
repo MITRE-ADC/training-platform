@@ -11,6 +11,9 @@ const config: Config = {
       colors: {
         highlight: '#E5E7EB',
         highlight2: "#CBD5E1",
+        darkLight: '#73737B',
+        dark: '#334155',
+        lightBlue: '#94A3B8',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

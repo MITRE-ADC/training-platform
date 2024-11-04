@@ -53,13 +53,13 @@ body {
     @apply outline outline-1 outline-black;
   }
   .text-neutral {
-    @apply text-neutral-700;
+    @apply text-[#FEE47B];
   }
   .text-alert {
-    @apply text-rose-500;
+    @apply text-[#E95D58];
   }
   .text-good {
-    @apply text-green-600;
+    @apply text-[#72BF6D];
   }
   .tab-selected {
     @apply h-full w-full p-0 rounded-t-md rounded-b-none border-highlight border-[1px] border-b-0;

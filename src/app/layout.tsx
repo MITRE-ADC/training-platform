@@ -13,6 +13,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+// eslint-disable-next-line
 const inter = localFont({
   src: './fonts/Inter.ttf',
   variable: "--font-inter",

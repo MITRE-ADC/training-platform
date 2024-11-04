@@ -33,7 +33,7 @@ export default function AdminDashBoard() {
                 <H3>Manage Courses</H3>
               </TabsTrigger>
             </TabsList>
-            <div className="flex-grow shadow-md border-highlight border-[1px]">
+            <div className="flex-grow shadow-md border-highlight border-[2px]">
               <TabsContent value="employees" className="h-full">
                 <div className="flex h-full w-full flex-col px-16 py-12">
                   <H2>Manage Employees</H2>
