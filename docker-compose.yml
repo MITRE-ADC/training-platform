@@ -12,13 +12,13 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data:Z
       - ./postgres_init:/docker-entrypoint-initdb.d:Z
-  web-app:
-    # we will change this after we have the gitlab ci stuff so that it uses that image name
-    build: .
-    container_name: web-app
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
+  # web-app:
+  #   # we will change this after we have the gitlab ci stuff so that it uses that image name
+  #   build: .
+  #   container_name: web-app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
   webgoat:
     image: webgoat/webgoat:latest
     container_name: webgoat

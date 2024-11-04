@@ -1,6 +1,7 @@
 import { getAllCourses } from "@/db/queries";
+import { processCreateCourseRequest } from "@/app/api/util";
 import { HttpStatusCode } from "axios";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET assignment info
 export async function GET() {
@@ -19,4 +20,8 @@ export async function GET() {
       }
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+  return await processCreateCourseRequest(request);
 }
