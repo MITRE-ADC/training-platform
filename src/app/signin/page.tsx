@@ -1,9 +1,16 @@
-"use client";
-
+'use client';
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+//import { signIn } from "@/db/auth";
+// import {signIn } from "next-auth/react"
+import { sign } from "crypto";
+//import { db } from "@/db/index";
+//import { userEmailExists } from "@/db/queries"
+import { HttpStatusCode } from "axios";
+
+
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -30,7 +37,27 @@ export default function SignInPage() {
       return;
     }
 
-    setErrorMessage("");
+    // signIn("credentials", {email: email, password: password})
+
+    const response = fetch("/api/auth/signin", {
+      method: "POST",
+      body: JSON.stringify({ email: email, password: password }),
+    });
+
+    response.then(function(res) {
+      if (res.status != HttpStatusCode.Ok) {
+        setErrorMessage("SOMETHING WENT WRONG bro");
+        return;
+      } else {
+        setErrorMessage("SUCCESSS bro");
+        return;
+      }
+      
+      
+    })
+
+    
+
   };
 
   return (

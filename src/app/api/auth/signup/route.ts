@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
 
     try {
       const x = await userEmailExists(email);
-      if (x.length != 0) {
-        return NextResponse.json({error: "This email has already been registered."}, {status: HttpStatusCode.BadRequest})
+      if (x) {
+        return NextResponse.json({error: "This email has already been registered."}, {status: HttpStatusCode.BadRequest});
       }
 
       await db

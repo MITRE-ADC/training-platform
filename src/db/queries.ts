@@ -32,10 +32,9 @@ export async function addUser(user: User) {
 // }
 
 export async function userEmailExists(email: string) {
-  return await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
+  return await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 }
 
 // // Delete a user
@@ -43,9 +42,9 @@ export async function userEmailExists(email: string) {
 //   return await db.delete(users).where(eq(users.id, id));
 // }
 
-// export async function userExists(id: string) {
-//   return await db.select().from(users).where(eq(users.id, id));
-// }
+export async function userExists(id: string) {
+  return await db.select().from(users).where(eq(users.id, id));
+}
 
 // export async function courseExists(id: number) {
 //   return await db.select().from(courses).where(eq(courses.course_id, id));
