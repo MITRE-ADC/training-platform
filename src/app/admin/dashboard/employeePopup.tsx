@@ -115,9 +115,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" onClick={load}>
-            Expand
-          </Button>
+          <Button variant="default" onClick={load}>Expand</Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
           <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">
