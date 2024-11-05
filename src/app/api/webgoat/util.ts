@@ -38,7 +38,7 @@ export async function login_user(
   return { cookie: response.headers.getSetCookie()[0], response: null };
 }
 
-export async function logout_user(){
+export async function logout_user() {
   console.log(`loggin out...`);
   const response = await fetch(URL_webgoat_logout, {
     method: "POST",

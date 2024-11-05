@@ -67,7 +67,6 @@ export async function POST(request: NextRequest) {
     let course_creations = 0;
 
     const courses = await response2.json();
-    console.log(courses);
     for (const course in courses) {
       // UPDATE COURSE RECORD
       if (
@@ -143,10 +142,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const res = await logout_user() ;
+    const res = await logout_user();
     if (res.status != HttpStatusCode.Ok)
-      return error(`Error while logging user out: ${res.statusText}`, HttpStatusCode.InternalServerError);
-    
+      return error(
+        `Error while logging user out: ${res.statusText}`,
+        HttpStatusCode.InternalServerError
+      );
+
     return NextResponse.json({
       message: `Updated all user assignment statuses associated with user ${user_id}. \n${changes} assignments changed state\n${assignment_linkages} assignments assigned to user\n\n${course_creations} courses autolinked to assignments based on WebGoat records\n${assignment_creations} assignments autocreated based on WebGoat records`,
     });
