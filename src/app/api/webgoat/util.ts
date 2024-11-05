@@ -23,7 +23,7 @@ export async function login_user(
     },
   });
 
-  console.log("checking for validity...");
+  console.log(`loggin in...`);
 
   const redirect_loc = response.headers.get("location");
   if (!redirect_loc)
@@ -36,4 +36,14 @@ export async function login_user(
     return { cookie: "", response: error("Invalid username/password") };
 
   return { cookie: response.headers.getSetCookie()[0], response: null };
+}
+
+export async function logout_user(){
+  console.log(`loggin out...`);
+  const response = await fetch(URL_webgoat_logout, {
+    method: "POST",
+    redirect: "follow",
+  });
+
+  return response;
 }

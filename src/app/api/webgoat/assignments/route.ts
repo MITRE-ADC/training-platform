@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { login_user, URL_webgoat_lessonmenu } from "../util";
+import { login_user, logout_user, URL_webgoat_lessonmenu } from "../util";
 import {
   error,
   processCreateAssignment,
@@ -143,6 +143,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const res = await logout_user() ;
+    if (res.status != HttpStatusCode.Ok)
+      return error(`Error while logging user out: ${res.statusText}`, HttpStatusCode.InternalServerError);
+    
     return NextResponse.json({
       message: `Updated all user assignment statuses associated with user ${user_id}. \n${changes} assignments changed state\n${assignment_linkages} assignments assigned to user\n\n${course_creations} courses autolinked to assignments based on WebGoat records\n${assignment_creations} assignments autocreated based on WebGoat records`,
     });
