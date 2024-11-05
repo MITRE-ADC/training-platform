@@ -1,47 +1,57 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
-import jwt from "jsonwebtoken";
+import { db } from "../db/index";
+import { eq, or } from "drizzle-orm";
 
-const JWT_SECRET = "temp_key_for_now"; // Define your secret in env variables
+var jwt = require('jsonwebtoken');
+import { users } from "@/db/schema";
+import type { User}  from "../db/schema"
+import { NextRequest } from "next/server";
+
+const JWT_SECRET = "change_to_something_else"; // Define your secret in env variables
 
 export type SessionValidationResult =
-	| { session: Session; user: User }
-	| { session: null; user: null };
+	| { user: User }
+	| { user: null };
 // ...
 
 export async function validateJwtToken(token: string): Promise<SessionValidationResult> {
 	try {
-		const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, exp: number };
+		const decoded = jwt.verify(token, JWT_SECRET) as { userID: string, exp: number };
+		console.log("THE USER ID IS " + decoded.userID)
 		const result = await db
-			.select({ user: userTable, session: sessionTable })
-			.from(sessionTable)
-			.innerJoin(userTable, eq(sessionTable.userId, userTable.id))
-			.where(eq(sessionTable.userId, decoded.userId));
+			.select()
+			.from(users)
+			.where(eq(users.id, decoded.userID));
 
 		if (result.length < 1) {
-			return { session: null, user: null };
+			console.log("User not found")
+			return { user: null} ;
 		}
+		console.log("User found")
 
-		const { user, session } = result[0];
+		const user = result[0];
 
 		// Extend expiration if token is near expiry (15 days or less remaining)
 		const expiresIn = 1000 * 60 * 60 * 24 * 30; // 30 days
 		if (Date.now() >= decoded.exp * 1000 - 1000 * 60 * 60 * 24 * 15) {
-			const newToken = jwt.sign({ userId: session.userId }, JWT_SECRET, { expiresIn });
+			const newToken = jwt.sign({ userID: decoded.userID }, JWT_SECRET, { expiresIn });
 			await setJwtCookie(newToken, expiresIn);
 		}
 
-		return { session, user };
+		return { user: user };
 	} catch (error) {
 		// Token verification failed or token expired
-		return { session: null, user: null };
+		return { user: null };
 	}
 }
 
 export async function setJwtCookie(userID: string, maxAge: number): Promise<void> {
 	const cookieStore = await cookies();
-	var token = userID;
-	var token = jwt.sign({ userID: userID, exp: maxAge }, process.env.JWT_SECRET);
+	console.log("THE USER ID IS "+userID)
+	const expiresIn = 1000 * 60 * 60 * 24 * 30;
+	var token = jwt.sign({ userID: userID,
+	}, JWT_SECRET,{ expiresIn });
 	cookieStore.set("session", token, {
 		httpOnly: true,
 		sameSite: "lax",
@@ -62,12 +72,14 @@ export async function deleteJwtCookie(): Promise<void> {
 	});
 }
 
-export const getCurrentSession = cache(async (): Promise<SessionValidationResult> => {
-	const cookieStore = await cookies();
+export async function getCurrentUser(cookieStore: NextRequest["cookies"]): Promise<SessionValidationResult> {
+	// const cookieStore = await cookies();
 	const token = cookieStore.get("session")?.value ?? null;
-	if (!token) {
-		return { session: null, user: null };
+	console.log("I AM YOUR TOKEN!" + token)
+	if (token == null) {
+		return { user: null };
 	}
 	const result = await validateJwtToken(token);
+
 	return result;
-});
+};

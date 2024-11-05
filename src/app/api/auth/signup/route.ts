@@ -4,6 +4,8 @@ import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { addUser, userEmailExists } from "@/db/queries";
+import { setJwtCookie } from "@/lib/auth-middleware";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   console.log('lmao');
@@ -25,6 +27,14 @@ export async function POST(req: NextRequest) {
       
       // await addUser({name: name, email: email, pass: password});
       console.log("adding worked");
+      let user = await userEmailExists(email);
+      if (user != null){
+        const maxAge = 24 * 3600 * 7;
+        setJwtCookie(user.id, maxAge);
+      }
+      
+
+      await cookies();
       return NextResponse.json({ name: name, email: email }, {status: HttpStatusCode.Ok});
     } catch (error) {
       console.log('fuck');
