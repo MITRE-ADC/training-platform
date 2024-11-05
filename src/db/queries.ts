@@ -111,6 +111,17 @@ export async function assignmentNameExists(name: string) {
   );
 }
 
+export async function assignmentWebgoatIdExists(webgoat_info: string) {
+  return (
+    (await db.$count(
+      db
+        .select()
+        .from(assignments)
+        .where(eq(assignments.webgoat_info, webgoat_info))
+    )) > 0
+  );
+}
+
 export async function userAssignmentIdExists(id: number) {
   return (
     (await db.$count(
@@ -118,6 +129,29 @@ export async function userAssignmentIdExists(id: number) {
         .select()
         .from(user_assignments)
         .where(eq(user_assignments.user_assignment_id, id))
+    )) > 0
+  );
+}
+
+export async function userAssignmentWebgoatIdExists(
+  user_id: number,
+  webgoat_info: string
+) {
+  return (
+    (await db.$count(
+      db
+        .select()
+        .from(assignments)
+        .innerJoin(
+          user_assignments,
+          eq(user_assignments.assignment_id, assignments.assignment_id)
+        )
+        .where(
+          and(
+            eq(user_assignments.user_id, user_id),
+            eq(assignments.webgoat_info, webgoat_info)
+          )
+        )
     )) > 0
   );
 }
@@ -141,6 +175,32 @@ export async function userAssignmentExists(
   );
 }
 
+export async function getUserAssignmentByWebgoatId(
+  user_id: number,
+  webgoat_info: string
+) {
+  return (
+    await db
+      .select({
+        user_assignment_id: user_assignments.user_assignment_id,
+        user_id: user_assignments.user_id,
+        assignment_id: user_assignments.assignment_id,
+        completed: user_assignments.completed,
+      })
+      .from(assignments)
+      .innerJoin(
+        user_assignments,
+        eq(user_assignments.assignment_id, assignments.assignment_id)
+      )
+      .where(
+        and(
+          eq(user_assignments.user_id, user_id),
+          eq(assignments.webgoat_info, webgoat_info)
+        )
+      )
+  )[0];
+}
+
 // Courses
 export async function getAllCourses() {
   return await db.select().from(courses);
@@ -162,9 +222,18 @@ export async function getCourse(courseId: number) {
 }
 
 export async function getCourseByName(course_name: string) {
-  return await db.select().from(courses).where(eq(courses.course_name, course_name));
+  return (
+    await db.select().from(courses).where(eq(courses.course_name, course_name))
+  )[0];
 }
 
+export async function getUser(userId: number) {
+  return await db.select().from(users).where(eq(users.user_id, userId));
+}
+
+export async function getUserByName(user_name: string) {
+  return (await db.select().from(users).where(eq(users.name, user_name)))[0];
+}
 
 export async function deleteCourse(courseId: number) {
   return await db.delete(courses).where(eq(courses.course_id, courseId));
@@ -180,6 +249,24 @@ export async function getAssignmentsByCourse(courseId: number) {
     .select()
     .from(assignments)
     .where(eq(assignments.course_id, courseId));
+}
+
+export async function getAssignment(assignmentId: number) {
+  return (
+    await db
+      .select()
+      .from(assignments)
+      .where(eq(assignments.assignment_id, assignmentId))
+  )[0];
+}
+
+export async function getAssignmentByWebgoatId(webgoat_info: string) {
+  return (
+    await db
+      .select()
+      .from(assignments)
+      .where(eq(assignments.webgoat_info, webgoat_info))
+  )[0];
 }
 
 export async function addAssignment(assignment: AddAssignment) {

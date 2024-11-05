@@ -26,7 +26,10 @@ import {
   assignmentIdExists,
 } from "@/db/queries";
 
-export function error(message: string, status: number = HttpStatusCode.BadRequest) {
+export function error(
+  message: string,
+  status: number = HttpStatusCode.BadRequest
+) {
   return NextResponse.json(
     { error: `Error: ${message}\n` },
     { status: status }
@@ -52,9 +55,16 @@ export async function processLinkAssignmentRequest(request: NextRequest) {
       `Request requires user_id and course_id in body or request parameters`
     );
 
-  const _user_id = body?.user_id ?? parseInt(user_id!);
-  const _assignment_id = body?.assignment_id ?? parseInt(assignment_id!);
+  processLinkAssignment(
+    body?.user_id ?? parseInt(user_id!),
+    body?.assignment_id ?? parseInt(assignment_id!)
+  );
+}
 
+export async function processLinkAssignment(
+  _user_id: number,
+  _assignment_id: number
+) {
   if (!(await userIdExists(_user_id))) return error("User not found");
   if (!(await assignmentIdExists(_assignment_id)))
     return error("Assignment not found");
@@ -170,7 +180,7 @@ export async function processCreateUserRequest(request: NextRequest) {
     )
     .then((user) =>
       NextResponse.json(
-        { message: `Succesfully inserted: \n\t${user}` },
+        { message: `Succesfully inserted: \n\t${JSON.stringify(user)}` },
         { status: HttpStatusCode.Created }
       )
     );
@@ -189,7 +199,7 @@ export async function processCreateCourseRequest(request: NextRequest) {
   if (!course_name && (!body || !body.course_name))
     return error(`Request requires course_name in body or request parameters`);
 
-  processCreateCourse(body?.course_name ?? course_name!);
+  return processCreateCourse(body?.course_name ?? course_name!);
 }
 
 export async function processCreateCourse(course_name: string) {
@@ -221,12 +231,18 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
       `Request requires assignment_name, course_id, webgoat_info in body or request parameters`
     );
 
-  processCreateAssignment(body?.assignment_name ?? assignment_name!,
+  return processCreateAssignment(
+    body?.assignment_name ?? assignment_name!,
     body?.webgoat_info ?? webgoat_info!,
-    body?.course_id ?? parseInt(course_id!));
+    body?.course_id ?? parseInt(course_id!)
+  );
 }
 
-export async function processCreateAssignment(assignment_name: string, webgoat_info: string, course_id: number) {
+export async function processCreateAssignment(
+  assignment_name: string,
+  webgoat_info: string,
+  course_id: number
+) {
   if (!(await courseIdExists(course_id)))
     return error("Course does not exist", HttpStatusCode.NotFound);
 
