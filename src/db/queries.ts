@@ -71,6 +71,11 @@ export async function getCourse(courseId: number) {
   return await db.select().from(courses).where(eq(courses.course_id, courseId));
 }
 
+export async function getCourseByName(course_name: string) {
+  return await db.select().from(courses).where(eq(courses.course_name, course_name));
+}
+
+
 export async function deleteCourse(courseId: number) {
   return await db.delete(courses).where(eq(courses.course_id, courseId));
 }
