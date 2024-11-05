@@ -19,11 +19,11 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { Button } from "./button";
+import { P } from "./custom/text";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  alternate?: boolean;
   defaultSort?: string;
 }
 
@@ -42,13 +42,13 @@ export function SortableColumn<TData, TValue>({
     <>
       <Button
         variant="ghost"
-        className="py-2 pl-0 text-base font-bold text-black hover:bg-white"
+        className="py-2 pl-0 hover:bg-white"
         onClick={() => {
           column.toggleSorting(sort === "asc");
           if (callback) callback();
         }}
       >
-        {title}
+        <P className="text-darkLight">{title}</P>
         <span className="pl-2 font-medium">
           {sort ? (
             sort == "asc" ? (
@@ -68,7 +68,6 @@ export function SortableColumn<TData, TValue>({
 export function DataTable<TData, TValue>({
   columns,
   data,
-  alternate,
   defaultSort,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
@@ -99,7 +98,7 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead
                     key={header.id}
-                    className="py-2 font-bold text-black"
+                    className="py-2"
                   >
                     {header.isPlaceholder
                       ? null
@@ -115,18 +114,17 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, ind) => (
+            table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className={
-                  (alternate && ind % 2 == 1 ? "bg-white" : "bg-secondary") +
-                  " h-full"
-                }
+                className="h-full border-b-highlight"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="h-full">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <P>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </P>
                   </TableCell>
                 ))}
               </TableRow>
@@ -134,7 +132,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                <P>No results.</P>
               </TableCell>
             </TableRow>
           )}
