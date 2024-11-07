@@ -99,3 +99,14 @@ export const user_courses = pgTable("user_courses", {
 export const selectUserCoursesSchema = createSelectSchema(user_courses);
 export type User_Course = z.infer<typeof selectUserCoursesSchema>;
 export type AddUserCourse = Omit<User_Course, "user_course_id">;
+
+const sessionTable = pgTable("session", {
+	id: text("id").primaryKey(),
+	userId: integer("user_id")
+		.notNull()
+		.references(() => users.id),
+	expiresAt: timestamp("expires_at", {
+		withTimezone: true,
+		mode: "date"
+	}).notNull()
+});

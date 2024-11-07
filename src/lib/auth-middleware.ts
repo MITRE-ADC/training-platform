@@ -83,3 +83,8 @@ export async function getCurrentUser(cookieStore: NextRequest["cookies"]): Promi
 
 	return result;
 };
+
+export async function getUserInfo(cookieStore: NextRequest["cookies"]): Promise<SessionValidationResult> {
+	const result = getCurrentUser(cookieStore);
+	return result;
+}

@@ -49,3 +49,5 @@ CREATE TABLE Accounts (
     id_token TEXT,
     session_state TEXT
 );
+
+INSERT INTO Courses(course_name) INSERT ('NONE COURSE');

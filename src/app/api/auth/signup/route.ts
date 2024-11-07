@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       await cookies();
       return NextResponse.json({ name: name, email: email }, {status: HttpStatusCode.Ok});
     } catch (error) {
-      console.log('fuck');
+      console.log('signup cookie fail');
       console.log(error);
       return NextResponse.json({error: "User Creation Failed"}, {status: HttpStatusCode.BadRequest});
     }
