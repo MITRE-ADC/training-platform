@@ -23,6 +23,10 @@ export async function getAllUsers() {
   return await db.select().from(users);
 }
 
+export async function getUserByEmail(email: string) {
+  return await db.select().from(users).where(eq(users.email, email));
+}
+
 export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
