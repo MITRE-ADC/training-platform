@@ -9,23 +9,21 @@ import { getUserByEmail } from "@/db/queries";
 // Get data for a single user -- detailed
 export async function GET(request: NextRequest) {
   const user_email = request.nextUrl.searchParams?.get("user_email");
-  if (!user_email) return NextResponse.json(
-    { message: "API Route Error" }, 
-    { status: HttpStatusCode.BadRequest }
-  )
+  if (!user_email)
+    return NextResponse.json(
+      { message: "API Route Error" },
+      { status: HttpStatusCode.BadRequest }
+    );
 
   const users = await getUserByEmail(user_email);
   if (users.length == 0) {
     return NextResponse.json(
       { message: "No user with the given email." },
       { status: HttpStatusCode.NotFound }
-    )
+    );
   }
 
-  return NextResponse.json(
-    { data: users[0] },
-    { status: HttpStatusCode.Ok }
-  );
+  return NextResponse.json({ data: users[0] }, { status: HttpStatusCode.Ok });
 }
 
 // Create new user
