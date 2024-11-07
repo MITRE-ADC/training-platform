@@ -15,9 +15,9 @@ const geistMono = localFont({
 
 // eslint-disable-next-line
 const inter = localFont({
-  src: './fonts/Inter.ttf',
+  src: "./fonts/Inter.ttf",
   variable: "--font-inter",
-})
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
