@@ -26,23 +26,23 @@ export default function AdminDashBoard() {
               >
                 <H3>Manage Employees</H3>
               </TabsTrigger>
-              <TabsTrigger
+              {/*<TabsTrigger
                 value="course"
                 className="data-[state=active]:tab-selected data-[state=inactive]:tab-unselected"
               >
                 <H3>Manage Courses</H3>
-              </TabsTrigger>
+              </TabsTrigger>*/}
             </TabsList>
             <div className="flex-grow shadow-md border-highlight border-[2px]">
               <TabsContent value="employees" className="h-full">
                 <div className="flex h-full w-full flex-col px-16 py-12">
                   <H2>Manage Employees</H2>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <div className="mb-5 mt-4 w-[405px] rounded-md shadow-md border-highlight2 border-[1px] flex items-center justify-start">
                       <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
                       <Input placeholder="Search Employee" className="py-2 border-0 focus-visible:ring-0 font-inter"/>
                     </div>
-                    <div className="mb-2 flex flex-col justify-end">
+                    <div className="flex flex-col justify-end">
                       <AdvancedDashboardFilters />
                     </div>
                   </div>

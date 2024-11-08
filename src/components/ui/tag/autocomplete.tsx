@@ -8,6 +8,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { P } from "../custom/text";
+import { Checkbox } from "../checkbox";
 
 type AutocompleteProps = {
   tags: TagType[];
@@ -235,10 +237,11 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                 setIsPopoverOpen(!isPopoverOpen);
               }}
             >
-              <i className="ri-arrow-drop-left-fill ri-2x font-[100]"></i>
-              <p className="mr-2 -translate-y-[1px] font-sans text-base font-bold">
+              {/*<div className="w-[1px] h-3/4 bg-highlight mr-3 ml-2"></div>*/}
+              <i className="ri-add-line ri-1x font-[100] ml-2"></i>
+              <P className="mr-4 ml-2 translate-y-[1px] text-dark">
                 {classStyleProps?.popoverTriggerName}
-              </p>
+              </P>
             </Button>
           </PopoverTrigger>
         </div>
@@ -294,23 +297,8 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                       onClick={() => toggleTag(option)}
                     >
                       <div className="flex w-full items-center gap-2">
-                        {option.text}
-                        {tags.some((tag) => tag.text === option.text) && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-check"
-                          >
-                            <path d="M20 6 9 17l-5-5"></path>
-                          </svg>
-                        )}
+                        <Checkbox className="pointer-events-none" checked={tags.some((tag) => tag.text === option.text)}></Checkbox>
+                        <P className="text-dark font-[600]">{option.text}</P>
                       </div>
                     </div>
                   );

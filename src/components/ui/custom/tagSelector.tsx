@@ -69,17 +69,17 @@ export function TagSelector({
                     restrictTagsToAutocompleteOptions
                     styleClasses={{
                       autoComplete: {
-                        command: "bg-secondary",
-                        popoverTrigger: "bg-secondary w-fit",
+                        command: "bg-white",
+                        popoverTrigger: "bg-white w-fit",
                         commandList: "list-none",
-                        commandGroup: "font-bold",
-                        commandItem: "cursor-pointer hover:bg-gray-100",
+                        commandGroup: "",
+                        commandItem: "cursor-pointer",
                         popoverTriggerName: title,
                       },
-                      inlineTagsContainer: "bg-secondary",
+                      inlineTagsContainer: "bg-white",
                       tag: {
-                        body: "flex items-center bg-white main-outline mx-[1px]",
-                        closeButton: "text-red-500 hover:text-red-600",
+                        body: "bg-lightBlue text-dark rounded-lg pl-4 hover:bg-lightBlue/80",
+                        closeButton: "",
                       },
                     }}
                   />

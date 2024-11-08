@@ -15,6 +15,7 @@ import {
 } from "./employeeDefinitions";
 import { Tag } from "@/components/ui/tag/tag-input";
 import { useState } from "react";
+import { P } from "@/components/ui/custom/text";
 
 export function AdvancedDashboardFilters() {
   const [courses, setCourses] = useState<Tag[]>([]);
@@ -22,18 +23,16 @@ export function AdvancedDashboardFilters() {
   const [roles, setRoles] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
 
-  // TODO: make form
-
   return (
     <DropdownMenu onOpenChange={() => console.log("trigger")}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="text-base">
-          Advanced Filters
-          <i className="ri-arrow-down-s-fill ri-xl ml-1"></i>
+        <Button variant="outline" className="text-darkLight">
+          <P className="text-darkLight">Advanced Filters</P>
+          <i className="ri-expand-up-down-line r-sm ml-1"></i>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="h-[200px] w-[1000px] translate-x-[1px] translate-y-[3px] rounded-none border-black bg-secondary"
+        className="h-[200px] w-[1000px] translate-x-[1px] translate-y-[3px] border-highlight bg-white rounded-md"
         align="end"
       >
         <div className="ml-8 flex h-full flex-col justify-around">
