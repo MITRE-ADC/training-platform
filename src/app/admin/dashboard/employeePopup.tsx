@@ -140,7 +140,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <CourseSelectorPopup title="Add Course" data={getCourseData()}>
+              <CourseSelectorPopup title="Add Course" email={data.email}>
                 <Button variant="ghost" className="text-md font-sans">
                   + Add Course
                 </Button>

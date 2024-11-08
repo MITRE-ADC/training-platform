@@ -4,13 +4,16 @@ import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import EmployeePopup from "./employeePopup";
 import {
+  MountStatus,
   employeeOverview,
   employeeTasks,
   getManageEmployees,
 } from "./employeeDefinitions";
-import { Text } from "@/components/ui/custom/text";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { P } from "@/components/ui/custom/text";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { User } from "@/db/schema";
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
@@ -79,14 +82,45 @@ export function roleToSpan(roles: string[]) {
 
 export default function EmployeeList() {
   const [data, setData] = useState<employeeOverview[]>([]);
+  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
+  const [placeholder, setPlaceholder] = useState<string>("Loading...");
 
-  setTimeout(() => setData(getManageEmployees()), 500);
+  useEffect(() => setMount(MountStatus.isFirstMounted), []);
+
+  if (didMount == MountStatus.isFirstMounted && data.length == 0) {
+    axios.get(req('api/users')).then((r) => {
+      const data: User[] = r.data.data;
+      let formatted: employeeOverview[] = [];
+
+      data.forEach((user) => {
+        formatted.push({
+          firstName: user.name.split(' ')[0],
+          lastName: user.name.split(' ')[1],
+          email: user.email,
+          roles: ['Not Implemented'],
+          tasks: {
+            overdue: 0,
+            completed: 0,
+            todo: 0
+          },
+        });
+      });
+
+      setData(formatted);
+      setPlaceholder("No Results.");
+    }).catch(() => {
+      setPlaceholder("No Results.");
+    });
+
+    setMount(MountStatus.isMounted);
+  }
 
   return (
     <DataTable
       columns={columns}
-      data={getManageEmployees()}
+      data={data}
       defaultSort="tasks"
+      placeholder={placeholder}
     />
   );
 }

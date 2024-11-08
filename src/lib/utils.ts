@@ -11,5 +11,5 @@ export function uuid() {
 
 export function req(req: string) {
   if (req.startsWith("/")) req = req.substring(1);
-  return process.env.DOMAIN + req;
+  return process.env.NEXT_PUBLIC_DOMAIN + req;
 }

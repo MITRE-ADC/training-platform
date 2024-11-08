@@ -25,6 +25,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   defaultSort?: string;
+  placeholder?: string;
 }
 
 export function SortableColumn<TData, TValue>({
@@ -69,6 +70,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   defaultSort,
+  placeholder,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -132,7 +134,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                <P>No results.</P>
+                <P>{placeholder ? placeholder : 'No results.'}</P>
               </TableCell>
             </TableRow>
           )}

@@ -33,6 +33,10 @@ export type employeeOverview = {
   tasks: employeeTasks;
 };
 
+export enum MountStatus {
+  isMounted, isNotMounted, isFirstMounted
+}
+
 export function getManageEmployees(): employeeOverview[] {
   return _DATAOVERVIEW;
 }

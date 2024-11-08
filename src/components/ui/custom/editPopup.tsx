@@ -79,9 +79,9 @@ function EditPopup({
         onOpenChange={control ? control.setOpen : undefined}
       >
         {but}
-        <DialogContent className="w-[400px]">
+        <DialogContent className="w-[400px]" aria-describedby="editID">
           <VisuallyHidden.Root>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle id="editID">{title}</DialogTitle>
           </VisuallyHidden.Root>
           <DialogHeader>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
