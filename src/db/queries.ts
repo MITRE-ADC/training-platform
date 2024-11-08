@@ -17,6 +17,7 @@ import {
   AddUserAssignment,
   statusEnumSchema,
 } from "./schema";
+import { count } from "console";
 
 // Users
 export async function getAllUsers() {
@@ -98,6 +99,14 @@ export async function userCourseExists(course_id: number, user_id: number) {
         )
     )) > 0
   );
+}
+
+export async function aggregateUserCoursesStatusByUser() {
+  return (
+    await db.execute(
+      "SELECT user_id, course_status, CAST(COUNT(*) AS int) FROM user_courses GROUP BY user_id, course_status;"
+    )
+  ).rows;
 }
 
 export async function assignmentIdExists(id: number) {
