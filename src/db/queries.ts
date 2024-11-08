@@ -17,7 +17,6 @@ import {
   AddUserAssignment,
   statusEnumSchema,
 } from "./schema";
-import { count } from "console";
 
 // Users
 export async function getAllUsers() {
