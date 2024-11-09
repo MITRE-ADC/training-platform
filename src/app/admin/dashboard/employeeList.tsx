@@ -46,7 +46,7 @@ const columns: ColumnDef<employeeOverview>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       return (
-        <div className="flex gap-[8px] text-[18px]">
+        <div className="flex gap-[8px] text-[18px] relative -z-50">
           <div className="min-w-9 flex items-center">
             <i className="absolute ri-checkbox-blank-circle-fill text-dark mr-1 -z-10 scale-[75%]"></i>
             <i className="ri-checkbox-circle-fill text-good mr-1"></i>

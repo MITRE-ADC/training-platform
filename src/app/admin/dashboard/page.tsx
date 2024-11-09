@@ -12,7 +12,7 @@ export default function AdminDashBoard() {
         <Image src="/mitre_logo.png" width="148" height="51" alt="Mitre Logo"></Image>
       </div>
       <div className="h-[50px]"></div>
-      <div className="flex h-[825px] w-screen items-center justify-center">
+      <div className="flex h-full w-full items-center justify-center">
         <div className="flex h-full w-[85vw] justify-center">
           <Tabs
             defaultValue="employees"
@@ -46,7 +46,7 @@ export default function AdminDashBoard() {
                       <AdvancedDashboardFilters />
                     </div>
                   </div>
-                  <div className="h-full shadow-md">
+                  <div className="shadow-md">
                     <EmployeeList />
                   </div>
                 </div>
