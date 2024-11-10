@@ -28,6 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns/format";
 import { Calendar } from "../calendar";
+import { P } from "./text";
 
 interface controlledOpen {
   open: boolean;
@@ -79,13 +80,13 @@ function EditPopup({
         onOpenChange={control ? control.setOpen : undefined}
       >
         {but}
-        <DialogContent className="w-[400px]" aria-describedby="editID">
+        <DialogContent className="w-[340px]" aria-describedby="editID">
           <VisuallyHidden.Root>
             <DialogTitle id="editID">{title}</DialogTitle>
           </VisuallyHidden.Root>
           <DialogHeader>
-            <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
-              <p className="text-lg font-bold">{title}</p>
+            <div className="mx-1 flex flex-col gap-2 font-sans">
+              <P className="font-[600]">{title}</P>
               {children}
             </div>
           </DialogHeader>
@@ -137,26 +138,26 @@ export function StringPopup({
             name="value"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
-                  <Input placeholder="New Value ..." {...field} />
+                <FormControl className="rounded-md shadow-md">
+                  <Input placeholder="New Value ..." className="py-2 border border-highlight focus-visible:ring-0 font-inter" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex justify-between">
-            <Close asChild>
-              <Button variant="ghost" className="px-0 text-base hover:bg-white">
-                Cancel
-              </Button>
-            </Close>
+          <div className="flex w-full mt-4 gap-2">
             <Button
-              variant="ghost"
-              className="px-0 text-base hover:bg-transparent"
+              variant="secondary"
+              className="flex-grow bg-navy rounded-md py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              Done
+              <P className="text-white font-[600]">Update</P>
             </Button>
+            <Close asChild>
+              <Button variant="secondary" className="flex-grow bg-lightBlue rounded-md py-[18px] hover:bg-lightBlue/80">
+              <P className="text-white font-[600]">Close</P>
+              </Button>
+            </Close>
           </div>
         </form>
       </Form>
@@ -233,19 +234,19 @@ export function DatePopup({
               </FormItem>
             )}
           />
-          <div className="flex justify-between">
-            <Close asChild>
-              <Button variant="ghost" className="px-0 text-base hover:bg-white">
-                Cancel
-              </Button>
-            </Close>
+          <div className="flex w-full mt-4 gap-2">
             <Button
-              variant="ghost"
-              className="px-0 text-base hover:bg-transparent"
+              variant="secondary"
+              className="flex-grow bg-navy rounded-md py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              Done
+              <P className="text-white font-[600]">Update</P>
             </Button>
+            <Close asChild>
+              <Button variant="secondary" className="flex-grow bg-lightBlue rounded-md py-[18px] hover:bg-lightBlue/80">
+              <P className="text-white font-[600]">Close</P>
+              </Button>
+            </Close>
           </div>
         </form>
       </Form>

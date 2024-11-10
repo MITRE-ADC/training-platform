@@ -238,8 +238,8 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
               }}
             >
               {/*<div className="w-[1px] h-3/4 bg-highlight mr-3 ml-2"></div>*/}
-              <i className="ri-add-line ri-1x font-[100] ml-2"></i>
-              <P className="mr-4 ml-2 translate-y-[1px] text-dark">
+              <i className={"ri-add-line ri-1x font-[100] text-darkBlue " + classStyleProps?.title}></i>
+              <P className="mr-4 ml-2 translate-y-[1px] text-darkBlue">
                 {classStyleProps?.popoverTriggerName}
               </P>
             </Button>

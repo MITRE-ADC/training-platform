@@ -13,6 +13,7 @@ interface TagSelectorProps {
   tags: Tag[];
   selectedTags: Tag[];
   setSelectedTags: Dispatch<SetStateAction<Tag[]>>;
+  titleClass: string;
 }
 
 export function TagSelector({
@@ -22,6 +23,7 @@ export function TagSelector({
   tags,
   selectedTags,
   setSelectedTags,
+  titleClass,
 }: TagSelectorProps) {
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
@@ -42,53 +44,51 @@ export function TagSelector({
   });
 
   return (
-    <div className="flex items-center justify-end">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit((v) => console.log(v))}
-          className="flex"
-        >
-          <FormField
-            control={form.control}
-            name="values"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <TagInput
-                    {...field}
-                    tags={selectedTags}
-                    setTags={(t) => {
-                      setSelectedTags(t);
-                      form.setValue("values", t as [Tag, ...Tag[]]);
-                    }}
-                    activeTagIndex={activeTagIndex}
-                    setActiveTagIndex={setActiveTagIndex}
-                    autocompleteOptions={tags}
-                    size="sm"
-                    enableAutocomplete
-                    restrictTagsToAutocompleteOptions
-                    styleClasses={{
-                      autoComplete: {
-                        command: "bg-white",
-                        popoverTrigger: "bg-white w-fit",
-                        commandList: "list-none",
-                        commandGroup: "",
-                        commandItem: "cursor-pointer",
-                        popoverTriggerName: title,
-                      },
-                      inlineTagsContainer: "bg-white",
-                      tag: {
-                        body: "bg-lightBlue text-dark rounded-lg pl-4 hover:bg-lightBlue/80",
-                        closeButton: "",
-                      },
-                    }}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit((v) => console.log(v))}
+      >
+        <FormField
+          control={form.control}
+          name="values"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <TagInput
+                  {...field}
+                  tags={selectedTags}
+                  setTags={(t) => {
+                    setSelectedTags(t);
+                    form.setValue("values", t as [Tag, ...Tag[]]);
+                  }}
+                  activeTagIndex={activeTagIndex}
+                  setActiveTagIndex={setActiveTagIndex}
+                  autocompleteOptions={tags}
+                  size="sm"
+                  enableAutocomplete
+                  restrictTagsToAutocompleteOptions
+                  styleClasses={{
+                    autoComplete: {
+                      command: "bg-white",
+                      popoverTrigger: "bg-white w-fit",
+                      commandList: "list-none",
+                      commandGroup: "",
+                      commandItem: "cursor-pointer",
+                      popoverTriggerName: title,
+                      title: titleClass,
+                    },
+                    inlineTagsContainer: "bg-white",
+                    tag: {
+                      body: "bg-lightBlue text-dark rounded-lg pl-4 hover:bg-lightBlue/80",
+                      closeButton: "",
+                    },
+                  }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   );
 }

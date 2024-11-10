@@ -36,34 +36,46 @@ export function AdvancedDashboardFilters() {
         align="end"
       >
         <div className="ml-8 flex h-full flex-col justify-around">
-          <TagSelector
-            title="Courses"
-            id="courses"
-            tags={_COURSETAGS}
-            selectedTags={courses}
-            setSelectedTags={setCourses}
-          />
-          <TagSelector
-            title="Assignments"
-            id="assignments"
-            tags={_ASSIGNMENTTAGS}
-            selectedTags={assignments}
-            setSelectedTags={setAssignments}
-          />
-          <TagSelector
-            title="Roles"
-            id="roles"
-            tags={_ROLETAGS}
-            selectedTags={roles}
-            setSelectedTags={setRoles}
-          />
-          <TagSelector
-            title="Status"
-            id="status"
-            tags={_STATUSTAGS}
-            selectedTags={status}
-            setSelectedTags={setStatus}
-          />
+          <div className="flex items-center justify-end">
+            <TagSelector
+              title="Courses"
+              id="courses"
+              tags={_COURSETAGS}
+              selectedTags={courses}
+              setSelectedTags={setCourses}
+              titleClass="ml-2"
+            />
+          </div>
+          <div className="flex items-center justify-end">
+            <TagSelector
+              title="Assignments"
+              id="assignments"
+              tags={_ASSIGNMENTTAGS}
+              selectedTags={assignments}
+              setSelectedTags={setAssignments}
+              titleClass="ml-2"
+            />
+          </div>
+          <div className="flex items-center justify-end">
+            <TagSelector
+              title="Roles"
+              id="roles"
+              tags={_ROLETAGS}
+              selectedTags={roles}
+              setSelectedTags={setRoles}
+              titleClass="ml-2"
+            />
+          </div>
+          <div className="flex items-center justify-end">
+            <TagSelector
+              title="Status"
+              id="status"
+              tags={_STATUSTAGS}
+              selectedTags={status}
+              setSelectedTags={setStatus}
+              titleClass="ml-2"
+            />
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -19,7 +19,7 @@ export type employee = {
   firstName: string;
   lastName: string;
   email: string;
-  roles: string[];
+  roles: Tag[];
   tasks: employeeTasks;
   assignments: employeeAssignment[];
 };
@@ -41,9 +41,6 @@ export function getManageEmployees(): employeeOverview[] {
   return _DATAOVERVIEW;
 }
 
-export function getCourseData(): CourseSelectorData[] {
-  return _COURSEDATA;
-}
 
 export function getEmployeeData(email: string): employee | undefined {
   let out: employee | undefined;
@@ -79,7 +76,7 @@ const _DATA: employee[] = [
   {
     firstName: "John",
     lastName: "Doe",
-    roles: ["Project Manager", "Cybersecurity Engineer"],
+    roles: [{text: "Project Manager", id: "1"}, {text: "Cybersecurity Engineer", id: "2"}],
     email: "email@email.org",
     tasks: {
       overdue: 2,
@@ -113,7 +110,7 @@ const _DATA: employee[] = [
   {
     firstName: "Jane",
     lastName: "Doe",
-    roles: ["Software Engineer"],
+    roles: [{text: "Software Engineer", id: "2"}],
     email: "helloworld@mitre.company.csec",
     tasks: {
       overdue: 1,
@@ -226,53 +223,6 @@ const _DATAOVERVIEW: employeeOverview[] = [
   },
 ];
 
-const _COURSEDATA: CourseSelectorData[] = [
-  {
-    name: "Course 1",
-    id: "1",
-    children: [
-      { name: "Course 1 Child 1", id: "1 1" },
-      { name: "Course 1 Child 2", id: "1 2" },
-      { name: "Course 1 Child 3", id: "1 3" },
-    ],
-  },
-  {
-    name: "Course 2",
-    id: "2",
-    children: [{ name: "Course 2 Child 1", id: "2 1" }],
-  },
-  {
-    name: "Course 3",
-    id: "3",
-    children: [
-      { name: "Course 3 Child 1", id: "3_1" },
-      { name: "Course 3 Child 2", id: "3_2" },
-      { name: "Course 3 Child 3", id: "3_3" },
-      { name: "Course 3 Child 4", id: "3_4" },
-      { name: "Course 3 Child 5", id: "3_5" },
-      { name: "Course 3 Child 6", id: "3_6" },
-    ],
-  },
-  {
-    name: "Course 4",
-    id: "4",
-    children: [
-      { name: "Course 4 Child 1", id: "4 1" },
-      { name: "Course 4 Child 2", id: "4 2" },
-      { name: "Course 4 Child 3", id: "4 3" },
-      { name: "Course 4 Child 4", id: "4 4" },
-      { name: "Course 4 Child 5", id: "4 5" },
-      { name: "Course 4 Child 6", id: "4 6" },
-      { name: "Course 4 Child 7", id: "4 7" },
-      { name: "Course 4 Child 8", id: "4 8" },
-      { name: "Course 4 Child 9", id: "4 9" },
-      { name: "Course 4 Child 10", id: "4 10" },
-      { name: "Course 4 Child 11", id: "4 11" },
-      { name: "Course 4 Child 12", id: "4 12" },
-    ],
-  },
-];
-
 export const _ASSIGNMENTTAGS: Tag[] = [
   {
     id: "4 1",
@@ -297,13 +247,17 @@ export const _COURSETAGS: Tag[] = [
 
 export const _ROLETAGS: Tag[] = [
   {
-    id: "role1",
     text: "Project Manager",
+    id: "1"
   },
   {
-    id: "role2",
-    text: "Intern",
+    text: "Cybersecurity Engineer",
+    id: "2"
   },
+  {
+    text: "Software Engineer",
+    id: "3"
+  }
 ];
 
 export const _STATUSTAGS: Tag[] = [

@@ -8,14 +8,16 @@ import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
-  getCourseData,
   getEmployeeData,
   EMPTY_EMPLOYEE,
+  _ROLETAGS,
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
-import { H2, Text } from "@/components/ui/custom/text";
+import { H2, P, Text } from "@/components/ui/custom/text";
 import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
 import { useState } from "react";
+import { TagSelector } from "@/components/ui/custom/tagSelector";
+import { Tag } from "@/components/ui/tag/tag-input";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -42,21 +44,14 @@ const columns: ColumnDef<employeeAssignment>[] = [
     accessorKey: "due",
     header: ({ column }) => <SortableColumn column={column} title="Date Due" />,
     cell: ({ row }) => {
-      const but = (
-        <Button
-          variant="secondary"
-          className="main-outline ml-2 h-5 px-2 py-1 text-xs"
-        >
-          Edit
-        </Button>
-      );
-
       const v: undefined | string = row.getValue("due");
 
       return (
         <>
-          <Text disabled={!v}>{v ? v : "None"}</Text>
-          <DatePopup title="Assign Due Date" openBut={but} />
+          <P>{v ? v : 'None'}</P>
+          <DatePopup title="Assign Due Date" openBut={
+            <i className="ml-2 ri-edit-2-line cursor-pointer text-darkBlue"></i>
+          } />
         </>
       );
     },
@@ -66,18 +61,30 @@ const columns: ColumnDef<employeeAssignment>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       const v = row.getValue("status");
-      return v == "done" ? (
-        <Text status="good">Completed</Text>
-      ) : v == "overdue" ? (
-        <Text status="alert">Overdue</Text>
-      ) : (
-        <Text>Incomplete</Text>
-      );
+      return (
+        <div className="flex items-center">
+          {
+            (v == "done") ? (
+              <P className="rounded-xl bg-green w-min text-white text-[11px] py-[6px] px-4 font-[600]">
+                Completed
+              </P>
+            ) : v == "overdue" ? (
+              <P className="rounded-xl bg-red w-min text-white text-[11px] py-[6px] px-4 font-[600]">
+                  Overdue
+                </P>
+            ) : (
+              <P className="rounded-xl bg-yellow w-min text-white text-[11px] py-[6px] px-4 font-[600]">
+                Incomplete
+              </P>
+            )
+        }
+        </div>
+      )
     },
   },
   {
     id: "delete",
-    cell: () => <i className="ri-delete-bin-2-line"></i>,
+    cell: () => <i className="ri-close-large-line text-darkBlue"></i>,
   },
 ];
 
@@ -92,9 +99,13 @@ function EmployeeInfo({
 }) {
   return (
     <TableRow className="border-b-0">
-      <TableCell className="p-0 pr-6 text-lg font-bold">{title}</TableCell>
-      <TableCell className="p-0 pr-6">{value}</TableCell>
-      <TableCell className="p-0 pr-6">{children}</TableCell>
+      <TableCell className="p-0 pr-6">
+        <P>{title}</P>
+      </TableCell>
+      <TableCell className="p-0">
+        <P className="text-darkBlue">{value}</P>
+        {children}
+      </TableCell>
       <TableCell className="w-full"></TableCell>
     </TableRow>
   );
@@ -102,11 +113,16 @@ function EmployeeInfo({
 
 export default function EmployeePopup({ employee }: { employee: string }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
+  const [roles, setRoles] = useState<Tag[]>([]);
 
   function load() {
     setTimeout(() => {
-      const d = getEmployeeData(employee);
-      if (d) setData(d);
+      //const d = getEmployeeData(employee);
+      const d = getEmployeeData('email@email.org')
+      if (d) {
+        setData(d);
+        setRoles(d.roles);
+      }
       else console.error("Trying to find unknown employee " + employee);
     }, 500);
   }
@@ -118,22 +134,31 @@ export default function EmployeePopup({ employee }: { employee: string }) {
           <Button variant="default" onClick={load}>Expand</Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
-          <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">
+          <div className="flex h-full w-full flex-col gap-4 px-16 pt-12 pb-8">
             <H2>Employee Information</H2>
-            <div className="h-4"></div>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
                 <EmployeeInfo
                   title="Name"
                   value={data["firstName"] + " " + data["lastName"]}
                 >
-                  <StringPopup title="Update Name" />
+                  <StringPopup title="Update Name" openBut={<i className="ml-2 ri-edit-2-line cursor-pointer text-darkBlue"></i>}/>
                 </EmployeeInfo>
                 <EmployeeInfo title="Email" value={data["email"]}>
-                  <StringPopup title="Update Email" />
+                  <StringPopup title="Update Email" openBut={<i className="ml-2 ri-edit-2-line cursor-pointer text-darkBlue"></i>}/>
                 </EmployeeInfo>
-                <EmployeeInfo title="Role" value={roleToSpan(data["roles"])}>
-                  <StringPopup title="Set Roles" />
+                <EmployeeInfo title="Role" value={
+                  <div className="translate-y-[2px]">
+                    <TagSelector
+                      title=""
+                      id="roles"
+                      tags={_ROLETAGS}
+                      selectedTags={roles}
+                      setSelectedTags={setRoles}
+                      titleClass=""
+                    />
+                  </div>
+                  }>
                 </EmployeeInfo>
               </TableBody>
             </Table>
@@ -141,12 +166,12 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
               <CourseSelectorPopup title="Add Course" email={data.email}>
-                <Button variant="ghost" className="text-md font-sans">
-                  + Add Course
+                <Button variant="outline" className="text-darkLight">
+                  <P className="text-darkLight">Add Courses</P>
                 </Button>
               </CourseSelectorPopup>
             </div>
-            <div className="main-outline w-full flex-grow">
+            <div className="shadow-md w-full flex-grow">
               <DataTable
                 columns={columns}
                 data={data["assignments"]}
@@ -155,12 +180,12 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             </div>
             <div className="flex justify-end gap-4 font-sans">
               <Close asChild>
-                <Button className="h-12 w-52 text-lg" variant="secondary">
-                  Cancel
+                <Button className="w-[140px] h-[40px] bg-blue rounded-md hover:bg-blue/80" variant="secondary">
+                  <P className="text-white font-[600]">Cancel</P>
                 </Button>
               </Close>
-              <Button className="h-12 w-52 text-lg" variant="outline">
-                Submit Changes
+              <Button className="w-[140px] h-[40px] bg-navy rounded-md hover:bg-navy/80" variant="secondary">
+              <P className="text-white font-[600]">Submit Changes</P>
               </Button>
             </div>
           </div>
