@@ -11,7 +11,7 @@ export async function GET() {
     in_progress: number;
     not_started: number;
   }
-  
+
   interface Entry {
     user_id: number;
     analysis: Analysis;
