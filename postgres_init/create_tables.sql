@@ -10,7 +10,7 @@ CREATE TABLE Courses (
     course_name VARCHAR(100)
 );
 
-CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
+CREATE TYPE c_status AS ENUM ('Not Started', 'In Progress', 'Completed');
 
 CREATE TABLE User_Courses (
     user_course_id SERIAL PRIMARY KEY,

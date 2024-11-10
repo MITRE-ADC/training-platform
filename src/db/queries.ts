@@ -103,7 +103,7 @@ export async function userCourseExists(course_id: number, user_id: number) {
 export async function aggregateUserCoursesStatusByUser() {
   return (
     await db.execute(
-      "SELECT user_id, course_status, CAST(COUNT(*) AS int) FROM user_courses GROUP BY user_id, course_status;"
+      "SELECT user_id, course_status, CAST(COUNT(*) AS int) FROM user_courses GROUP BY user_id, course_status ORDER BY user_id ASC;"
     )
   ).rows;
 }

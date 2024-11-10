@@ -66,13 +66,13 @@ INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_
     VALUES (1, 1, 'Not Started', '2024-06-01', '2024-05-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (1, 2, 'In Progess', '2024-08-01', '2024-01-01');
+    VALUES (1, 2, 'In Progress', '2024-08-01', '2024-01-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
     VALUES (2, 3, 'Completed', '2024-05-01', '2024-01-07');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (2, 4, 'In Progess', '2024-08-06', '2024-01-07');
+    VALUES (2, 4, 'In Progress', '2024-08-06', '2024-01-07');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
     VALUES (3, 1, 'Not Started', '2024-04-01', '2024-01-07');
