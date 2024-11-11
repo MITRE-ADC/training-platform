@@ -38,7 +38,7 @@ export default function RecoverPasswordPage() {
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.email ? "border-2 border-customRed" : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -46,7 +46,9 @@ export default function RecoverPasswordPage() {
               required
             />
           </div>
-          {errorMessage && <p className="mb-4 text-rose-600">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="mb-4 text-customRed">{errorMessage}</p>
+          )}
           <br />
           <Button className="w-full" onClick={handleReset}>
             Get Code
