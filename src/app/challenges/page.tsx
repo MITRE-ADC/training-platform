@@ -58,7 +58,6 @@ export default function ChallengeHomepage() {
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
-                          variant="outline"
                           role="combobox"
                           aria-expanded={open}
                           className="h-9 w-[200px] justify-between rounded-full py-2"
