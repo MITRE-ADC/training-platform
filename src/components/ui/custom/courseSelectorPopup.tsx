@@ -6,8 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Close } from "@radix-ui/react-dialog";
+import { Close, DialogDescription } from "@radix-ui/react-dialog";
 import { Checkbox } from "../checkbox";
 import {
   Accordion,
@@ -25,6 +24,7 @@ import axios from "axios";
 import { req } from "@/lib/utils";
 import { Assignment, Course } from "@/db/schema";
 import { P } from "./text";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export interface CourseSelectorData {
   name: string;
@@ -203,11 +203,12 @@ export default function CourseSelectorPopup({
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="w-[500px]" aria-describedby={undefined}>
-          <VisuallyHidden.Root>
-            <DialogTitle id="courseSelectorID">{title}</DialogTitle>
-          </VisuallyHidden.Root>
+        <DialogContent className="w-[500px]">
           <DialogHeader>
+            <VisuallyHidden>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>Assign courses and assignments to employee</DialogDescription>
+            </VisuallyHidden>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
               <p className="text-lg font-bold">{title}</p>
               <Form {...form}>

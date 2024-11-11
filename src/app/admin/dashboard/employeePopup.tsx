@@ -1,4 +1,4 @@
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -18,6 +18,7 @@ import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
 import { useState } from "react";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import { Tag } from "@/components/ui/tag/tag-input";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -134,6 +135,12 @@ export default function EmployeePopup({ employee }: { employee: string }) {
           <Button variant="default" onClick={load}>Expand</Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
+          <SheetHeader>
+            <VisuallyHidden>
+              <SheetTitle>Employee Popup</SheetTitle>
+              <SheetDescription>Course and assignment information for {employee}</SheetDescription>
+            </VisuallyHidden>
+          </SheetHeader>
           <div className="flex h-full w-full flex-col gap-4 px-16 pt-12 pb-8">
             <H2>Employee Information</H2>
             <Table>

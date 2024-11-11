@@ -6,8 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Close } from "@radix-ui/react-dialog";
+import { Close, DialogDescription } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns/format";
 import { Calendar } from "../calendar";
 import { P } from "./text";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface controlledOpen {
   open: boolean;
@@ -80,11 +80,12 @@ function EditPopup({
         onOpenChange={control ? control.setOpen : undefined}
       >
         {but}
-        <DialogContent className="w-[340px]" aria-describedby="editID">
-          <VisuallyHidden.Root>
-            <DialogTitle id="editID">{title}</DialogTitle>
-          </VisuallyHidden.Root>
+        <DialogContent className="w-[340px]">
           <DialogHeader>
+            <VisuallyHidden>
+              <DialogDescription>Edit field for {title}</DialogDescription>
+              <DialogTitle>{title}</DialogTitle>
+            </VisuallyHidden>
             <div className="mx-1 flex flex-col gap-2 font-sans">
               <P className="font-[600]">{title}</P>
               {children}
