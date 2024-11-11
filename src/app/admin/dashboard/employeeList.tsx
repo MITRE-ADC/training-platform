@@ -9,12 +9,12 @@ import {
   getEmployeeData,
   getManageEmployees,
 } from "./employeeDefinitions";
-import { Text } from "@/components/ui/custom/text";
+import { P } from "@/components/ui/custom/text";
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
     id: "buffer",
-    cell: () => <div className="w-4"></div>,
+    cell: () => <div></div>,
   },
   {
     accessorKey: "firstName",
@@ -42,18 +42,21 @@ const columns: ColumnDef<employeeOverview>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       return (
-        <div className="flex gap-1">
-          <div className="min-w-9">
+        <div className="flex gap-[8px] text-[18px]">
+          <div className="min-w-9 flex items-center">
+            <i className="absolute ri-checkbox-blank-circle-fill text-dark mr-1 -z-10 scale-[75%]"></i>
             <i className="ri-checkbox-circle-fill text-good mr-1"></i>
-            <span>{(row.getValue("tasks") as employeeTasks)["completed"]}</span>
+            <P className="text-dark">{(row.getValue("tasks") as employeeTasks)["completed"]}</P>
           </div>
-          <div className="min-w-9">
-            <i className="ri-error-warning-fill text-alert mr-1"></i>
-            <span>{(row.getValue("tasks") as employeeTasks)["overdue"]}</span>
+          <div className="min-w-9 flex items-center">
+            <i className="absolute ri-checkbox-blank-circle-fill text-dark mr-1 -z-10 scale-[75%]"></i>
+            <i className="ri-indeterminate-circle-fill mr-1 text-neutral"></i>
+            <P className="text-dark">{(row.getValue("tasks") as employeeTasks)["todo"]}</P>
           </div>
-          <div className="min-w-9">
-            <i className="ri-circle-fill mr-1 text-neutral-500"></i>
-            <span>{(row.getValue("tasks") as employeeTasks)["todo"]}</span>
+          <div className="min-w-9 flex items-center">
+            <i className="absolute ri-checkbox-blank-circle-fill text-dark mr-1 -z-10 scale-[75%]"></i>
+            <i className="ri-close-circle-fill fill-dark text-alert mr-1"></i>
+            <P className="text-dark">{(row.getValue("tasks") as employeeTasks)["overdue"]}</P>
           </div>
         </div>
       );
@@ -74,7 +77,7 @@ const columns: ColumnDef<employeeOverview>[] = [
 
 export function roleToSpan(roles: string[]) {
   return roles.length == 0 ? (
-    <Text disabled>No Assigned Role</Text>
+    <span className="text-darkLight">No Assigned Role</span>
   ) : (
     <span>{roles.join(", ")}</span>
   );
@@ -86,7 +89,6 @@ export default function EmployeeList() {
       columns={columns}
       data={getManageEmployees()}
       defaultSort="tasks"
-      alternate
     />
   );
 }
