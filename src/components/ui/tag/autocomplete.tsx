@@ -238,8 +238,13 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
               }}
             >
               {/*<div className="w-[1px] h-3/4 bg-highlight mr-3 ml-2"></div>*/}
-              <i className={"ri-add-line ri-1x font-[100] text-darkBlue " + classStyleProps?.title}></i>
-              <P className="mr-4 ml-2 translate-y-[1px] text-darkBlue">
+              <i
+                className={
+                  "ri-add-line ri-1x font-[100] text-darkBlue " +
+                  classStyleProps?.title
+                }
+              ></i>
+              <P className="ml-2 mr-4 translate-y-[1px] text-darkBlue">
                 {classStyleProps?.popoverTriggerName}
               </P>
             </Button>
@@ -297,8 +302,11 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                       onClick={() => toggleTag(option)}
                     >
                       <div className="flex w-full items-center gap-2">
-                        <Checkbox className="pointer-events-none" checked={tags.some((tag) => tag.text === option.text)}></Checkbox>
-                        <P className="text-dark font-[600]">{option.text}</P>
+                        <Checkbox
+                          className="pointer-events-none"
+                          checked={tags.some((tag) => tag.text === option.text)}
+                        ></Checkbox>
+                        <P className="font-[600] text-dark">{option.text}</P>
                       </div>
                     </div>
                   );

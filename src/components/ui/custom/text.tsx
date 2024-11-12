@@ -1,27 +1,62 @@
 import { cn } from "@/lib/utils";
 
 export function H1({ children }: { children?: React.ReactNode }) {
-  return <div className="ml-2 font-inter text-[36px] leading-[36px] font-[600] text-black">{children}</div>;
+  return (
+    <div className="ml-2 font-inter text-[36px] font-[600] leading-[36px] text-black">
+      {children}
+    </div>
+  );
 }
 
 export function H2({ children }: { children?: React.ReactNode }) {
-  return <div className="font-inter text-[20px] leading-[28px] font-[700] text-black">{children}</div>;
+  return (
+    <div className="font-inter text-[20px] font-[700] leading-[28px] text-black">
+      {children}
+    </div>
+  );
 }
 
 export function H3({ children }: { children?: React.ReactNode }) {
-  return <div className="font-inter text-[14px] leading-[20px] font-[600] text-black">{children}</div>;
+  return (
+    <div className="font-inter text-[14px] font-[600] leading-[20px] text-black">
+      {children}
+    </div>
+  );
 }
 
-export function P({ className, children }: { className?: string, children?: React.ReactNode }) {
-  return <span className={cn("font-inter text-[14px] leading-[14px] font-[400] text-black", className)}>{children}</span>;
+export function P({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <span
+      className={cn(
+        "font-inter text-[14px] font-[400] leading-[14px] text-black",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
 }
 
 export function Status({ children }: { children?: React.ReactNode }) {
-  return <div className="font-inter text-[11px] leading-[24px] font-[500] text-black">{children}</div>;
+  return (
+    <div className="font-inter text-[11px] font-[500] leading-[24px] text-black">
+      {children}
+    </div>
+  );
 }
 
 export function Small({ children }: { children?: React.ReactNode }) {
-  return <div className="font-inter text-[12px] leading-[16px] font-[400] text-black">{children}</div>;
+  return (
+    <div className="font-inter text-[12px] font-[400] leading-[16px] text-black">
+      {children}
+    </div>
+  );
 }
 
 interface TextProps {

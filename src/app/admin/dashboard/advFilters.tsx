@@ -32,7 +32,7 @@ export function AdvancedDashboardFilters() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="h-[200px] w-[1000px] translate-x-[1px] translate-y-[3px] border-highlight bg-white rounded-md"
+        className="h-[200px] w-auto max-w-[1000px] translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
         align="end"
       >
         <div className="ml-8 flex h-full flex-col justify-around">

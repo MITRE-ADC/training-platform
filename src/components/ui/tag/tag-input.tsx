@@ -553,7 +553,8 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                 commandList: styleClasses?.autoComplete?.commandList,
                 commandGroup: styleClasses?.autoComplete?.commandGroup,
                 commandItem: styleClasses?.autoComplete?.commandItem,
-                popoverTriggerName: styleClasses?.autoComplete?.popoverTriggerName,
+                popoverTriggerName:
+                  styleClasses?.autoComplete?.popoverTriggerName,
                 title: styleClasses?.autoComplete?.title,
               }}
             >

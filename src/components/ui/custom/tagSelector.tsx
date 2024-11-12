@@ -45,9 +45,7 @@ export function TagSelector({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((v) => console.log(v))}
-      >
+      <form onSubmit={form.handleSubmit((v) => console.log(v))}>
         <FormField
           control={form.control}
           name="values"

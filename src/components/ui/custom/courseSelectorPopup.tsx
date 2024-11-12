@@ -60,7 +60,7 @@ function CourseSelectorAssignment({
       name={child.id}
       render={() => {
         return (
-          <FormItem className="ml-10 flex gap-2 items-center">
+          <FormItem className="ml-10 flex items-center gap-2">
             <FormControl>
               <Checkbox
                 checked={value}
@@ -148,7 +148,7 @@ export default function CourseSelectorPopup({
   email,
 }: {
   title: string;
-  email: string,
+  email: string;
   children: JSX.Element;
 }) {
   const [open, setOpen] = useState(false);
@@ -164,37 +164,38 @@ export default function CourseSelectorPopup({
     form.reset();
 
     if (open && data.length == 0) {
-      axios.all([
-        axios.get(req('api/courses')),
-        axios.get(req('api/assignments')),
-      ]).then(axios.spread((_c, _a) => {
-        const courses: Course[] = _c.data.data;
-        const assignments: Assignment[] = _a.data.data;
+      axios
+        .all([axios.get(req("api/courses")), axios.get(req("api/assignments"))])
+        .then(
+          axios.spread((_c, _a) => {
+            const courses: Course[] = _c.data.data;
+            const assignments: Assignment[] = _a.data.data;
 
-        let formatted: CourseSelectorData[] = [];
+            let formatted: CourseSelectorData[] = [];
 
-        courses.forEach((c) => {
-          let children: CourseSelectorChildData[] = [];
-          assignments.forEach((a) => {
-            if (a.course_id == c.course_id) {
-              children.push({
-                name: a.assignment_name,
-                id: 'a_' + a.assignment_id,
-                webgoat: a.webgoat_info,
-                courseId: '' + a.course_id,
+            courses.forEach((c) => {
+              let children: CourseSelectorChildData[] = [];
+              assignments.forEach((a) => {
+                if (a.course_id == c.course_id) {
+                  children.push({
+                    name: a.assignment_name,
+                    id: "a_" + a.assignment_id,
+                    webgoat: a.webgoat_info,
+                    courseId: "" + a.course_id,
+                  });
+                }
               });
-            }
-          });
 
-          formatted.push({
-            name: c.course_name,
-            id: 'c_' + c.course_id,
-            children: children,
+              formatted.push({
+                name: c.course_name,
+                id: "c_" + c.course_id,
+                children: children,
+              });
+            });
+
+            setData(formatted);
           })
-        });
-
-        setData(formatted);
-      }));
+        );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -207,7 +208,9 @@ export default function CourseSelectorPopup({
           <DialogHeader>
             <VisuallyHidden>
               <DialogTitle>{title}</DialogTitle>
-              <DialogDescription>Assign courses and assignments to employee</DialogDescription>
+              <DialogDescription>
+                Assign courses and assignments to employee
+              </DialogDescription>
             </VisuallyHidden>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
               <p className="text-lg font-bold">{title}</p>
@@ -219,18 +222,18 @@ export default function CourseSelectorPopup({
                   })}
                 >
                   <ScrollArea className="main-outline mb-2 h-[500px] w-full">
-                    <Accordion
-                      type="multiple"
-                    >
-                      {data.length != 0 ? data.map((course, ind) => (
-                        <CourseSelectorAccordion
-                          key={ind}
-                          course={course}
-                          ind={ind}
-                          form={form}
-                        />
-                      )) : (
-                        <div className="w-full flex justify-center py-2">
+                    <Accordion type="multiple">
+                      {data.length != 0 ? (
+                        data.map((course, ind) => (
+                          <CourseSelectorAccordion
+                            key={ind}
+                            course={course}
+                            ind={ind}
+                            form={form}
+                          />
+                        ))
+                      ) : (
+                        <div className="flex w-full justify-center py-2">
                           <P>Loading...</P>
                         </div>
                       )}

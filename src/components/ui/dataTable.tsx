@@ -93,17 +93,14 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col justify-between">
-      <ScrollArea className="overflow-hidden h-[560px]">
+      <ScrollArea className="h-[560px] overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      className="py-2"
-                    >
+                    <TableHead key={header.id} className="py-2">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -127,7 +124,10 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="h-full">
                       <P>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </P>
                     </TableCell>
                   ))}
@@ -135,8 +135,11 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <P>{placeholder ? placeholder : 'No results.'}</P>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <P>{placeholder ? placeholder : "No results."}</P>
                 </TableCell>
               </TableRow>
             )}

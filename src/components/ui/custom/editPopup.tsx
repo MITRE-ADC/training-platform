@@ -140,23 +140,30 @@ export function StringPopup({
             render={({ field }) => (
               <FormItem>
                 <FormControl className="rounded-md shadow-md">
-                  <Input placeholder="New Value ..." className="py-2 border border-highlight focus-visible:ring-0 font-inter" {...field} />
+                  <Input
+                    placeholder="New Value ..."
+                    className="border border-highlight py-2 font-inter focus-visible:ring-0"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex w-full mt-4 gap-2">
+          <div className="mt-4 flex w-full gap-2">
             <Button
               variant="secondary"
-              className="flex-grow bg-navy rounded-md py-[18px] hover:bg-navy/80"
+              className="flex-grow rounded-md bg-navy py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              <P className="text-white font-[600]">Update</P>
+              <P className="font-[600] text-white">Update</P>
             </Button>
             <Close asChild>
-              <Button variant="secondary" className="flex-grow bg-lightBlue rounded-md py-[18px] hover:bg-lightBlue/80">
-              <P className="text-white font-[600]">Close</P>
+              <Button
+                variant="secondary"
+                className="flex-grow rounded-md bg-lightBlue py-[18px] hover:bg-lightBlue/80"
+              >
+                <P className="font-[600] text-white">Close</P>
               </Button>
             </Close>
           </div>
@@ -235,17 +242,20 @@ export function DatePopup({
               </FormItem>
             )}
           />
-          <div className="flex w-full mt-4 gap-2">
+          <div className="mt-4 flex w-full gap-2">
             <Button
               variant="secondary"
-              className="flex-grow bg-navy rounded-md py-[18px] hover:bg-navy/80"
+              className="flex-grow rounded-md bg-navy py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              <P className="text-white font-[600]">Update</P>
+              <P className="font-[600] text-white">Update</P>
             </Button>
             <Close asChild>
-              <Button variant="secondary" className="flex-grow bg-lightBlue rounded-md py-[18px] hover:bg-lightBlue/80">
-              <P className="text-white font-[600]">Close</P>
+              <Button
+                variant="secondary"
+                className="flex-grow rounded-md bg-lightBlue py-[18px] hover:bg-lightBlue/80"
+              >
+                <P className="font-[600] text-white">Close</P>
               </Button>
             </Close>
           </div>

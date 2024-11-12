@@ -9,19 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        highlight: '#E5E7EB',
+        highlight: "#E5E7EB",
         highlight2: "#CBD5E1",
-        darkLight: '#73737B',
-        dark: '#334155',
-        lightBlue: '#94A3B8',
-        blue: '#8CB1CA',
-        navy: '#1E293B',
-        darkBlue: '#64748B',
+        darkLight: "#73737B",
+        dark: "#334155",
+        lightBlue: "#94A3B8",
+        blue: "#8CB1CA",
+        navy: "#1E293B",
+        darkBlue: "#64748B",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        green: '#72BF6D',
-        yellow: '#FEE47B',
-        red: '#E95D58',
+        green: "#72BF6D",
+        yellow: "#FEE47B",
+        red: "#E95D58",
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -89,8 +89,8 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        inter: ['var(--font-inter)']
-      }
+        inter: ["var(--font-inter)"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

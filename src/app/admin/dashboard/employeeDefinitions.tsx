@@ -34,13 +34,14 @@ export type employeeOverview = {
 };
 
 export enum MountStatus {
-  isMounted, isNotMounted, isFirstMounted
+  isMounted,
+  isNotMounted,
+  isFirstMounted,
 }
 
 export function getManageEmployees(): employeeOverview[] {
   return _DATAOVERVIEW;
 }
-
 
 export function getEmployeeData(email: string): employee | undefined {
   let out: employee | undefined;
@@ -76,7 +77,10 @@ const _DATA: employee[] = [
   {
     firstName: "John",
     lastName: "Doe",
-    roles: [{text: "Project Manager", id: "1"}, {text: "Cybersecurity Engineer", id: "2"}],
+    roles: [
+      { text: "Project Manager", id: "1" },
+      { text: "Cybersecurity Engineer", id: "2" },
+    ],
     email: "email@email.org",
     tasks: {
       overdue: 2,
@@ -110,7 +114,7 @@ const _DATA: employee[] = [
   {
     firstName: "Jane",
     lastName: "Doe",
-    roles: [{text: "Software Engineer", id: "2"}],
+    roles: [{ text: "Software Engineer", id: "2" }],
     email: "helloworld@mitre.company.csec",
     tasks: {
       overdue: 1,
@@ -248,16 +252,16 @@ export const _COURSETAGS: Tag[] = [
 export const _ROLETAGS: Tag[] = [
   {
     text: "Project Manager",
-    id: "1"
+    id: "1",
   },
   {
     text: "Cybersecurity Engineer",
-    id: "2"
+    id: "2",
   },
   {
     text: "Software Engineer",
-    id: "3"
-  }
+    id: "3",
+  },
 ];
 
 export const _STATUSTAGS: Tag[] = [
