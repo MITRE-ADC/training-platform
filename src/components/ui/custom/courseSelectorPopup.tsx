@@ -171,10 +171,10 @@ export default function CourseSelectorPopup({
             const courses: Course[] = _c.data.data;
             const assignments: Assignment[] = _a.data.data;
 
-            let formatted: CourseSelectorData[] = [];
+            const formatted: CourseSelectorData[] = [];
 
             courses.forEach((c) => {
-              let children: CourseSelectorChildData[] = [];
+              const children: CourseSelectorChildData[] = [];
               assignments.forEach((a) => {
                 if (a.course_id == c.course_id) {
                   children.push({

@@ -98,7 +98,7 @@ export default function EmployeeList() {
       .get(req("api/users"))
       .then((r) => {
         const data: User[] = r.data.data;
-        let formatted: employeeOverview[] = [];
+        const formatted: employeeOverview[] = [];
 
         data.forEach((user) => {
           formatted.push({
