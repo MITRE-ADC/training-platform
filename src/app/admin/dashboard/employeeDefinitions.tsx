@@ -247,6 +247,46 @@ export const _COURSETAGS: Tag[] = [
     id: "3",
     text: "Course 3",
   },
+  {
+    id: "44",
+    text: "Course 44",
+  },
+  {
+    id: "33",
+    text: "Course 33",
+  },
+  {
+    id: "100",
+    text: "Course 100",
+  },
+  {
+    id: "200",
+    text: "Course 200",
+  },
+  {
+    id: "-1",
+    text: "_Course 4",
+  },
+  {
+    id: "-2",
+    text: "_Course 3",
+  },
+  {
+    id: "-3",
+    text: "_Course 44",
+  },
+  {
+    id: "-4",
+    text: "_Course 33",
+  },
+  {
+    id: "-5",
+    text: "_Course 100",
+  },
+  {
+    id: "-6",
+    text: "_Course 200",
+  },
 ];
 
 export const _ROLETAGS: Tag[] = [
@@ -261,6 +301,42 @@ export const _ROLETAGS: Tag[] = [
   {
     text: "Software Engineer",
     id: "3",
+  },
+  {
+    text: "_Project Manager",
+    id: "4",
+  },
+  {
+    text: "_Cybersecurity Engineer",
+    id: "5",
+  },
+  {
+    text: "_Software Engineer",
+    id: "6",
+  },
+  {
+    text: "__Project Manager",
+    id: "7",
+  },
+  {
+    text: "__Cybersecurity Engineer",
+    id: "8",
+  },
+  {
+    text: "__Software Engineer",
+    id: "9",
+  },
+  {
+    text: "___Project Manager",
+    id: "10",
+  },
+  {
+    text: "___Cybersecurity Engineer",
+    id: "11",
+  },
+  {
+    text: "___Software Engineer",
+    id: "12",
   },
 ];
 

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
 import Image from "next/image";
+import { _COURSETAGS } from "./employeeDefinitions";
 
 export default function AdminDashBoard() {
   return (
@@ -54,7 +55,7 @@ export default function AdminDashBoard() {
                       <AdvancedDashboardFilters />
                     </div>
                   </div>
-                  <div className="shadow-md">
+                  <div className="shadow-md" id="Employee-List-Table">
                     <EmployeeList />
                   </div>
                 </div>

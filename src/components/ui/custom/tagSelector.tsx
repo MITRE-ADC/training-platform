@@ -13,7 +13,10 @@ interface TagSelectorProps {
   tags: Tag[];
   selectedTags: Tag[];
   setSelectedTags: Dispatch<SetStateAction<Tag[]>>;
-  titleClass: string;
+  titleClass?: string;
+  popoverTrigger?: string;
+  span?: string;
+  tagUpdateCallback?: () => void;
 }
 
 export function TagSelector({
@@ -24,6 +27,9 @@ export function TagSelector({
   selectedTags,
   setSelectedTags,
   titleClass,
+  popoverTrigger,
+  span,
+  tagUpdateCallback,
 }: TagSelectorProps) {
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
@@ -58,6 +64,8 @@ export function TagSelector({
                   setTags={(t) => {
                     setSelectedTags(t);
                     form.setValue("values", t as [Tag, ...Tag[]]);
+
+                    if (tagUpdateCallback) tagUpdateCallback();
                   }}
                   activeTagIndex={activeTagIndex}
                   setActiveTagIndex={setActiveTagIndex}
@@ -65,15 +73,16 @@ export function TagSelector({
                   size="sm"
                   enableAutocomplete
                   restrictTagsToAutocompleteOptions
+                  usePortal
                   styleClasses={{
                     autoComplete: {
                       command: "bg-white",
-                      popoverTrigger: "bg-white w-fit",
-                      commandList: "list-none",
+                      popoverTrigger: "bg-white w-fit " + popoverTrigger,
                       commandGroup: "",
                       commandItem: "cursor-pointer",
                       popoverTriggerName: title,
                       title: titleClass,
+                      span: span,
                     },
                     inlineTagsContainer: "bg-white",
                     tag: {

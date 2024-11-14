@@ -175,21 +175,26 @@ export default function EmployeePopup({ employee }: { employee: string }) {
                     }
                   />
                 </EmployeeInfo>
-                <EmployeeInfo
-                  title="Role"
-                  value={
-                    <div className="translate-y-[2px]">
-                      <TagSelector
-                        title=""
-                        id="roles"
-                        tags={_ROLETAGS}
-                        selectedTags={roles}
-                        setSelectedTags={setRoles}
-                        titleClass=""
-                      />
-                    </div>
-                  }
-                ></EmployeeInfo>
+                <TableRow className="border-b-0">
+                  <TableCell className="p-0 pr-6">
+                    <P>Role</P>
+                  </TableCell>
+                  <TableCell className="p-0 w-full">
+                    <P className="translate-y-[2px] text-darkBlue block">
+                      <div className="max-w-[750px] w-min">
+                        <TagSelector
+                          title=""
+                          id="roles"
+                          tags={_ROLETAGS}
+                          selectedTags={roles}
+                          setSelectedTags={setRoles}
+                          span="flex-row-reverse justify-end"
+                          popoverTrigger="flex-row-reverse justify-end"
+                        />
+                      </div>
+                    </P>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
             <div className="h-2"></div>

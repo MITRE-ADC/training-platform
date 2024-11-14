@@ -129,7 +129,8 @@ export const Tag: React.FC<TagProps> = ({
           "cursor-pointer": draggable,
           "ring-2 ring-ring ring-offset-2 ring-offset-background": isActiveTag,
         },
-        tagClasses?.body
+        tagClasses?.body,
+        "mr-1"
       )}
       onClick={(e) => {
         onRemoveTag(tagObj.id);

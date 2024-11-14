@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import {
@@ -14,8 +9,14 @@ import {
   _STATUSTAGS,
 } from "./employeeDefinitions";
 import { Tag } from "@/components/ui/tag/tag-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { P } from "@/components/ui/custom/text";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export function AdvancedDashboardFilters() {
   const [courses, setCourses] = useState<Tag[]>([]);
@@ -23,61 +24,65 @@ export function AdvancedDashboardFilters() {
   const [roles, setRoles] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
 
+  const [tableWidth, setTableWidth] = useState<string>("w-auto");
+
+  useEffect(() => {
+    const table = document.getElementById("Employee-List-Table");
+    if (table) {
+      setTableWidth(table.scrollWidth + "px");
+    }
+  }, []);
+
   return (
-    <DropdownMenu onOpenChange={() => console.log("trigger")}>
-      <DropdownMenuTrigger asChild>
+    <Popover onOpenChange={() => console.log("trigger")}>
+      <PopoverTrigger asChild>
         <Button variant="outline" className="text-darkLight">
           <P className="text-darkLight">Advanced Filters</P>
           <i className="ri-expand-up-down-line r-sm ml-1"></i>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="h-[200px] w-auto max-w-[1000px] translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
+      </PopoverTrigger>
+      <PopoverContent
+        className="h-[200px] w-auto translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
+        style={{
+          maxWidth: tableWidth,
+        }}
         align="end"
       >
-        <div className="ml-8 flex h-full flex-col justify-around">
-          <div className="flex items-center justify-end">
-            <TagSelector
-              title="Courses"
-              id="courses"
-              tags={_COURSETAGS}
-              selectedTags={courses}
-              setSelectedTags={setCourses}
-              titleClass="ml-2"
-            />
-          </div>
-          <div className="flex items-center justify-end">
-            <TagSelector
-              title="Assignments"
-              id="assignments"
-              tags={_ASSIGNMENTTAGS}
-              selectedTags={assignments}
-              setSelectedTags={setAssignments}
-              titleClass="ml-2"
-            />
-          </div>
-          <div className="flex items-center justify-end">
-            <TagSelector
-              title="Roles"
-              id="roles"
-              tags={_ROLETAGS}
-              selectedTags={roles}
-              setSelectedTags={setRoles}
-              titleClass="ml-2"
-            />
-          </div>
-          <div className="flex items-center justify-end">
-            <TagSelector
-              title="Status"
-              id="status"
-              tags={_STATUSTAGS}
-              selectedTags={status}
-              setSelectedTags={setStatus}
-              titleClass="ml-2"
-            />
-          </div>
+        <div className="ml-2 mr-4 flex h-full min-w-[200px] flex-col justify-around">
+          <TagSelector
+            title="Courses"
+            id="courses"
+            tags={_COURSETAGS}
+            selectedTags={courses}
+            setSelectedTags={setCourses}
+            titleClass="mr-2"
+          />
+          <TagSelector
+            title="Assignments"
+            id="assignments"
+            tags={_ASSIGNMENTTAGS}
+            selectedTags={assignments}
+            setSelectedTags={setAssignments}
+            titleClass="mr-2"
+          />
+          <TagSelector
+            title="Roles"
+            id="roles"
+            tags={_ROLETAGS}
+            selectedTags={roles}
+            setSelectedTags={setRoles}
+            titleClass="mr-2"
+          />
+          <TagSelector
+            title="Status"
+            id="status"
+            tags={_STATUSTAGS}
+            selectedTags={status}
+            setSelectedTags={setStatus}
+            titleClass="mr-2"
+          />
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverContent>
+    </Popover>
   );
 }
