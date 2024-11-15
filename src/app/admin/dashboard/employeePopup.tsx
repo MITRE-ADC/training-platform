@@ -22,7 +22,7 @@ import {
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
 import { H2, P, Text } from "@/components/ui/custom/text";
-import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
+import CourseSelectorPopup, { CourseSelectorChildData, CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
 import { useState } from "react";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import { Tag } from "@/components/ui/tag/tag-input";
@@ -129,6 +129,8 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
   const [roles, setRoles] = useState<Tag[]>([]);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
+  const [courseData, setCourseData] = useState<CourseSelectorData[]>([]);
+  const [defaultCourses, setDefaultCourses] = useState<string[]>([]);
 
   async function load() {
     // TODO: replace with user id get once that route is implemented
@@ -148,14 +150,14 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
       const _users: User[] = _u.data.data;
 
       const user = _users.find((u) => u.user_id == employeeId);
-      const assignments = _uassignments.filter((a) => a.user_id == employeeId);
+      const uassignments = _uassignments.filter((a) => a.user_id == employeeId);
       const ucourses = _ucourses.filter((c) => c.user_id == employeeId);
 
       if (!user) return;
 
       const date = new Date();
 
-      let formatted: employee = {
+      const formattedUser: employee = {
         firstName: user.name.split(' ')[0],
         lastName: user.name.split(' ')[1],
         email: user.email,
@@ -165,7 +167,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
           completed: 0,
           todo: 0,
         },
-        assignments: assignments.flatMap((a) => {
+        assignments: uassignments.flatMap((a) => {
             const assignment = _assignments.find((x) => x.assignment_id == a.assignment_id);
             const course = _courses.find((x) => x.course_id == assignment?.course_id);
             const ucourse = ucourses.find((x) => x.course_id == assignment?.course_id);
@@ -187,10 +189,34 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
         })
       };
 
-      setData(formatted);
-      setRoles(formatted.roles);
+      const formattedCourses: CourseSelectorData[] = _courses.map((c) => ({
+          name: c.course_name,
+          id: "c_" + c.course_id,
+          children: _assignments.flatMap((a) => (
+            a.course_id == c.course_id ? {
+              name: a.assignment_name,
+              id: "a_" + a.assignment_id,
+              webgoat: a.webgoat_info,
+              courseId: "" + a.course_id,
+            } : []
+          ))
+        })
+      );
 
-      if (formatted.assignments.length == 0) {
+      const selectedCourses: string[] = uassignments.flatMap((a) => {
+        const _a = _assignments.find((x) => x.assignment_id == a.assignment_id);
+        return _a ? 'a_' + _a.assignment_id : [];
+      });
+
+      console.log(selectedCourses);
+      console.log(formattedCourses);
+
+      setData(formattedUser);
+      setRoles(formattedUser.roles);
+      setCourseData(formattedCourses);
+      setDefaultCourses(selectedCourses);
+
+      if (formattedUser.assignments.length == 0) {
         setPlaceholder('No Results.');
       }
 
@@ -249,7 +275,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <CourseSelectorPopup title="Add Course" email={data.email}>
+              <CourseSelectorPopup title="Add Course" data={courseData} setData={setCourseData} defaultCourses={defaultCourses}>
                 <Button variant="outline" className="text-darkLight">
                   <P className="text-darkLight">Add Courses</P>
                 </Button>

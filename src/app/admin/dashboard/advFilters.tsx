@@ -16,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
 export function AdvancedDashboardFilters() {
   const [courses, setCourses] = useState<Tag[]>([]);
@@ -42,13 +41,13 @@ export function AdvancedDashboardFilters() {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="h-[200px] w-auto translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
+        className="h-[175px] w-auto translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
         style={{
           maxWidth: tableWidth,
         }}
         align="end"
       >
-        <div className="ml-2 mr-4 flex h-full min-w-[200px] flex-col justify-around">
+        <div className="flex h-full min-w-[200px] flex-col justify-around">
           <TagSelector
             title="Courses"
             id="courses"

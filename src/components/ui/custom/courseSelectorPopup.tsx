@@ -19,7 +19,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { req } from "@/lib/utils";
 import { Assignment, Course } from "@/db/schema";
@@ -101,6 +101,14 @@ function CourseSelectorAccordion({
     }
   }
 
+  // ensure internal state is consistent with form
+  course.children.map((child, ind) => {
+    const f = form.getValues(child.id);
+    if (f && f != childIsChecked[ind]) {
+      notify(f as boolean, ind);
+    }
+  });
+
   return (
     <AccordionItem value={course.name} key={ind}>
       <FormField
@@ -145,60 +153,26 @@ function CourseSelectorAccordion({
 export default function CourseSelectorPopup({
   title,
   children,
-  email,
+  data,
+  setData,
+  defaultCourses
 }: {
   title: string;
-  email: string;
   children: JSX.Element;
+  data: CourseSelectorData[],
+  setData: Dispatch<SetStateAction<CourseSelectorData[]>>;
+  defaultCourses: string[];
 }) {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState<CourseSelectorData[]>([]);
 
   const schema = z.record(z.string(), z.boolean().default(false));
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
-  // TODO: replace with auto inputting assignments!
-  useEffect(() => {
-    form.reset();
-
-    if (open && data.length == 0) {
-      axios
-        .all([axios.get(req("api/courses")), axios.get(req("api/assignments"))])
-        .then(
-          axios.spread((_c, _a) => {
-            const courses: Course[] = _c.data.data;
-            const assignments: Assignment[] = _a.data.data;
-
-            const formatted: CourseSelectorData[] = [];
-
-            courses.forEach((c) => {
-              const children: CourseSelectorChildData[] = [];
-              assignments.forEach((a) => {
-                if (a.course_id == c.course_id) {
-                  children.push({
-                    name: a.assignment_name,
-                    id: "a_" + a.assignment_id,
-                    webgoat: a.webgoat_info,
-                    courseId: "" + a.course_id,
-                  });
-                }
-              });
-
-              formatted.push({
-                name: c.course_name,
-                id: "c_" + c.course_id,
-                children: children,
-              });
-            });
-
-            setData(formatted);
-          })
-        );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  defaultCourses.forEach((key) => {
+    form.setValue(key, true);
+  });
 
   return (
     <>
@@ -222,7 +196,7 @@ export default function CourseSelectorPopup({
                   })}
                 >
                   <ScrollArea className="main-outline mb-2 h-[500px] w-full">
-                    <Accordion type="multiple">
+                    <Accordion type="multiple" defaultValue={data.map((c) => c.name)}>
                       {data.length != 0 ? (
                         data.map((course, ind) => (
                           <CourseSelectorAccordion
