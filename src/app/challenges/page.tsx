@@ -1,6 +1,6 @@
 "use client";
 
-import Image from 'next/image'
+import Image from "next/image";
 import { CourseList } from "./courseList";
 import { Input } from "@/components/ui/input";
 import { H1 } from "@/components/ui/custom/text";
@@ -36,8 +36,13 @@ export default function ChallengeHomepage() {
 
   return (
     <div>
-      <div className="mt-[calc(26px+18px)] ml-[calc(43px+18px)]">
-        <Image src="/mitre_logo.png" width="148" height="51" alt="Mitre Logo"></Image>
+      <div className="ml-[calc(43px+18px)] mt-[calc(26px+18px)]">
+        <Image
+          src="/mitre_logo.png"
+          width="148"
+          height="51"
+          alt="Mitre Logo"
+        ></Image>
       </div>
       <div className="h-8"></div>
       <div className="flex h-[825px] w-screen items-center justify-center">
@@ -47,17 +52,20 @@ export default function ChallengeHomepage() {
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-4">
                 <H1>Dashboard</H1>
                 <div className="flex justify-between">
-                <div className="mb-5 mt-4 w-[405px] rounded-md shadow-md border-highlight2 border-[1px] flex items-center justify-start">
-                      <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
-                      <Input placeholder="Search Lessons" className="py-2 border-0 focus-visible:ring-0 font-inter"/>
-                    </div>
-                  <div className="flex flex-col justify-center mb-5 mt-4 rounded-md shadow-md border-highlight2 border-[1px] flex items-center justify-start">
+                  <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
+                    <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
+                    <Input
+                      placeholder="Search Lessons"
+                      className="border-0 py-2 font-inter focus-visible:ring-0"
+                    />
+                  </div>
+                  <div className="mb-5 mt-4 flex flex-col items-center justify-start justify-center rounded-md border-[1px] border-highlight2 shadow-md">
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           role="combobox"
                           aria-expanded={open}
-                          className="h-9 w-[200px] justify-between rounded-full py-2 bg-white hover:bg-white text-black text-base"
+                          className="h-9 w-[200px] justify-between rounded-full bg-white py-2 text-base text-black hover:bg-white"
                         >
                           {value
                             ? frameworks.find(
@@ -75,7 +83,10 @@ export default function ChallengeHomepage() {
                             <CommandEmpty>No framework found.</CommandEmpty>
                             <CommandGroup>
                               {frameworks.map(
-                                (framework: { value: string; label: string }) => (
+                                (framework: {
+                                  value: string;
+                                  label: string;
+                                }) => (
                                   <CommandItem
                                     key={framework.value}
                                     value={framework.value}

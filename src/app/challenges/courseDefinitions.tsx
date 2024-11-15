@@ -1,5 +1,3 @@
-
-
 export type courseAssignment = {
   name: string;
   assigned: string;

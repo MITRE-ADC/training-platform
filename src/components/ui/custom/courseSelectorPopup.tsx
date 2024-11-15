@@ -6,8 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Close } from "@radix-ui/react-dialog";
+import { Close, DialogDescription } from "@radix-ui/react-dialog";
 import { Checkbox } from "../checkbox";
 import {
   Accordion,
@@ -21,6 +20,11 @@ import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { Assignment, Course } from "@/db/schema";
+import { P } from "./text";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export interface CourseSelectorData {
   name: string;
@@ -32,6 +36,8 @@ export interface CourseSelectorData {
 export interface CourseSelectorChildData {
   name: string;
   id: string;
+  courseId: string;
+  webgoat: string;
 }
 
 function CourseSelectorAssignment({
@@ -54,7 +60,7 @@ function CourseSelectorAssignment({
       name={child.id}
       render={() => {
         return (
-          <FormItem className="ml-10 flex gap-2">
+          <FormItem className="ml-10 flex items-center gap-2">
             <FormControl>
               <Checkbox
                 checked={value}
@@ -139,23 +145,58 @@ function CourseSelectorAccordion({
 export default function CourseSelectorPopup({
   title,
   children,
-  data,
+  email,
 }: {
   title: string;
+  email: string;
   children: JSX.Element;
-  data: CourseSelectorData[];
 }) {
-  const schema = z.record(z.string(), z.boolean().default(false));
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<CourseSelectorData[]>([]);
 
+  const schema = z.record(z.string(), z.boolean().default(false));
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
-  const [open, setOpen] = useState(false);
-
   // TODO: replace with auto inputting assignments!
   useEffect(() => {
     form.reset();
+
+    if (open && data.length == 0) {
+      axios
+        .all([axios.get(req("api/courses")), axios.get(req("api/assignments"))])
+        .then(
+          axios.spread((_c, _a) => {
+            const courses: Course[] = _c.data.data;
+            const assignments: Assignment[] = _a.data.data;
+
+            const formatted: CourseSelectorData[] = [];
+
+            courses.forEach((c) => {
+              const children: CourseSelectorChildData[] = [];
+              assignments.forEach((a) => {
+                if (a.course_id == c.course_id) {
+                  children.push({
+                    name: a.assignment_name,
+                    id: "a_" + a.assignment_id,
+                    webgoat: a.webgoat_info,
+                    courseId: "" + a.course_id,
+                  });
+                }
+              });
+
+              formatted.push({
+                name: c.course_name,
+                id: "c_" + c.course_id,
+                children: children,
+              });
+            });
+
+            setData(formatted);
+          })
+        );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -164,10 +205,13 @@ export default function CourseSelectorPopup({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="w-[500px]">
-          <VisuallyHidden.Root>
-            <DialogTitle>{title}</DialogTitle>
-          </VisuallyHidden.Root>
           <DialogHeader>
+            <VisuallyHidden>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>
+                Assign courses and assignments to employee
+              </DialogDescription>
+            </VisuallyHidden>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
               <p className="text-lg font-bold">{title}</p>
               <Form {...form}>
@@ -178,18 +222,21 @@ export default function CourseSelectorPopup({
                   })}
                 >
                   <ScrollArea className="main-outline mb-2 h-[500px] w-full">
-                    <Accordion
-                      type="multiple"
-                      defaultValue={data.map((d) => d.name)}
-                    >
-                      {data.map((course, ind) => (
-                        <CourseSelectorAccordion
-                          key={ind}
-                          course={course}
-                          ind={ind}
-                          form={form}
-                        />
-                      ))}
+                    <Accordion type="multiple">
+                      {data.length != 0 ? (
+                        data.map((course, ind) => (
+                          <CourseSelectorAccordion
+                            key={ind}
+                            course={course}
+                            ind={ind}
+                            form={form}
+                          />
+                        ))
+                      ) : (
+                        <div className="flex w-full justify-center py-2">
+                          <P>Loading...</P>
+                        </div>
+                      )}
                     </Accordion>
                   </ScrollArea>
                   <div className="flex gap-2">

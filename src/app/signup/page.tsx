@@ -61,7 +61,7 @@ export default function SignUpPage() {
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.firstName ? "border-2 border-customRed" : ""}`}
+              className={`mb-4 ${fieldErrors.firstName ? "border-customRed border-2" : ""}`}
               placeholder="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -70,7 +70,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.lastName ? "border-2 border-customRed" : ""}`}
+              className={`mb-4 ${fieldErrors.lastName ? "border-customRed border-2" : ""}`}
               placeholder="Last name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -79,7 +79,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? "border-2 border-customRed" : ""}`}
+              className={`mb-4 ${fieldErrors.email ? "border-customRed border-2" : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -89,7 +89,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.password ? "border-2 border-customRed" : ""}`}
+              className={`mb-4 ${fieldErrors.password ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -109,7 +109,7 @@ export default function SignUpPage() {
           </div>
 
           {errorMessage && (
-            <p className="mb-4 text-customRed">{errorMessage}</p>
+            <p className="text-customRed mb-4">{errorMessage}</p>
           )}
 
           <br />

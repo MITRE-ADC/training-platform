@@ -79,14 +79,14 @@ const SubmitModal = ({
           </div>
           <div className="flex space-x-2">
             <Button
-              className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-white hover:bg-slate-100 text-sm"
+              className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-100"
               disabled={!file || !honorPledge}
             >
               Submit
             </Button>
             <Button
               onClick={onClose}
-              className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-white hover:bg-slate-100 text-sm"
+              className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-100"
             >
               Close
             </Button>
@@ -150,7 +150,7 @@ export function CourseList() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
-                    <Button className="w-32 rounded-md bg-blue px-16 py-5 text-white hover:bg-slate-100 text-sm">
+                    <Button className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-100">
                       Link to Lesson
                     </Button>
                     <Button
