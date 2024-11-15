@@ -259,7 +259,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       >
         <div
           className={
-            "relative flex h-full items-center bg-transparent group " +
+            "group relative flex h-full items-center bg-transparent " +
             classStyleProps?.span
           }
           ref={triggerContainerRef}

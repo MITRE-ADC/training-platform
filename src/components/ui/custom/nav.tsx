@@ -17,8 +17,12 @@ export default function Navigation({ name }: { name: string }) {
             <div>{name}</div>
             <div>
               <b>Navigation</b>
-              <p className="ml-2">Dashboard</p>
-              <p className="ml-2">Challenge Portal</p>
+              <a href="/admin/dashboard">
+                <p className="ml-2">Dashboard</p>
+              </a>
+              <a href="/challenges">
+                <p className="ml-2">Challenge Portal</p>
+              </a>
             </div>
             <div>
               <b>Account Settings</b>
