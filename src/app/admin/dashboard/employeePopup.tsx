@@ -102,21 +102,18 @@ const columns: ColumnDef<employeeAssignment>[] = [
   },
 ];
 
-function EmployeeInfo({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) {
+function EmployeeInfo({ title, value }: { title: string; value: string }) {
   return (
     <TableRow className="border-b-0">
       <TableCell className="p-0 pr-6">
         <P>{title}</P>
       </TableCell>
       <TableCell className="p-0">
-        <P className="text-darkBlue w-min flex items-center h-9">
-          <Input defaultValue={value} className="w-min border-0 shadow-none focus-visible:ring-0 focus-visible:border-b-[1px] rounded-none py-0 h-min pl-1"/>
+        <P className="flex h-9 w-min items-center text-darkBlue">
+          <Input
+            defaultValue={value}
+            className="h-min w-min rounded-none border-0 py-0 pl-1 shadow-none focus-visible:border-b-[1px] focus-visible:ring-0"
+          />
           <i className="ri-edit-2-line -translate-x-full"></i>
         </P>
       </TableCell>
@@ -248,15 +245,22 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
             <H2>Employee Information</H2>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
-                <EmployeeInfo title="Name" value={data.firstName && data.lastName ? data.firstName + " " + data.lastName : ''} />
+                <EmployeeInfo
+                  title="Name"
+                  value={
+                    data.firstName && data.lastName
+                      ? data.firstName + " " + data.lastName
+                      : ""
+                  }
+                />
                 <EmployeeInfo title="Email" value={data.email} />
                 <TableRow className="border-b-0">
                   <TableCell className="p-0 pr-6">
                     <P>Role</P>
                   </TableCell>
-                  <TableCell className="p-0 w-full">
-                    <P className="translate-y-[2px] text-darkBlue block">
-                      <div className="max-w-[750px] w-min">
+                  <TableCell className="w-full p-0">
+                    <P className="block translate-y-[2px] text-darkBlue">
+                      <div className="w-min max-w-[750px]">
                         <TagSelector
                           title=""
                           id="roles"
