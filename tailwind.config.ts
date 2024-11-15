@@ -9,12 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        customRed: "#E95D58",
-        customGreen: "#72BF6D",
-        customYellow: "#FEE47B",
-        buttonBlue: "#8CB1CA",
+        highlight: '#E5E7EB',
+        highlight2: "#CBD5E1",
+        darkLight: '#73737B',
+        dark: '#334155',
+        lightBlue: '#94A3B8',
+        blue: '#8CB1CA',
+        navy: '#1E293B',
+        darkBlue: '#64748B',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        green: '#72BF6D',
+        yellow: '#FEE47B',
+        red: '#E95D58',
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

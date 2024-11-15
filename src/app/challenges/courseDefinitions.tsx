@@ -1,5 +1,4 @@
-import { CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
-import { Tag } from "@/components/ui/tag/tag-input";
+
 
 export type courseAssignment = {
   name: string;

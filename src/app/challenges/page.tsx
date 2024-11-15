@@ -1,9 +1,9 @@
 "use client";
 
-import Navigation from "@/components/ui/custom/nav";
+import Image from 'next/image'
 import { CourseList } from "./courseList";
 import { Input } from "@/components/ui/input";
-import { H2 } from "@/components/ui/custom/text";
+import { H1 } from "@/components/ui/custom/text";
 import {
   Command,
   CommandEmpty,
@@ -36,8 +36,8 @@ export default function ChallengeHomepage() {
 
   return (
     <div>
-      <div className="m-6">
-        <Navigation name="Admin"></Navigation>
+      <div className="mt-[calc(26px+18px)] ml-[calc(43px+18px)]">
+        <Image src="/mitre_logo.png" width="148" height="51" alt="Mitre Logo"></Image>
       </div>
       <div className="h-8"></div>
       <div className="flex h-[825px] w-screen items-center justify-center">
@@ -45,22 +45,19 @@ export default function ChallengeHomepage() {
           <div className="flex-grow">
             <div className="h-full">
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-4">
-                <H2>Your Lessons</H2>
+                <H1>Dashboard</H1>
                 <div className="flex justify-between">
-                  <div className="relative mb-6 mt-6 w-[500px]">
-                    <Input
-                      placeholder="Search Lessons"
-                      className="flex justify-end rounded-full py-2"
-                    />
-                    <span className="ri-search-line absolute right-3 top-1/2 -translate-y-1/2 transform"></span>
-                  </div>
-                  <div className="flex flex-col justify-center">
+                <div className="mb-5 mt-4 w-[405px] rounded-md shadow-md border-highlight2 border-[1px] flex items-center justify-start">
+                      <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
+                      <Input placeholder="Search Lessons" className="py-2 border-0 focus-visible:ring-0 font-inter"/>
+                    </div>
+                  <div className="flex flex-col justify-center mb-5 mt-4 rounded-md shadow-md border-highlight2 border-[1px] flex items-center justify-start">
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           role="combobox"
                           aria-expanded={open}
-                          className="h-9 w-[200px] justify-between rounded-full py-2"
+                          className="h-9 w-[200px] justify-between rounded-full py-2 bg-white hover:bg-white text-black text-base"
                         >
                           {value
                             ? frameworks.find(
@@ -78,7 +75,7 @@ export default function ChallengeHomepage() {
                             <CommandEmpty>No framework found.</CommandEmpty>
                             <CommandGroup>
                               {frameworks.map(
-                                (framework: { value: string; label: any }) => (
+                                (framework: { value: string; label: string }) => (
                                   <CommandItem
                                     key={framework.value}
                                     value={framework.value}

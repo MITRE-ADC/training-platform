@@ -24,6 +24,10 @@ const SubmitModal = ({
     }
   };
 
+  const handleCheckboxChange = (checked: "indeterminate" | boolean) => {
+    setHonorPledge(checked === true);
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/20">
       <Card className="w-[480px]">
@@ -57,7 +61,7 @@ const SubmitModal = ({
               <Checkbox
                 id="honorPledge"
                 checked={honorPledge}
-                onCheckedChange={setHonorPledge}
+                onCheckedChange={handleCheckboxChange}
                 className="mt-1"
               />
               <div>
@@ -75,14 +79,14 @@ const SubmitModal = ({
           </div>
           <div className="flex space-x-2">
             <Button
-              className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-white hover:bg-slate-100"
+              className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-white hover:bg-slate-100 text-sm"
               disabled={!file || !honorPledge}
             >
               Submit
             </Button>
             <Button
               onClick={onClose}
-              className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-white hover:bg-slate-100"
+              className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-white hover:bg-slate-100 text-sm"
             >
               Close
             </Button>
@@ -121,10 +125,10 @@ export function CourseList() {
                       <span
                         className={`rounded-full px-2 py-1 text-sm font-semibold ${
                           assignment.status === "done"
-                            ? "bg-customGreen text-white"
+                            ? "bg-green text-white"
                             : assignment.status === "overdue"
-                              ? "bg-customRed text-white"
-                              : "bg-customYellow text-white"
+                              ? "bg-red text-white"
+                              : "bg-yellow text-white"
                         }`}
                       >
                         {assignment.status === "done"
@@ -146,11 +150,11 @@ export function CourseList() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
-                    <Button className="w-32 rounded-md bg-buttonBlue px-16 py-5 text-white hover:bg-slate-100">
+                    <Button className="w-32 rounded-md bg-blue px-16 py-5 text-white hover:bg-slate-100 text-sm">
                       Link to Lesson
                     </Button>
                     <Button
-                      className={`w-32 rounded-md px-16 py-5 ${
+                      className={`w-32 rounded-md px-16 py-5 text-sm ${
                         assignment.status === "done"
                           ? "cursor-not-allowed bg-slate-400 text-white"
                           : "bg-slate-800 text-white hover:bg-slate-100"
