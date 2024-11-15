@@ -129,21 +129,27 @@ export const Tag: React.FC<TagProps> = ({
           "cursor-pointer": draggable,
           "ring-2 ring-ring ring-offset-2 ring-offset-background": isActiveTag,
         },
-        tagClasses?.body
+        tagClasses?.body,
+        "mr-1"
       )}
-      onClick={() => onTagClick?.(tagObj)}
+      onClick={(e) => {
+        onRemoveTag(tagObj.id);
+
+        // onTagClick?.(tagObj)
+      }}
     >
       {tagObj.text}
       <Button
         type="button"
         variant="ghost"
         onClick={(e) => {
-          e.stopPropagation(); // Prevent event from bubbling up to the tag span
-          onRemoveTag(tagObj.id);
+          //e.stopPropagation(); // Prevent event from bubbling up to the tag span
+          //onRemoveTag(tagObj.id);
+          //e.preventDefault();
         }}
-        disabled={disabled}
+        disabled={true}
         className={cn(
-          `h-full px-3 py-1 hover:bg-transparent`,
+          `z-50 h-full px-3 py-1 hover:bg-transparent`,
           tagClasses?.closeButton
         )}
       >
