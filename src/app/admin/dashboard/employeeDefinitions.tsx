@@ -31,16 +31,13 @@ export type employeeOverview = {
   email: string;
   roles: string[];
   tasks: employeeTasks;
+  id: number;
 };
 
 export enum MountStatus {
   isMounted,
   isNotMounted,
   isFirstMounted,
-}
-
-export function getManageEmployees(): employeeOverview[] {
-  return _DATAOVERVIEW;
 }
 
 export function getEmployeeData(email: string): employee | undefined {
@@ -166,64 +163,6 @@ const _DATA: employee[] = [
       todo: 6,
     },
     assignments: [],
-  },
-];
-
-const _DATAOVERVIEW: employeeOverview[] = [
-  {
-    firstName: "John",
-    lastName: "Doe",
-    roles: ["Project Manager", "Cybersecurity Engineer"],
-    email: "email@email.org",
-    tasks: {
-      overdue: 2,
-      completed: 1,
-      todo: 2,
-    },
-  },
-  {
-    firstName: "Jane",
-    lastName: "Doe",
-    roles: ["Software Engineer"],
-    email: "helloworld@mitre.company.csec",
-    tasks: {
-      overdue: 1,
-      completed: 5,
-      todo: 0,
-    },
-  },
-  {
-    firstName: "Emilia",
-    lastName: "Oneal",
-    roles: [],
-    email: "helloworld@mitre.company.csec",
-    tasks: {
-      overdue: 0,
-      completed: 1,
-      todo: 2,
-    },
-  },
-  {
-    firstName: "Will",
-    lastName: "Zamora",
-    roles: [],
-    email: "helloworld@mitre.company.csec",
-    tasks: {
-      overdue: 0,
-      completed: 10,
-      todo: 0,
-    },
-  },
-  {
-    firstName: "Ibraheem",
-    lastName: "White",
-    roles: [],
-    email: "helloworld@mitre.company.csec",
-    tasks: {
-      overdue: 0,
-      completed: 4,
-      todo: 6,
-    },
   },
 ];
 

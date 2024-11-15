@@ -18,6 +18,7 @@ import {
   getEmployeeData,
   EMPTY_EMPLOYEE,
   _ROLETAGS,
+  EMPTY_EMPLOYEE_ASSIGNMENT,
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
 import { H2, P, Text } from "@/components/ui/custom/text";
@@ -27,6 +28,9 @@ import { TagSelector } from "@/components/ui/custom/tagSelector";
 import { Tag } from "@/components/ui/tag/tag-input";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { Assignment, Course, User, User_Assignment, User_Course } from "@/db/schema";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -121,27 +125,85 @@ function EmployeeInfo({
   );
 }
 
-export default function EmployeePopup({ employee }: { employee: string }) {
+export default function EmployeePopup({ employeeId }: { employeeId: number }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
   const [roles, setRoles] = useState<Tag[]>([]);
+  const [placeholder, setPlaceholder] = useState<string>("Loading...");
 
-  function load() {
-    setTimeout(() => {
-      //const d = getEmployeeData(employee);
-      const d = getEmployeeData("email@email.org");
-      if (d) {
-        console.log(d);
-        setData(d);
-        setRoles(d.roles);
-      } else console.error("Trying to find unknown employee " + employee);
-    }, 500);
+  async function load() {
+    // TODO: replace with user id get once that route is implemented
+    setPlaceholder('Loading...');
+
+    axios.all([
+      axios.get(req('api/user_assignments')),
+      axios.get(req('api/user_courses')),
+      axios.get(req('api/assignments')),
+      axios.get(req('api/courses')),
+      axios.get(req('api/users')),
+    ]).then(axios.spread((_ua, _uc, _a, _c, _u) => {
+      const _uassignments: User_Assignment[] = _ua.data.data;
+      const _ucourses: User_Course[] = _uc.data.data;
+      const _assignments: Assignment[] = _a.data.data;
+      const _courses: Course[] = _c.data.data;
+      const _users: User[] = _u.data.data;
+
+      const user = _users.find((u) => u.user_id == employeeId);
+      const assignments = _uassignments.filter((a) => a.user_id == employeeId);
+      const ucourses = _ucourses.filter((c) => c.user_id == employeeId);
+
+      if (!user) return;
+
+      const date = new Date();
+
+      let formatted: employee = {
+        firstName: user.name.split(' ')[0],
+        lastName: user.name.split(' ')[1],
+        email: user.email,
+        roles: [],
+        tasks: {
+          overdue: 0,
+          completed: 0,
+          todo: 0,
+        },
+        assignments: assignments.flatMap((a) => {
+            const assignment = _assignments.find((x) => x.assignment_id == a.assignment_id);
+            const course = _courses.find((x) => x.course_id == assignment?.course_id);
+            const ucourse = ucourses.find((x) => x.course_id == assignment?.course_id);
+
+            if (!assignment || !course || !ucourse) {
+              console.error("Could not find assignment " + a.assignment_id + " or its related course.");
+              return [];
+            }
+
+            return {
+              course: course.course_name,
+              assignment: assignment.assignment_name,
+              assigned: ucourse.assigned_date ? ucourse.assigned_date.toDateString() : 'Unknown',
+              due: ucourse.due_date ? ucourse.due_date.toDateString() : 'No Deadline',
+              status: a.completed ? 'done' : (
+                ucourse.due_date ? (ucourse.due_date > date ? 'todo' : 'overdue') : 'todo'
+              ),
+            }
+        })
+      };
+
+      setData(formatted);
+      setRoles(formatted.roles);
+
+      if (formatted.assignments.length == 0) {
+        setPlaceholder('No Results.');
+      }
+
+    })).catch(() => setPlaceholder('No Results.'));
   }
 
   return (
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="default" onClick={load}>
+          {/* Even though load should be async, it causes animation lag when the sheet opens, so
+            * delay the call until the sheet fully opens */}
+          <Button variant="default" onClick={() => setTimeout(() => load(), 500)}>
             Expand
           </Button>
         </SheetTrigger>
@@ -150,7 +212,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <VisuallyHidden>
               <SheetTitle>Employee Popup</SheetTitle>
               <SheetDescription>
-                Course and assignment information for {employee}
+                Course and assignment information for employee {employeeId}
               </SheetDescription>
               {/* hidden field to take away auto focus on name field */}
               <input></input>
@@ -198,6 +260,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
                 columns={columns}
                 data={data["assignments"]}
                 defaultSort="status"
+                placeholder={placeholder}
               />
             </div>
             <div className="flex justify-end gap-4 font-sans">

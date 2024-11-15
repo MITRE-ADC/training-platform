@@ -7,7 +7,6 @@ import {
   MountStatus,
   employeeOverview,
   employeeTasks,
-  getManageEmployees,
 } from "./employeeDefinitions";
 import { useEffect, useState } from "react";
 import { P } from "@/components/ui/custom/text";
@@ -74,7 +73,7 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     id: "expand",
-    cell: ({ row }) => <EmployeePopup employee={row.getValue("email")} />,
+    cell: ({ row }) => <EmployeePopup employeeId={row.original.id} />,
   },
 ];
 
@@ -111,6 +110,7 @@ export default function EmployeeList() {
               completed: 0,
               todo: 0,
             },
+            id: user.user_id,
           });
         });
 
