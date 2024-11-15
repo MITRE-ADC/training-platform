@@ -26,6 +26,7 @@ import { useState } from "react";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import { Tag } from "@/components/ui/tag/tag-input";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Input } from "@/components/ui/input";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -100,11 +101,9 @@ const columns: ColumnDef<employeeAssignment>[] = [
 function EmployeeInfo({
   title,
   value,
-  children,
 }: {
   title: string;
-  value: string | JSX.Element;
-  children: React.ReactNode;
+  value: string;
 }) {
   return (
     <TableRow className="border-b-0">
@@ -112,8 +111,10 @@ function EmployeeInfo({
         <P>{title}</P>
       </TableCell>
       <TableCell className="p-0">
-        <P className="text-darkBlue">{value}</P>
-        {children}
+        <P className="text-darkBlue w-min flex items-center h-9">
+          <Input defaultValue={value} className="w-min border-0 shadow-none focus-visible:ring-0 focus-visible:border-b-[1px] rounded-none py-0 h-min pl-1"/>
+          <i className="ri-edit-2-line -translate-x-full"></i>
+        </P>
       </TableCell>
       <TableCell className="w-full"></TableCell>
     </TableRow>
@@ -156,25 +157,8 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <H2>Employee Information</H2>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
-                <EmployeeInfo
-                  title="Name"
-                  value={data["firstName"] + " " + data["lastName"]}
-                >
-                  <StringPopup
-                    title="Update Name"
-                    openBut={
-                      <i className="ri-edit-2-line ml-2 cursor-pointer text-darkBlue"></i>
-                    }
-                  />
-                </EmployeeInfo>
-                <EmployeeInfo title="Email" value={data["email"]}>
-                  <StringPopup
-                    title="Update Email"
-                    openBut={
-                      <i className="ri-edit-2-line ml-2 cursor-pointer text-darkBlue"></i>
-                    }
-                  />
-                </EmployeeInfo>
+                <EmployeeInfo title="Name" value={data["firstName"] + " " + data["lastName"]}/>
+                <EmployeeInfo title="Email" value={data["email"]} />
                 <TableRow className="border-b-0">
                   <TableCell className="p-0 pr-6">
                     <P>Role</P>
