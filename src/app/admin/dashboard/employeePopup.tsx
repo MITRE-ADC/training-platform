@@ -130,6 +130,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
       //const d = getEmployeeData(employee);
       const d = getEmployeeData("email@email.org");
       if (d) {
+        console.log(d);
         setData(d);
         setRoles(d.roles);
       } else console.error("Trying to find unknown employee " + employee);
@@ -151,14 +152,16 @@ export default function EmployeePopup({ employee }: { employee: string }) {
               <SheetDescription>
                 Course and assignment information for {employee}
               </SheetDescription>
+              {/* hidden field to take away auto focus on name field */}
+              <input></input>
             </VisuallyHidden>
           </SheetHeader>
           <div className="flex h-full w-full flex-col gap-4 px-16 pb-8 pt-12">
             <H2>Employee Information</H2>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
-                <EmployeeInfo title="Name" value={data["firstName"] + " " + data["lastName"]}/>
-                <EmployeeInfo title="Email" value={data["email"]} />
+                <EmployeeInfo title="Name" value={data.firstName && data.lastName ? data.firstName + " " + data.lastName : ''} />
+                <EmployeeInfo title="Email" value={data.email} />
                 <TableRow className="border-b-0">
                   <TableCell className="p-0 pr-6">
                     <P>Role</P>

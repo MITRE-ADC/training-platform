@@ -243,8 +243,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       if (p > 0.9 && fadeClass == "fade-right") setFadeClass("mask-none");
       else if (p <= 0.9 && fadeClass == "mask-none") setFadeClass("fade-right");
     }
-
-    console.log(p);
   }
 
   return (
