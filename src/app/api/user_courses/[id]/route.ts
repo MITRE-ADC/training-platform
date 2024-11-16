@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 
 // GET assignment info
-export async function GET(request: NextRequest, context: { params: Promise<{ id: number }> }) 
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) 
 {
   try {
       return NextResponse.json(

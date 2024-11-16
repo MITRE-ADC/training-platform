@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { error, processCreateUserRequest } from "../../util";
 
 // // GET assignment info
-// export async function GET(request: NextRequest, context: { params: Promise<{ id: number }> })
+// export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> })
 // {
 //   try {
 //       return NextResponse.json(
@@ -36,13 +36,13 @@ export async function POST(request: NextRequest) {
     const body = selectUsersSchema.parse(await request.json());
 
     const exists =
-      (await db.selectDistinct().from(users).where(eq(users.user_id, body.user_id)))
+      (await db.selectDistinct().from(users).where(eq(users.id, body.id)))
         .length > 0;
 
     if (!exists) return processCreateUserRequest(request);
 
     await db.insert(users).values(body).onConflictDoUpdate({
-      target: users.user_id,
+      target: users.id,
       set: body
     });
 

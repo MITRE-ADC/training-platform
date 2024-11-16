@@ -3,7 +3,7 @@ import { db } from "@/db/index";
 import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { addUser, userEmailExists } from "@/db/queries";
+import { getUserByEmail, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 
@@ -24,15 +24,14 @@ export async function POST(req: NextRequest) {
         .insert(users)
         .values({ name: name, email: email, pass: password });
 
-      
       // await addUser({name: name, email: email, pass: password});
       console.log("adding worked");
-      let user = await userEmailExists(email);
-      if (user != null){
+      const exists = await userEmailExists(email);
+      if (exists){
+        const user = await getUserByEmail(email);
         const maxAge = 24 * 3600 * 7;
         setJwtCookie(user.id, maxAge);
       }
-      
 
       await cookies();
       return NextResponse.json({ name: name, email: email }, {status: HttpStatusCode.Ok});

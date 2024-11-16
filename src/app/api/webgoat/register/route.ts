@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { error } from "../../util";
-import { register_user } from "../util";
+// import { register_user } from "../util";
 import { HttpStatusCode } from "axios";
 
 
@@ -17,14 +17,15 @@ export async function POST(request: NextRequest) {
     if(!username || !password)
       return error("Please specify a name and password");
 
-    const ok = await register_user(username, password);
-    if(!ok)
-      return error("Error registering user");
+    // const ok = await register_user(username, password);
+    // if(!ok)
+    //   return error("Error registering user");
+    //
 
-    return NextResponse.json(
-      {message: "Created user"}, 
-      {status: HttpStatusCode.Created}
-    );
+    // return NextResponse.json(
+    //   {message: "Created user"}, 
+    //   {status: HttpStatusCode.Created}
+    // );
   } 
   catch (ex)
   {

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 //export { handler as GET, handler as POST} from "@/db/auth";
 import { HttpStatusCode } from "axios";
-import { userEmailExists } from "@/db/queries";
+import { getUserByEmail, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 
@@ -17,23 +17,20 @@ export async function POST(req: Request) {
     const { email, password } = await req.json();
     console.log("signin ");
     try {
-      let user = await userEmailExists(email);
-      if (!user) {
+      const exists = await userEmailExists(email);
+      if (!exists) {
         console.log("querying error / may not exist idk");
         return NextResponse.json({error: "This email has not been registered."}, {status: HttpStatusCode.BadRequest});
       }
 
+      const user = await getUserByEmail(email);
       if(user.pass == password) {
-
-        
         console.log("SUCESSSS!!!!");
 
         const maxAge = 24 * 3600 * 7;
-        
         setJwtCookie(user.id, maxAge);
 
         await cookies();
-        
         const response = NextResponse.json({ email: email }, {status: HttpStatusCode.Ok});
 
         return response;
