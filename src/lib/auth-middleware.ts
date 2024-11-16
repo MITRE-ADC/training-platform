@@ -1,9 +1,8 @@
 import { cookies } from "next/headers";
-import { cache } from "react";
 import { db } from "../db/index";
-import { eq, or } from "drizzle-orm";
+import { eq} from "drizzle-orm";
+import { jwt } from "jsonwebtoken"
 
-var jwt = require('jsonwebtoken');
 import { users } from "@/db/schema";
 import type { User}  from "../db/schema"
 import { NextRequest } from "next/server";
@@ -42,6 +41,7 @@ export async function validateJwtToken(token: string): Promise<SessionValidation
 		return { user: user };
 	} catch (error) {
 		// Token verification failed or token expired
+    console.log(error)
 		return { user: null };
 	}
 }
@@ -50,7 +50,7 @@ export async function setJwtCookie(userID: string, maxAge: number): Promise<void
 	const cookieStore = await cookies();
 	console.log("THE USER ID IS "+userID)
 	const expiresIn = 1000 * 60 * 60 * 24 * 30;
-	var token = jwt.sign({ userID: userID,
+	const token = jwt.sign({ userID: userID,
 	}, JWT_SECRET,{ expiresIn });
 	cookieStore.set("session", token, {
 		httpOnly: true,

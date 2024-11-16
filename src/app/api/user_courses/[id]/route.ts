@@ -1,4 +1,4 @@
-import { getAssignmentsByUser, getCoursesByUser } from "@/db/queries";
+import { getCoursesByUser } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 
@@ -6,6 +6,7 @@ import { HttpStatusCode } from "axios";
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) 
 {
   try {
+      console.log(request.url)
       return NextResponse.json(
         { data: await getCoursesByUser((await context.params).id) },
         { status: HttpStatusCode.Ok }

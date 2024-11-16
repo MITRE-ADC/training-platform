@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
     //   return error("Error registering user");
     //
 
-    // return NextResponse.json(
-    //   {message: "Created user"}, 
-    //   {status: HttpStatusCode.Created}
-    // );
+    return NextResponse.json(
+      {message: "Created user"}, 
+      {status: HttpStatusCode.Created}
+    );
   } 
   catch (ex)
   {

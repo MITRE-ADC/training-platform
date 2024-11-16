@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { HttpStatusCode } from "axios";
-import { locateUser, selectUsersSchema, User, users } from "@/db/schema";
+import { selectUsersSchema, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { error, processCreateUserRequest } from "../../util";

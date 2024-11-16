@@ -3,10 +3,6 @@ import { db } from "./index";
 import {
   users,
   courses,
-  User,
-  Assignment,
-  User_Assignment,
-  User_Course,
   Course,
   assignments,
   user_assignments,

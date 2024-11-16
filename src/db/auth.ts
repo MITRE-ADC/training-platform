@@ -2,29 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "./index";
-import { eq } from "drizzle-orm";
-import { accounts, users } from "./schema";
-
-async function getUserFromDb(email: string) {
-  // const user = await db
-  //   .select()
-  //   .from(users)
-  //   .where(eq(users.email, email));
-  // return user;
-
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
-  return user;
-}
-
-// export const { handlers, auth, signIn, signOut } = NextAuth({
-//   adapter: DrizzleAdapter(db, {
-//     usersTable: users,
-//     accountsTable: accounts,
-//   }),
-//   providers: [],
-// });
+import { getUserByEmail } from "./queries";
 
 export const {
   handler,
@@ -43,6 +21,7 @@ export const {
       async authorize(credentials, req) {
         let user = null;
 
+        console.log(req.body ?? "no body")
         if (credentials == undefined) {
           return null;
         }
@@ -54,7 +33,7 @@ export const {
           return null;
         }
 
-        user = await getUserFromDb(email);
+        user = await getUserByEmail(email);
 
         if (user) {
 
