@@ -4,16 +4,17 @@ import {
   users,
   courses,
   User,
+  Assignment,
+  User_Assignment,
+  User_Course,
   Course,
-  //User_Assignment,
-  //User_Course,
   assignments,
   user_assignments,
   user_courses,
   AddUser,
   AddCourse,
   AddAssignment,
-  AddUserCourse,
+  // AddUserCourse,
   AddUserAssignment,
   statusEnumSchema,
 } from "./schema";
@@ -27,89 +28,58 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
-export async function updateUser(user: User) {
-  return await db
-    .update(users)
-    .set(user)
-    .where(eq(users.user_id, user.user_id));
-}
+// // Update a user
+// export async function updateUser(user: User) {
+//   return await db
+//     .update(users)
+//     .set(user)
+//     .where(eq(users.id, user.user_id));
+// }
 
-export async function deleteUser(id: number) {
-  return await db.delete(users).where(eq(users.user_id, id));
-}
-
-export async function userIdExists(id: number) {
-  return (
-    (await db.$count(db.select().from(users).where(eq(users.user_id, id)))) > 0
-  );
-}
 export async function userEmailExists(email: string) {
-  return (
-    (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
-  );
-}
+  return await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });}
 
-export async function userNameExists(name: string) {
-  return (
-    (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
-  );
-}
+  // export async function userEmailExists(email: string) {
+  //   return await db.select().from(users).where(eq(users.email, email)).limit(1);
+  // }
 
-export async function courseIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(courses).where(eq(courses.course_id, id))
-    )) > 0
-  );
-}
+// export async function updateUser(user: User) {
+//   return await db
+//     .update(users)
+//     .set(user)
+//     .where(eq(users.user_id, user.user_id));
+// }
 
-export async function courseNameExists(name: string) {
-  // https://orm.drizzle.team/docs/query-utils
-  return (
-    (await db.$count(
-      db.select().from(courses).where(eq(courses.course_name, name))
-    )) > 0
-  );
-}
+// export async function deleteUser(id: number) {
+//   return await db.delete(users).where(eq(users.user_id, id));
+// }
 
-export async function userCourseIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(user_courses).where(eq(user_courses.user_course_id, id))
-    )) > 0
-  );
-}
+// export async function userIdExists(id: number) {
+//   return (
+//     (await db.$count(db.select().from(users).where(eq(users.user_id, id)))) > 0
+//   );
+// }
+// export async function userEmailExists(email: string) {
+//   return (
+//     (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
+//   );
+// }
 
-export async function userCourseExists(course_id: number, user_id: number) {
-  return (
-    (await db.$count(
-      db
-        .select()
-        .from(user_courses)
-        .where(
-          and(
-            eq(user_courses.course_id, course_id),
-            eq(user_courses.user_id, user_id)
-          )
-        )
-    )) > 0
-  );
-}
+// export async function userNameExists(name: string) {
+//   return (
+//     (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
+//   );
+// }
 
-export async function assignmentIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_id, id))
-    )) > 0
-  );
-}
-export async function assignmentNameExists(name: string) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_name, name))
-    )) > 0
-  );
-}
+// export async function courseIdExists(id: number) {
+//   return (
+//     (await db.$count(
+//       db.select().from(courses).where(eq(courses.course_id, id))
+//     )) > 0
+//   );
+// }
 
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
   return (
@@ -206,20 +176,50 @@ export async function getAllCourses() {
   return await db.select().from(courses);
 }
 
-export async function addCourse(course: AddCourse) {
-  return await db.insert(courses).values(course).returning();
-}
+// export async function assignmentIdExists(id: number) {
+//   return (
+//     (await db.$count(
+//       db.select().from(assignments).where(eq(assignments.assignment_id, id))
+//     )) > 0
+//   );
+// }
+  // export async function assignmentNameExists(name: string) {
+//   return (
+//     (await db.$count(
+//       db.select().from(assignments).where(eq(assignments.assignment_name, name))
+//     )) > 0
+//   );
+// }
 
-export async function updateCourse(course: Course) {
-  return await db
-    .update(courses)
-    .set(course)
-    .where(eq(courses.course_id, course.course_id));
-}
+// export async function userAssignmentIdExists(id: number) {
+//   return (
+//     (await db.$count(
+//       db
+//         .select()
+//         .from(user_assignments)
+//         .where(eq(user_assignments.user_assignment_id, id))
+//     )) > 0
+//   );
+// }
 
-export async function getCourse(courseId: number) {
-  return await db.select().from(courses).where(eq(courses.course_id, courseId));
-}
+// export async function userAssignmentExists(
+//   assignment_id: number,
+//   user_id: number
+// ) {
+//   return (
+//     (await db.$count(
+//       db
+//         .select()
+//         .from(user_assignments)
+//         .where(
+//           and(
+//             eq(user_assignments.assignment_id, assignment_id),
+//             eq(user_assignments.user_id, user_id)
+//           )
+//         )
+//     )) > 0
+//   );
+// }
 
 export async function getCourseByName(course_name: string) {
   return (
@@ -239,16 +239,15 @@ export async function deleteCourse(courseId: number) {
   return await db.delete(courses).where(eq(courses.course_id, courseId));
 }
 
-// Assignment
-export async function getAllAssignments() {
-  return await db.select().from(assignments);
+export async function addCourse(course: AddCourse) {
+  return await db.insert(courses).values(course).returning();
 }
 
-export async function getAssignmentsByCourse(courseId: number) {
+export async function updateCourse(course: Course) {
   return await db
-    .select()
-    .from(assignments)
-    .where(eq(assignments.course_id, courseId));
+    .update(courses)
+    .set(course)
+    .where(eq(courses.course_id, course.course_id));
 }
 
 export async function getAssignment(assignmentId: number) {
@@ -273,97 +272,3 @@ export async function addAssignment(assignment: AddAssignment) {
   return await db.insert(assignments).values(assignment).returning();
 }
 
-export async function deleteAssignment(assignmentId: number) {
-  return await db
-    .delete(assignments)
-    .where(eq(assignments.assignment_id, assignmentId));
-}
-
-// User assignment
-export async function getAllUserAssignments() {
-  return await db.select().from(user_assignments);
-}
-
-export async function getAssignmentsByUser(userId: number) {
-  return await db
-    .select()
-    .from(user_assignments)
-    .where(eq(user_assignments.user_id, userId));
-}
-
-export async function addUserAssignment(userAssignment: AddUserAssignment) {
-  return await db.insert(user_assignments).values(userAssignment).returning();
-}
-
-export async function updateUserAssignment(
-  userId: number,
-  assignmentId: number,
-  completed: boolean
-) {
-  return await db
-    .update(user_assignments)
-    .set({ completed })
-    .where(
-      and(
-        eq(user_assignments.user_id, userId),
-        eq(user_assignments.assignment_id, assignmentId)
-      )
-    );
-}
-
-export async function deleteUserAssignment(
-  userId: number,
-  assignmentId: number
-) {
-  return await db
-    .delete(user_assignments)
-    .where(
-      and(
-        eq(user_assignments.user_id, userId),
-        eq(user_assignments.assignment_id, assignmentId)
-      )
-    );
-}
-
-// User courses
-export async function getAllUserCourses() {
-  return await db.select().from(user_courses);
-}
-
-export async function getCoursesByUser(userId: number) {
-  return await db
-    .select()
-    .from(user_courses)
-    .where(eq(user_courses.user_id, userId));
-}
-
-export async function addUserCourse(userCourse: AddUserCourse) {
-  return await db.insert(user_courses).values(userCourse).returning();
-}
-
-export async function updateUserCourseStatus(
-  userId: number,
-  courseId: number,
-  status: typeof statusEnumSchema._type
-) {
-  return await db
-    .update(user_courses)
-    .set({ course_status: status })
-    .where(
-      and(
-        eq(user_courses.user_id, userId),
-        eq(user_courses.course_id, courseId)
-      )
-    );
-}
-
-export async function deleteUserCourse(userId: number, courseId: number) {
-  return await db
-    .delete(user_courses)
-    .where(
-      and(
-        eq(user_courses.user_id, userId),
-        eq(user_courses.course_id, courseId)
-      )
-    );
-}

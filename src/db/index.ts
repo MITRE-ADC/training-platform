@@ -1,8 +1,10 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
+// import { users, accounts } from "./schema";
+import * as schema from "./schema";
 
-const client = new Client({
+export const client = new Client({
   host: "localhost",
   port: 5432,
   user: "mitre_admin",
@@ -12,6 +14,6 @@ const client = new Client({
 
 export const connectDB = async () => await client.connect();
 
-export const db = drizzle(client);
+export const db = drizzle(client, { schema });
 
 connectDB();

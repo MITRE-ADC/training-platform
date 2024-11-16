@@ -1,23 +1,38 @@
 import { z } from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
-  timestamp,
   integer,
   pgTable,
   varchar,
+  text,
+  primaryKey,
+  timestamp,
   boolean,
+  date,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
+import { db } from "./index";
+import type { AdapterAccount } from "next-auth/adapters";
 
-export const locateUser = (user: User) =>
-  eq(users.user_id, user.user_id);
+export async function locateUser(user: User) {
+  const existingUsers = await db
+    .select()
+    .from(users)
+    .where(or(eq(users.email, user.email), eq(users.name, user.name)));
+
+  return existingUsers.length > 0;
+}
 
 export const users = pgTable("users", {
-  user_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   pass: varchar({ length: 255 }).notNull(),
+  emailVerified: timestamp("emailverified", { mode: "date" }),
+  image: text("image"),
 });
 
 export const selectUsersSchema = createSelectSchema(users);
@@ -50,9 +65,9 @@ export type AddAssignment = Omit<Assignment, "assignment_id">;
 export const user_assignments = pgTable("user_assignments", {
   user_assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
   completed: boolean().notNull(),
-  user_id: integer()
+  user_id: text()
     .notNull()
-    .references(() => users.user_id),
+    .references(() => users.id), // Foreign key to users table
   assignment_id: integer()
     .notNull()
     .references(() => assignments.assignment_id),
@@ -72,10 +87,7 @@ const statusEnum = pgEnum("c_status", [
 export const statusEnumSchema = z.enum(statusEnum.enumValues);
 
 export const user_courses = pgTable("user_courses", {
-  user_course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  user_id: integer()
-    .notNull()
-    .references(() => users.user_id),
+  user_id: text(),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
