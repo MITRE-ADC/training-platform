@@ -5,17 +5,25 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { processCreateUserRequest } from "../../util";
 
-// Get data for a single user -- detailed
-export async function GET(request: NextRequest) {
-  // using email as the primary key
-  const user_email = request.nextUrl.searchParams?.get("user_email");
-  console.log(user_email);
-
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
-}
+// // GET assignment info
+// export async function GET(request: NextRequest, context: { params: Promise<{ id: number }> }) 
+// {
+//   try {
+//       return NextResponse.json(
+//         { data: await getUser((await context.params).id) },
+//         { status: HttpStatusCode.Ok }
+//       );
+//     } catch (ex) {
+//       return NextResponse.json(
+//         {
+//           message: `Error: ${ex}\n`,
+//         },
+//         {
+//           status: HttpStatusCode.InternalServerError,
+//         }
+//       );
+//     }
+// }
 
 // Create new user
 export async function PUT(request: NextRequest) {
