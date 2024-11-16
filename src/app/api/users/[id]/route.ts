@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { locateUser, User, users } from "@/db/schema";
+import { locateUser, selectUsersSchema, User, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { processCreateUserRequest } from "../../util";
+import { error, processCreateUserRequest } from "../../util";
 
 // // GET assignment info
-// export async function GET(request: NextRequest, context: { params: Promise<{ id: number }> }) 
+// export async function GET(request: NextRequest, context: { params: Promise<{ id: number }> })
 // {
 //   try {
 //       return NextResponse.json(
@@ -31,17 +31,24 @@ export async function PUT(request: NextRequest) {
 }
 // Modify user data -- detailed
 export async function POST(request: NextRequest) {
-  const user_email = request.nextUrl.searchParams?.get("user_email");
-  console.log(user_email);
 
-  const body: User = await request.json();
-  console.log(body);
+  try{
+    const body = selectUsersSchema.parse(await request.json());
 
-  const exists =
-    (await db.selectDistinct().from(users).where(eq(users.email, body.email)))
-      .length > 0;
+    const exists =
+      (await db.selectDistinct().from(users).where(eq(users.user_id, body.user_id)))
+        .length > 0;
 
-  if (!exists) return processCreateUserRequest(request);
+    if (!exists) return processCreateUserRequest(request);
 
-  db.update(users).set(body).where(locateUser(body));
+    await db.insert(users).values(body).onConflictDoUpdate({
+      target: users.user_id,
+      set: body
+    });
+
+    return NextResponse.json({message: `Updated user:\n${JSON.stringify(body)}`})
+  }
+  catch(ex){
+    return error(`processing update request failed: ${ex}`)
+  }
 }

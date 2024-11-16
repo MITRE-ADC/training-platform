@@ -11,7 +11,7 @@ import {
 import { eq, or } from "drizzle-orm";
 
 export const locateUser = (user: User) =>
-  or(eq(users.user_id, user.user_id), eq(users.email, user.email));
+  eq(users.user_id, user.user_id);
 
 export const users = pgTable("users", {
   user_id: integer().primaryKey().generatedAlwaysAsIdentity(),
