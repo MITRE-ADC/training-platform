@@ -31,7 +31,7 @@ export type employeeOverview = {
   email: string;
   roles: string[];
   tasks: employeeTasks;
-  id: number;
+  id: string;
 };
 
 export enum MountStatus {

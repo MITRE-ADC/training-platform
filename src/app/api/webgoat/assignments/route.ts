@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
 
     // TODO: auth into our system as well
-    const user_id = (await getUserByName(username)).user_id;
+    const user_id = (await getUserByName(username)).id;
     const { cookie, response } = await login_user(username, password);
 
     if (response) return response;

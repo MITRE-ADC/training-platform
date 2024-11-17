@@ -110,7 +110,7 @@ export default function EmployeeList() {
               completed: 0,
               todo: 0,
             },
-            id: user.user_id,
+            id: user.id,
           });
         });
 

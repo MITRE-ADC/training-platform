@@ -1,12 +1,26 @@
-import { HttpStatusCode } from "axios";
+import { getAssignmentsByUser } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
+import { HttpStatusCode } from "axios";
 
-// GET method for a single training
-export async function GET(request: NextRequest) {
-  console.log(request.body);
-
-  return NextResponse.json(
-    { message: "Not Implemented" },
-    { status: HttpStatusCode.NotImplemented }
-  );
+// GET assignment info
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) 
+{
+  try {
+      console.log("here");
+      console.log((await context.params).id);
+      return NextResponse.json(
+        { data: await getAssignmentsByUser((await context.params).id) },
+        { status: HttpStatusCode.Ok }
+      );
+    } catch (ex) {
+      console.log(ex);
+      return NextResponse.json(
+        {
+          message: `Error: ${ex}\n`,
+        },
+        {
+          status: HttpStatusCode.InternalServerError,
+        }
+      );
+    }
 }

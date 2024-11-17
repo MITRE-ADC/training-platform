@@ -122,7 +122,7 @@ function EmployeeInfo({ title, value }: { title: string; value: string }) {
   );
 }
 
-export default function EmployeePopup({ employeeId }: { employeeId: number }) {
+export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
   const [roles, setRoles] = useState<Tag[]>([]);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
@@ -134,7 +134,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
     setPlaceholder('Loading...');
 
     axios.all([
-      axios.get(req('api/user_assignments')),
+      axios.get(req('api/user_assignments/' + employeeId)),
       axios.get(req('api/user_courses')),
       axios.get(req('api/assignments')),
       axios.get(req('api/courses')),
@@ -146,7 +146,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
       const _courses: Course[] = _c.data.data;
       const _users: User[] = _u.data.data;
 
-      const user = _users.find((u) => u.user_id == employeeId);
+      const user = _users.find((u) => u.id == employeeId);
       const uassignments = _uassignments.filter((a) => a.user_id == employeeId);
       const ucourses = _ucourses.filter((c) => c.user_id == employeeId);
 
@@ -204,9 +204,6 @@ export default function EmployeePopup({ employeeId }: { employeeId: number }) {
         const _a = _assignments.find((x) => x.assignment_id == a.assignment_id);
         return _a ? 'a_' + _a.assignment_id : [];
       });
-
-      console.log(selectedCourses);
-      console.log(formattedCourses);
 
       setData(formattedUser);
       setRoles(formattedUser.roles);
