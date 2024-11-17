@@ -16,6 +16,7 @@ CREATE TABLE Courses (
 CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
 
 CREATE TABLE User_Courses (
+    user_course_id SERIAL PRIMARY KEY,
     user_id TEXT REFERENCES Users(id),
     course_id int REFERENCES Courses(course_id),
     course_status c_status,
@@ -31,6 +32,7 @@ CREATE TABLE Assignments (
 );
 
 CREATE TABLE User_Assignments (
+    user_assignment_id SERIAL PRIMARY KEY,
     user_id TEXT REFERENCES Users(id),
     assignment_id int REFERENCES Assignments(assignment_id),
     completed BOOLEAN
