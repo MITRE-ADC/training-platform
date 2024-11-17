@@ -53,7 +53,7 @@ export default function SignUpPage() {
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.code ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.code ? "border-customRed border-2" : ""}`}
               placeholder="Code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -62,7 +62,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.password ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.password ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -72,7 +72,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.confirmPassword ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.confirmPassword ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -81,7 +81,9 @@ export default function SignUpPage() {
             />
           </div>
 
-          {errorMessage && <p className="mb-4 text-rose-600">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-customRed mb-4">{errorMessage}</p>
+          )}
 
           <br />
           <Button className="w-full" onClick={handleReset}>

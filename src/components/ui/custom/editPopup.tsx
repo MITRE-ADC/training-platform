@@ -6,8 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Close } from "@radix-ui/react-dialog";
+import { Close, DialogDescription } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -28,6 +27,8 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns/format";
 import { Calendar } from "../calendar";
+import { P } from "./text";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface controlledOpen {
   open: boolean;
@@ -79,13 +80,14 @@ function EditPopup({
         onOpenChange={control ? control.setOpen : undefined}
       >
         {but}
-        <DialogContent className="w-[400px]">
-          <VisuallyHidden.Root>
-            <DialogTitle>{title}</DialogTitle>
-          </VisuallyHidden.Root>
+        <DialogContent className="w-[340px]">
           <DialogHeader>
-            <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
-              <p className="text-lg font-bold">{title}</p>
+            <VisuallyHidden>
+              <DialogDescription>Edit field for {title}</DialogDescription>
+              <DialogTitle>{title}</DialogTitle>
+            </VisuallyHidden>
+            <div className="mx-1 flex flex-col gap-2 font-sans">
+              <P className="font-[600]">{title}</P>
               {children}
             </div>
           </DialogHeader>
@@ -137,26 +139,33 @@ export function StringPopup({
             name="value"
             render={({ field }) => (
               <FormItem>
-                <FormControl>
-                  <Input placeholder="New Value ..." {...field} />
+                <FormControl className="rounded-md shadow-md">
+                  <Input
+                    placeholder="New Value ..."
+                    className="border border-highlight py-2 font-inter focus-visible:ring-0"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex justify-between">
-            <Close asChild>
-              <Button variant="ghost" className="px-0 text-base hover:bg-white">
-                Cancel
-              </Button>
-            </Close>
+          <div className="mt-4 flex w-full gap-2">
             <Button
-              variant="ghost"
-              className="px-0 text-base hover:bg-transparent"
+              variant="secondary"
+              className="flex-grow rounded-md bg-navy py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              Done
+              <P className="font-[600] text-white">Update</P>
             </Button>
+            <Close asChild>
+              <Button
+                variant="secondary"
+                className="flex-grow rounded-md bg-lightBlue py-[18px] hover:bg-lightBlue/80"
+              >
+                <P className="font-[600] text-white">Close</P>
+              </Button>
+            </Close>
           </div>
         </form>
       </Form>
@@ -233,19 +242,22 @@ export function DatePopup({
               </FormItem>
             )}
           />
-          <div className="flex justify-between">
-            <Close asChild>
-              <Button variant="ghost" className="px-0 text-base hover:bg-white">
-                Cancel
-              </Button>
-            </Close>
+          <div className="mt-4 flex w-full gap-2">
             <Button
-              variant="ghost"
-              className="px-0 text-base hover:bg-transparent"
+              variant="secondary"
+              className="flex-grow rounded-md bg-navy py-[18px] hover:bg-navy/80"
               type="submit"
             >
-              Done
+              <P className="font-[600] text-white">Update</P>
             </Button>
+            <Close asChild>
+              <Button
+                variant="secondary"
+                className="flex-grow rounded-md bg-lightBlue py-[18px] hover:bg-lightBlue/80"
+              >
+                <P className="font-[600] text-white">Close</P>
+              </Button>
+            </Close>
           </div>
         </form>
       </Form>

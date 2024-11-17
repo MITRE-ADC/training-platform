@@ -19,7 +19,7 @@ export type employee = {
   firstName: string;
   lastName: string;
   email: string;
-  roles: string[];
+  roles: Tag[];
   tasks: employeeTasks;
   assignments: employeeAssignment[];
 };
@@ -33,12 +33,14 @@ export type employeeOverview = {
   tasks: employeeTasks;
 };
 
-export function getManageEmployees(): employeeOverview[] {
-  return _DATAOVERVIEW;
+export enum MountStatus {
+  isMounted,
+  isNotMounted,
+  isFirstMounted,
 }
 
-export function getCourseData(): CourseSelectorData[] {
-  return _COURSEDATA;
+export function getManageEmployees(): employeeOverview[] {
+  return _DATAOVERVIEW;
 }
 
 export function getEmployeeData(email: string): employee | undefined {
@@ -54,11 +56,31 @@ export function getEmployeeData(email: string): employee | undefined {
   return out;
 }
 
+export const EMPTY_EMPLOYEE_TASK: employeeTasks = {
+  overdue: 0,
+  completed: 0,
+  todo: 0,
+};
+
+export const EMPTY_EMPLOYEE_ASSIGNMENT: employeeAssignment[] = [];
+
+export const EMPTY_EMPLOYEE: employee = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  roles: [],
+  tasks: EMPTY_EMPLOYEE_TASK,
+  assignments: EMPTY_EMPLOYEE_ASSIGNMENT,
+};
+
 const _DATA: employee[] = [
   {
     firstName: "John",
     lastName: "Doe",
-    roles: ["Project Manager", "Cybersecurity Engineer"],
+    roles: [
+      { text: "Project Manager", id: "1" },
+      { text: "Cybersecurity Engineer", id: "2" },
+    ],
     email: "email@email.org",
     tasks: {
       overdue: 2,
@@ -92,7 +114,7 @@ const _DATA: employee[] = [
   {
     firstName: "Jane",
     lastName: "Doe",
-    roles: ["Software Engineer"],
+    roles: [{ text: "Software Engineer", id: "2" }],
     email: "helloworld@mitre.company.csec",
     tasks: {
       overdue: 1,
@@ -205,53 +227,6 @@ const _DATAOVERVIEW: employeeOverview[] = [
   },
 ];
 
-const _COURSEDATA: CourseSelectorData[] = [
-  {
-    name: "Course 1",
-    id: "1",
-    children: [
-      { name: "Course 1 Child 1", id: "1 1" },
-      { name: "Course 1 Child 2", id: "1 2" },
-      { name: "Course 1 Child 3", id: "1 3" },
-    ],
-  },
-  {
-    name: "Course 2",
-    id: "2",
-    children: [{ name: "Course 2 Child 1", id: "2 1" }],
-  },
-  {
-    name: "Course 3",
-    id: "3",
-    children: [
-      { name: "Course 3 Child 1", id: "3_1" },
-      { name: "Course 3 Child 2", id: "3_2" },
-      { name: "Course 3 Child 3", id: "3_3" },
-      { name: "Course 3 Child 4", id: "3_4" },
-      { name: "Course 3 Child 5", id: "3_5" },
-      { name: "Course 3 Child 6", id: "3_6" },
-    ],
-  },
-  {
-    name: "Course 4",
-    id: "4",
-    children: [
-      { name: "Course 4 Child 1", id: "4 1" },
-      { name: "Course 4 Child 2", id: "4 2" },
-      { name: "Course 4 Child 3", id: "4 3" },
-      { name: "Course 4 Child 4", id: "4 4" },
-      { name: "Course 4 Child 5", id: "4 5" },
-      { name: "Course 4 Child 6", id: "4 6" },
-      { name: "Course 4 Child 7", id: "4 7" },
-      { name: "Course 4 Child 8", id: "4 8" },
-      { name: "Course 4 Child 9", id: "4 9" },
-      { name: "Course 4 Child 10", id: "4 10" },
-      { name: "Course 4 Child 11", id: "4 11" },
-      { name: "Course 4 Child 12", id: "4 12" },
-    ],
-  },
-];
-
 export const _ASSIGNMENTTAGS: Tag[] = [
   {
     id: "4 1",
@@ -272,16 +247,96 @@ export const _COURSETAGS: Tag[] = [
     id: "3",
     text: "Course 3",
   },
+  {
+    id: "44",
+    text: "Course 44",
+  },
+  {
+    id: "33",
+    text: "Course 33",
+  },
+  {
+    id: "100",
+    text: "Course 100",
+  },
+  {
+    id: "200",
+    text: "Course 200",
+  },
+  {
+    id: "-1",
+    text: "_Course 4",
+  },
+  {
+    id: "-2",
+    text: "_Course 3",
+  },
+  {
+    id: "-3",
+    text: "_Course 44",
+  },
+  {
+    id: "-4",
+    text: "_Course 33",
+  },
+  {
+    id: "-5",
+    text: "_Course 100",
+  },
+  {
+    id: "-6",
+    text: "_Course 200",
+  },
 ];
 
 export const _ROLETAGS: Tag[] = [
   {
-    id: "role1",
     text: "Project Manager",
+    id: "1",
   },
   {
-    id: "role2",
-    text: "Intern",
+    text: "Cybersecurity Engineer",
+    id: "2",
+  },
+  {
+    text: "Software Engineer",
+    id: "3",
+  },
+  {
+    text: "_Project Manager",
+    id: "4",
+  },
+  {
+    text: "_Cybersecurity Engineer",
+    id: "5",
+  },
+  {
+    text: "_Software Engineer",
+    id: "6",
+  },
+  {
+    text: "__Project Manager",
+    id: "7",
+  },
+  {
+    text: "__Cybersecurity Engineer",
+    id: "8",
+  },
+  {
+    text: "__Software Engineer",
+    id: "9",
+  },
+  {
+    text: "___Project Manager",
+    id: "10",
+  },
+  {
+    text: "___Cybersecurity Engineer",
+    id: "11",
+  },
+  {
+    text: "___Software Engineer",
+    id: "12",
   },
 ];
 

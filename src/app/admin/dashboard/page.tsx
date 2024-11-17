@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
 import Image from "next/image";
+import { _COURSETAGS } from "./employeeDefinitions";
 
 export default function AdminDashBoard() {
   return (
@@ -17,7 +18,7 @@ export default function AdminDashBoard() {
         ></Image>
       </div>
       <div className="h-[50px]"></div>
-      <div className="flex h-[825px] w-screen items-center justify-center">
+      <div className="flex h-full w-full items-center justify-center">
         <div className="flex h-full w-[85vw] justify-center">
           <Tabs
             defaultValue="employees"
@@ -31,18 +32,18 @@ export default function AdminDashBoard() {
               >
                 <H3>Manage Employees</H3>
               </TabsTrigger>
-              <TabsTrigger
+              {/*<TabsTrigger
                 value="course"
                 className="data-[state=active]:tab-selected data-[state=inactive]:tab-unselected"
               >
                 <H3>Manage Courses</H3>
-              </TabsTrigger>
+              </TabsTrigger>*/}
             </TabsList>
             <div className="flex-grow border-[2px] border-highlight shadow-md">
               <TabsContent value="employees" className="h-full">
                 <div className="flex h-full w-full flex-col px-16 py-12">
                   <H2>Manage Employees</H2>
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                       <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
                       <Input
@@ -50,11 +51,11 @@ export default function AdminDashBoard() {
                         className="border-0 py-2 font-inter focus-visible:ring-0"
                       />
                     </div>
-                    <div className="mb-2 flex flex-col justify-end">
+                    <div className="flex flex-col justify-end">
                       <AdvancedDashboardFilters />
                     </div>
                   </div>
-                  <div className="h-full shadow-md">
+                  <div className="shadow-md" id="Employee-List-Table">
                     <EmployeeList />
                   </div>
                 </div>

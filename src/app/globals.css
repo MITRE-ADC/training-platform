@@ -67,4 +67,21 @@ body {
   .tab-unselected {
     @apply h-[calc(100%-4px)] w-full rounded-md border-[1px] border-highlight p-0 shadow-md;
   }
+  .fade-right {
+    --mask: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 1) 0,
+        rgba(0, 0, 0, 1) calc(100% - 10px),
+        rgba(0, 0, 0, 0) 100%,
+        rgba(0, 0, 0, 0) 0
+      )
+      100% 50% / 100% 100% repeat-x;
+
+    -webkit-mask: var(--mask);
+    mask: var(--mask);
+  }
+  .mask-none {
+    mask: unset;
+    -webkit-mask: unset;
+  }
 }
