@@ -34,10 +34,10 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="absolute left-1/2 top-1/2 w-3/4 md:w-1/3 -translate-x-1/2 -translate-y-1/2 transform text-center">
+    <div className="absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 transform text-center md:w-1/3">
       <Card className="mb-4 text-left">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Sign In</CardTitle>
+          <CardTitle className="text-center text-2xl">Sign In</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
@@ -64,10 +64,12 @@ export default function SignInPage() {
             <p className="text-customRed mb-4 text-lg">{errorMessage}</p>
           )}
           <div className="mt-1">
-            <a className="text-lg" href="/recover_password">Forgot Password?</a>
+            <a className="text-lg" href="/recover_password">
+              Forgot Password?
+            </a>
           </div>
           <br />
-          <Button className="w-full h-12 text-xl" onClick={handleSignIn}>
+          <Button className="h-12 w-full text-xl" onClick={handleSignIn}>
             Sign In
           </Button>
         </CardContent>

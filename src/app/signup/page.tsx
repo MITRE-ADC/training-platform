@@ -56,7 +56,7 @@ export default function SignUpPage() {
     <div className="absolute left-1/2 top-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 transform text-center">
       <Card className="mb-4 text-left">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
+          <CardTitle className="text-center text-2xl">Sign Up</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
@@ -113,7 +113,7 @@ export default function SignUpPage() {
           )}
 
           <br />
-          <Button className="w-full h-12 text-xl" onClick={handleSignUp}>
+          <Button className="h-12 w-full text-xl" onClick={handleSignUp}>
             Sign Up
           </Button>
         </CardContent>
