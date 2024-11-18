@@ -3,63 +3,86 @@ import { db } from "./index";
 import {
   users,
   courses,
-  User,
   Course,
-  //User_Assignment,
-  //User_Course,
   assignments,
   user_assignments,
   user_courses,
   AddUser,
   AddCourse,
   AddAssignment,
-  AddUserCourse,
   AddUserAssignment,
   statusEnumSchema,
+  AddUserCourse,
 } from "./schema";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 
 // Users
 export async function getAllUsers() {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.select().from(users);
 }
 
-export async function getUserByEmail(email: string) {
-  return await db.select().from(users).where(eq(users.email, email));
-}
-
 export async function addUser(user: AddUser) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.insert(users).values(user).returning();
 }
 
-export async function updateUser(user: User) {
-  return await db
-    .update(users)
-    .set(user)
-    .where(eq(users.user_id, user.user_id));
-}
+// // Update a user
+// export async function updateUser(user: User) {
+//   return await db
+//     .update(users)
+//     .set(user)
+//     .where(eq(users.id, user.user_id));
+// }
 
-export async function deleteUser(id: number) {
-  return await db.delete(users).where(eq(users.user_id, id));
-}
 
-export async function userIdExists(id: number) {
+  // export async function userEmailExists(email: string) {
+  //   return await db.select().from(users).where(eq(users.email, email)).limit(1);
+  // }
+
+// export async function updateUser(user: User) {
+//   return await db
+//     .update(users)
+//     .set(user)
+//     .where(eq(users.user_id, user.user_id));
+// }
+
+// export async function deleteUser(id: number) {
+//   return await db.delete(users).where(eq(users.user_id, id));
+// }
+
+export async function userIdExists(id: string) {
+  const err = await CHECK_UNAUTHORIZED(id)
+  if(err)
+    return err;
+
+
   return (
-    (await db.$count(db.select().from(users).where(eq(users.user_id, id)))) > 0
+    (await db.$count(db.select().from(users).where(eq(users.id, id)))) > 0
   );
 }
 export async function userEmailExists(email: string) {
+  // TODO: see below
   return (
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
   );
 }
 
 export async function userNameExists(name: string) {
+  // TODO: see below
   return (
     (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
   );
 }
 
 export async function courseIdExists(id: number) {
+  // TODO: see below
   return (
     (await db.$count(
       db.select().from(courses).where(eq(courses.course_id, id))
@@ -67,35 +90,11 @@ export async function courseIdExists(id: number) {
   );
 }
 
-export async function courseNameExists(name: string) {
-  // https://orm.drizzle.team/docs/query-utils
+export async function courseNameExists(course_name: string) {
+  // TODO: see below
   return (
     (await db.$count(
-      db.select().from(courses).where(eq(courses.course_name, name))
-    )) > 0
-  );
-}
-
-export async function userCourseIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(user_courses).where(eq(user_courses.user_course_id, id))
-    )) > 0
-  );
-}
-
-export async function userCourseExists(course_id: number, user_id: number) {
-  return (
-    (await db.$count(
-      db
-        .select()
-        .from(user_courses)
-        .where(
-          and(
-            eq(user_courses.course_id, course_id),
-            eq(user_courses.user_id, user_id)
-          )
-        )
+      db.select().from(courses).where(eq(courses.course_name, course_name))
     )) > 0
   );
 }
@@ -176,22 +175,8 @@ export async function aggregateUserCoursesStatusByUser() {
   return res;
 }
 
-export async function assignmentIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_id, id))
-    )) > 0
-  );
-}
-export async function assignmentNameExists(name: string) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_name, name))
-    )) > 0
-  );
-}
-
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
+  // TODO: see below
   return (
     (await db.$count(
       db
@@ -203,6 +188,7 @@ export async function assignmentWebgoatIdExists(webgoat_info: string) {
 }
 
 export async function userAssignmentIdExists(id: number) {
+  // TODO: determine which auth check to run -- generally auth'd in?
   return (
     (await db.$count(
       db
@@ -214,9 +200,13 @@ export async function userAssignmentIdExists(id: number) {
 }
 
 export async function userAssignmentWebgoatIdExists(
-  user_id: number,
+  user_id: string,
   webgoat_info: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     (await db.$count(
       db
@@ -238,8 +228,12 @@ export async function userAssignmentWebgoatIdExists(
 
 export async function userAssignmentExists(
   assignment_id: number,
-  user_id: number
+  user_id: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     (await db.$count(
       db
@@ -256,9 +250,13 @@ export async function userAssignmentExists(
 }
 
 export async function getUserAssignmentByWebgoatId(
-  user_id: number,
+  user_id: string,
   webgoat_info: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     await db
       .select({
@@ -286,40 +284,102 @@ export async function getAllCourses() {
   return await db.select().from(courses);
 }
 
-export async function addCourse(course: AddCourse) {
-  return await db.insert(courses).values(course).returning();
-}
+export async function getCoursesByUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
 
-export async function updateCourse(course: Course) {
   return await db
-    .update(courses)
-    .set(course)
-    .where(eq(courses.course_id, course.course_id));
+    .select()
+    .from(user_courses)
+    .where(eq(user_courses.user_id, user_id));
 }
 
-export async function getCourse(courseId: number) {
-  return await db.select().from(courses).where(eq(courses.course_id, courseId));
+export async function getAllUserCourses() {
+  const err = await CHECK_ADMIN()
+  if(err)
+    return err;
+
+  return await db.select().from(user_courses);
 }
 
-export async function getCourseByName(course_name: string) {
+export async function userCourseExists(course_id: number, user_id: string) {
   return (
-    await db.select().from(courses).where(eq(courses.course_name, course_name))
-  )[0];
+    (await db.$count(
+      db
+        .select()
+        .from(user_courses)
+        .where(
+          and(
+            eq(user_courses.course_id, course_id),
+            eq(user_courses.user_id, user_id)
+          )
+        )
+    )) > 0
+  );
 }
 
-export async function getUser(userId: number) {
-  return await db.select().from(users).where(eq(users.user_id, userId));
+
+
+export async function addUserCourse(userCourse: AddUserCourse) {
+  const err = await CHECK_ADMIN()
+  if(err)
+    return err;
+
+  return await db.insert(user_courses).values(userCourse).returning();
 }
 
-export async function getUserByName(user_name: string) {
-  return (await db.select().from(users).where(eq(users.name, user_name)))[0];
+export async function updateUserCourseStatus(
+  user_id: string,
+  course_id: number,
+  status: typeof statusEnumSchema._type
+) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db
+    .update(user_courses)
+    .set({ course_status: status })
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    );
 }
 
-export async function deleteCourse(courseId: number) {
-  return await db.delete(courses).where(eq(courses.course_id, courseId));
+export async function deleteUserCourse(user_id: string, course_id: number) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db
+    .delete(user_courses)
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    );
 }
 
-// Assignment
+export async function assignmentIdExists(id: number) {
+  return (
+    (await db.$count(
+      db.select().from(assignments).where(eq(assignments.assignment_id, id))
+    )) > 0
+  );
+}
+
+export async function deleteAssignment(assignmentId: number) {
+  return await db
+    .delete(assignments)
+    .where(eq(assignments.assignment_id, assignmentId));
+}
+
+
+
 export async function getAllAssignments() {
   return await db.select().from(assignments);
 }
@@ -329,6 +389,146 @@ export async function getAssignmentsByCourse(courseId: number) {
     .select()
     .from(assignments)
     .where(eq(assignments.course_id, courseId));
+}
+
+export async function getAllUserAssignments() {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
+  return await db.select().from(user_assignments);
+}
+
+
+export async function getAssignmentsByUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db
+    .select()
+    .from(user_assignments)
+    .where(eq(user_assignments.user_id, user_id));
+}
+
+
+export async function assignmentNameExists(name: string) {
+  return (
+    (await db.$count(
+      db.select().from(assignments).where(eq(assignments.assignment_name, name))
+    )) > 0
+  );
+}
+
+export async function addUserAssignment(userAssignment: AddUserAssignment) {
+  const err = await CHECK_UNAUTHORIZED(userAssignment.user_id)
+  if (err)
+    return err
+
+  return await db.insert(user_assignments).values(userAssignment).returning();
+}
+
+export async function updateUserAssignment(
+  user_id: string,
+  assignment_id: number,
+  completed: boolean
+) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db
+    .update(user_assignments)
+    .set({ completed })
+    .where(
+      and(
+        eq(user_assignments.user_id, user_id),
+        eq(user_assignments.assignment_id, assignment_id)
+      )
+    );
+}
+
+export async function deleteUserAssignment(
+  user_id: string,
+  assignment_id: number
+) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db
+    .delete(user_assignments)
+    .where(
+      and(
+        eq(user_assignments.user_id, user_id),
+        eq(user_assignments.assignment_id, assignment_id)
+      )
+    );
+}
+
+
+
+export async function getCourseByName(course_name: string) {
+  return (
+    await db.select().from(courses).where(eq(courses.course_name, course_name))
+  )[0];
+}
+
+export async function getUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
+  return await db.select().from(users).where(eq(users.id, user_id));
+}
+
+export async function getUserByEmail(user_email: string) {
+  // TODO: select id by email, then check authorization, then return
+  const user = (await db.select().from(users).where(eq(users.email, user_email)))[0];
+
+  const err = await CHECK_UNAUTHORIZED(user.id);
+  if (err)
+    return err;
+  
+  return user;
+}
+
+
+export async function getUserByName(user_name: string) {
+  const user = (await db.select().from(users).where(eq(users.name, user_name)))[0];
+
+  const err = await CHECK_UNAUTHORIZED(user.id);
+  if (err)
+    return err;
+
+  return user;
+}
+
+export async function deleteCourse(courseId: number) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
+  return await db.delete(courses).where(eq(courses.course_id, courseId));
+}
+
+export async function addCourse(course: AddCourse) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
+  return await db.insert(courses).values(course).returning();
+}
+
+export async function updateCourse(course: Course) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
+  return await db
+    .update(courses)
+    .set(course)
+    .where(eq(courses.course_id, course.course_id));
 }
 
 export async function getAssignment(assignmentId: number) {
@@ -350,100 +550,10 @@ export async function getAssignmentByWebgoatId(webgoat_info: string) {
 }
 
 export async function addAssignment(assignment: AddAssignment) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.insert(assignments).values(assignment).returning();
 }
 
-export async function deleteAssignment(assignmentId: number) {
-  return await db
-    .delete(assignments)
-    .where(eq(assignments.assignment_id, assignmentId));
-}
-
-// User assignment
-export async function getAllUserAssignments() {
-  return await db.select().from(user_assignments);
-}
-
-export async function getAssignmentsByUser(userId: number) {
-  return await db
-    .select()
-    .from(user_assignments)
-    .where(eq(user_assignments.user_id, userId));
-}
-
-export async function addUserAssignment(userAssignment: AddUserAssignment) {
-  return await db.insert(user_assignments).values(userAssignment).returning();
-}
-
-export async function updateUserAssignment(
-  userId: number,
-  assignmentId: number,
-  completed: boolean
-) {
-  return await db
-    .update(user_assignments)
-    .set({ completed })
-    .where(
-      and(
-        eq(user_assignments.user_id, userId),
-        eq(user_assignments.assignment_id, assignmentId)
-      )
-    );
-}
-
-export async function deleteUserAssignment(
-  userId: number,
-  assignmentId: number
-) {
-  return await db
-    .delete(user_assignments)
-    .where(
-      and(
-        eq(user_assignments.user_id, userId),
-        eq(user_assignments.assignment_id, assignmentId)
-      )
-    );
-}
-
-// User courses
-export async function getAllUserCourses() {
-  return await db.select().from(user_courses);
-}
-
-export async function getCoursesByUser(userId: number) {
-  return await db
-    .select()
-    .from(user_courses)
-    .where(eq(user_courses.user_id, userId));
-}
-
-export async function addUserCourse(userCourse: AddUserCourse) {
-  return await db.insert(user_courses).values(userCourse).returning();
-}
-
-export async function updateUserCourseStatus(
-  userId: number,
-  courseId: number,
-  status: typeof statusEnumSchema._type
-) {
-  return await db
-    .update(user_courses)
-    .set({ course_status: status })
-    .where(
-      and(
-        eq(user_courses.user_id, userId),
-        eq(user_courses.course_id, courseId)
-      )
-    );
-}
-
-export async function deleteUserCourse(userId: number, courseId: number) {
-  return await db
-    .delete(user_courses)
-    .where(
-      and(
-        eq(user_courses.user_id, userId),
-        eq(user_courses.course_id, courseId)
-      )
-    );
-}

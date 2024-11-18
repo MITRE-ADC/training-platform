@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       .execute();
 
     const filteredUserIdsForCourses = userCourses.map((row) => row.user_id);
-    conditions.push(inArray(users.user_id, filteredUserIdsForCourses));
+    conditions.push(inArray(users.id, filteredUserIdsForCourses));
   }
 
   if (assignment_filter.length > 0) {
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     const filteredUserIdsForAssignments = userAssignments.map(
       (row) => row.user_id
     );
-    conditions.push(inArray(users.user_id, filteredUserIdsForAssignments));
+    conditions.push(inArray(users.id, filteredUserIdsForAssignments));
   }
 
   // Implementing the status filter

@@ -18,6 +18,7 @@ import {
   userAssignmentWebgoatIdExists,
   userNameExists,
 } from "@/db/queries";
+import { CHECK_UNAUTHORIZED } from "../../auth";
 
 // export const autopopulate_courses_from_webgoat = true;
 // export const assign_all_assignments_in_webgoat = true;
@@ -47,7 +48,12 @@ export async function POST(request: NextRequest) {
       return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
 
     // TODO: auth into our system as well
-    const user_id = (await getUserByName(username)).user_id;
+    const user_id = (await getUserByName(username)).id;
+
+    const err = await CHECK_UNAUTHORIZED(user_id)
+    if(err)
+      return err;
+
     const { cookie, response } = await login_user(username, password);
 
     if (response) return response;
@@ -131,6 +137,9 @@ export async function POST(request: NextRequest) {
           user_id,
           webgoat_name
         );
+        if (user_assignment instanceof NextResponse)
+          return user_assignment
+
         if (user_assignment && complete != user_assignment.completed) {
           updateUserAssignment(
             user_assignment.user_id,
