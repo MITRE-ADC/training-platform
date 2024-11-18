@@ -56,13 +56,13 @@ export async function processLinkAssignmentRequest(request: NextRequest) {
     );
 
   processLinkAssignment(
-    body?.user_id ?? parseInt(user_id!),
+    body?.user_id ?? user_id!,
     body?.assignment_id ?? parseInt(assignment_id!)
   );
 }
 
 export async function processLinkAssignment(
-  _user_id: number,
+  _user_id: string,
   _assignment_id: number
 ) {
   if (!(await userIdExists(_user_id))) return error("User not found");
@@ -98,7 +98,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
       `Request requires user_id and course_id in body or request parameters`
     );
 
-  const _user_id = body?.user_id ?? parseInt(user_id!);
+  const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
   const _assigned_date =
     body?.assigned_date ??
