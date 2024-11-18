@@ -9,9 +9,9 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-      const id = (await context.params).id;
-      console.log(request);
-      if (!userIdExists(id)){
+    const id = (await context.params).id;
+    console.log(request);
+    if (!userIdExists(id)) {
       return error("User does not exist");
     }
 

@@ -3,8 +3,6 @@ import { HttpStatusCode } from "axios";
 import { getCurrentUser } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 
-
-
 export async function GET(req: NextRequest) {
   if (req.method === "GET") {
     const user = await getCurrentUser(req.cookies);

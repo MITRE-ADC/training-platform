@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { db } from "../db/index";
-import { eq} from "drizzle-orm";
+import { eq } from "drizzle-orm";
 const { default: jwt } = await import("jsonwebtoken");
 
 import { users } from "@/db/schema";
@@ -81,14 +81,16 @@ export async function deleteJwtCookie(): Promise<void> {
   });
 }
 
-export async function getCurrentUser(cookieStore: ReadonlyRequestCookies | RequestCookies): Promise<SessionValidationResult> {
-	// const cookieStore = await cookies();
-	const token = cookieStore.get("session")?.value ?? null;
-	console.log("I AM YOUR TOKEN!" + token)
-	if (token == null) {
-		return { user: null };
-	}
-	const result = await validateJwtToken(token);
+export async function getCurrentUser(
+  cookieStore: ReadonlyRequestCookies | RequestCookies
+): Promise<SessionValidationResult> {
+  // const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value ?? null;
+  console.log("I AM YOUR TOKEN!" + token);
+  if (token == null) {
+    return { user: null };
+  }
+  const result = await validateJwtToken(token);
 
   return result;
 }

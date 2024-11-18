@@ -67,7 +67,7 @@ export async function processLinkAssignment(
   _assignment_id: number
 ) {
   const err = await CHECK_ADMIN();
-  if(err) return err
+  if (err) return err;
 
   if (!(await userIdExists(_user_id))) return error("User not found");
 
@@ -211,7 +211,7 @@ export async function processCreateCourseRequest(request: NextRequest) {
 
 export async function processCreateCourse(course_name: string) {
   const err = await CHECK_ADMIN();
-  if(err) return err
+  if (err) return err;
   if (await courseNameExists(course_name)) return error("Course exists");
 
   const [first] = await addCourse({
@@ -247,26 +247,26 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
   );
 }
 
-export async function processUpdateUser(
-  body: User
-){
+export async function processUpdateUser(body: User) {
   if (!(await userIdExists(body.id)))
-    return error("user does not exist", HttpStatusCode.NotFound)
-
+    return error("user does not exist", HttpStatusCode.NotFound);
 
   const err = await CHECK_UNAUTHORIZED(body.id);
-  if(err) return err
+  if (err) return err;
 
   await db.insert(users).values(body).onConflictDoUpdate({
     target: users.id,
-    set: body
+    set: body,
   });
 
-  return NextResponse.json({
-    data: body
-  }, {
-    status: HttpStatusCode.Ok
-  });
+  return NextResponse.json(
+    {
+      data: body,
+    },
+    {
+      status: HttpStatusCode.Ok,
+    }
+  );
 }
 
 export async function processCreateAssignment(
@@ -275,7 +275,7 @@ export async function processCreateAssignment(
   course_id: number
 ) {
   const err = await CHECK_ADMIN();
-  if(err) return err
+  if (err) return err;
 
   if (!(await courseIdExists(course_id)))
     return error("Course does not exist", HttpStatusCode.NotFound);

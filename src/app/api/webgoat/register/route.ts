@@ -11,9 +11,8 @@ import { CHECK_ADMIN } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-      const err = await CHECK_ADMIN()
-      if(err)
-        return err;
+    const err = await CHECK_ADMIN();
+    if (err) return err;
 
     const username = request.nextUrl.searchParams?.get("name");
     const password = request.nextUrl.searchParams?.get("password");

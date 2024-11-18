@@ -7,10 +7,8 @@ import { CHECK_ADMIN } from "../auth";
 // GET method for all trainings
 export async function GET() {
   try {
-    const err = await CHECK_ADMIN()
-    if(err)
-      return err;
-
+    const err = await CHECK_ADMIN();
+    if (err) return err;
 
     return NextResponse.json(
       { data: await getAllUserAssignments() },
