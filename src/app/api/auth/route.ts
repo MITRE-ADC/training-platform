@@ -10,13 +10,9 @@ export async function GET(req: NextRequest) {
     if (req.method === "GET") {
       const user = await getCurrentUser(await cookies() as any);
       if (user.user == null){
-        return NextResponse.redirect(new URL('/signin', req.url));
+        return NextResponse.json({}, {status:403});;
       }
-      
-      if(user.user.id == admin_id) {
-        return NextResponse.next();
-      }
-    // idrk what to do if they are signed in but not admin    
+        return NextResponse.json({user: user.user, isAdmin: (user.user.id == admin_id)})  
     }
     return NextResponse.json(await getCurrentUser(req.cookies), {status: HttpStatusCode.MethodNotAllowed});
   }
