@@ -13,7 +13,6 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
 
   const [fieldErrors, setFieldErrors] = useState({
     firstName: false,
@@ -50,28 +49,31 @@ export default function SignUpPage() {
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
     } else {
-      console.log('starting sending');
+      console.log("starting sending");
       const response = await fetch("/api/auth/signup", {
         method: "POST",
-        body: JSON.stringify({ name: firstName + " " + lastName, email: email, password: password }),
+        body: JSON.stringify({
+          name: firstName + " " + lastName,
+          email: email,
+          password: password,
+        }),
       });
-      
-      
+
       if (response.status != HttpStatusCode.Ok) {
-        setErrorMessage("wrong stuff bro");
+        setErrorMessage("Something Went Wrong");
         return;
       } else {
-        setErrorMessage("It worked bro");
+        setErrorMessage("SignUp Successful");
         const data = new URLSearchParams();
-        data.append('name', firstName + ' ' + lastName);
-        data.append('password', password);
+        data.append("name", firstName + " " + lastName);
+        data.append("password", password);
         const res = await fetch("/api/webgoat/register", {
           method: "POST",
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Content-Type": "application/x-www-form-urlencoded",
           },
           body: data,
-        })
+        });
         return;
       }
     }
@@ -86,7 +88,7 @@ export default function SignUpPage() {
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.firstName ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.firstName ? "border-customRed border-2" : ""}`}
               placeholder="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -95,7 +97,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.lastName ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.lastName ? "border-customRed border-2" : ""}`}
               placeholder="Last name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -104,7 +106,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.email ? "border-customRed border-2" : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -114,7 +116,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.password ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.password ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -124,7 +126,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.confirmPassword ? "border-2 border-rose-600" : ""}`}
+              className={`mb-4 ${fieldErrors.confirmPassword ? "border-customRed0 border-2" : ""}`}
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -133,7 +135,9 @@ export default function SignUpPage() {
             />
           </div>
 
-          {errorMessage && <p className="mb-4 text-rose-600">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-customRed mb-4">{errorMessage}</p>
+          )}
 
           <br />
           <Button className="w-full" onClick={handleSignUp}>

@@ -5,15 +5,12 @@ import {
   pgTable,
   varchar,
   text,
-  primaryKey,
   timestamp,
   boolean,
-  date,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
-// import type { AdapterAccount } from "next-auth/adapters";
 
 export async function locateUser(user: User) {
   const existingUsers = await db
@@ -37,7 +34,7 @@ export const users = pgTable("users", {
 
 export const selectUsersSchema = createSelectSchema(users);
 export type User = z.infer<typeof selectUsersSchema>;
-export type AddUser = Omit<User, "user_id">;
+export type AddUser = Omit<User, "id">;
 
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -101,12 +98,12 @@ export type User_Course = z.infer<typeof selectUserCoursesSchema>;
 export type AddUserCourse = Omit<User_Course, "user_course_id">;
 
 const sessionTable = pgTable("session", {
-	id: text("id").primaryKey(),
-	userId: integer("user_id")
-		.notNull()
-		.references(() => users.id),
-	expiresAt: timestamp("expires_at", {
-		withTimezone: true,
-		mode: "date"
-	}).notNull()
+  id: text("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
 });
