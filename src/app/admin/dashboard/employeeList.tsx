@@ -36,11 +36,6 @@ const columns: ColumnDef<employeeOverview>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Email" />,
   },
   {
-    accessorKey: "roles",
-    header: ({ column }) => <SortableColumn column={column} title="Roles" />,
-    cell: ({ row }) => roleToSpan(row.getValue("roles")),
-  },
-  {
     accessorKey: "tasks",
     header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
@@ -104,7 +99,6 @@ export default function EmployeeList() {
             firstName: user.name.split(" ")[0],
             lastName: user.name.split(" ")[1],
             email: user.email,
-            roles: ["Not Implemented"],
             tasks: {
               overdue: 0,
               completed: 0,

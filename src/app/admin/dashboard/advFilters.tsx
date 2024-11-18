@@ -20,7 +20,6 @@ import {
 export function AdvancedDashboardFilters() {
   const [courses, setCourses] = useState<Tag[]>([]);
   const [assignments, setAssignments] = useState<Tag[]>([]);
-  const [roles, setRoles] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
 
   const [tableWidth, setTableWidth] = useState<string>("w-auto");
@@ -62,14 +61,6 @@ export function AdvancedDashboardFilters() {
             tags={_ASSIGNMENTTAGS}
             selectedTags={assignments}
             setSelectedTags={setAssignments}
-            titleClass="mr-2"
-          />
-          <TagSelector
-            title="Roles"
-            id="roles"
-            tags={_ROLETAGS}
-            selectedTags={roles}
-            setSelectedTags={setRoles}
             titleClass="mr-2"
           />
           <TagSelector

@@ -15,17 +15,12 @@ import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
-  getEmployeeData,
   EMPTY_EMPLOYEE,
   _ROLETAGS,
-  EMPTY_EMPLOYEE_ASSIGNMENT,
 } from "./employeeDefinitions";
-import { roleToSpan } from "./employeeList";
-import { H2, P, Text } from "@/components/ui/custom/text";
+import { H2, P } from "@/components/ui/custom/text";
 import CourseSelectorPopup, { CourseSelectorChildData, CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
-import { MutableRefObject, forwardRef, useRef, useState } from "react";
-import { TagSelector } from "@/components/ui/custom/tagSelector";
-import { Tag } from "@/components/ui/tag/tag-input";
+import { forwardRef, useRef, useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -131,7 +126,6 @@ const EmployeeInfo = forwardRef<HTMLInputElement, EmployeeInfoProps>(function Em
 
 export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
-  const [roles, setRoles] = useState<Tag[]>([]);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
   const [courseData, setCourseData] = useState<CourseSelectorData[]>([]);
   const [defaultCourses, setDefaultCourses] = useState<string[]>([]);
@@ -168,7 +162,6 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
         firstName: user.name.split(' ')[0],
         lastName: user.name.split(' ')[1],
         email: user.email,
-        roles: [],
         tasks: {
           overdue: 0,
           completed: 0,
@@ -216,7 +209,6 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
       });
 
       setData(formattedUser);
-      setRoles(formattedUser.roles);
       setCourseData(formattedCourses);
       setDefaultCourses(selectedCourses);
 
@@ -283,26 +275,6 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
                   }
                 />
                 <EmployeeInfo ref={emailInput} title="Email" value={data.email} />
-                <TableRow className="border-b-0">
-                  <TableCell className="p-0 pr-6">
-                    <P>Role</P>
-                  </TableCell>
-                  <TableCell className="w-full p-0">
-                    <P className="block translate-y-[2px] text-darkBlue">
-                      <div className="w-min max-w-[750px]">
-                        <TagSelector
-                          title=""
-                          id="roles"
-                          tags={_ROLETAGS}
-                          selectedTags={roles}
-                          setSelectedTags={setRoles}
-                          span="flex-row-reverse justify-end"
-                          popoverTrigger="flex-row-reverse justify-end"
-                        />
-                      </div>
-                    </P>
-                  </TableCell>
-                </TableRow>
               </TableBody>
             </Table>
             <div className="h-2"></div>
