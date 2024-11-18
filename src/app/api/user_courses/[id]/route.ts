@@ -11,10 +11,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       const err = await CHECK_UNAUTHORIZED(user_id)
       if(err)
         return err;
+      const res = await getCoursesByUser((await context.params).id)
+      if (res instanceof NextResponse)
+        return res
 
       console.log(request.url)
       return NextResponse.json(
-        { data: await getCoursesByUser((await context.params).id) },
+        { data: res },
         { status: HttpStatusCode.Ok }
       );
     } catch (ex) {

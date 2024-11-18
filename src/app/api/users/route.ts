@@ -6,8 +6,12 @@ import { getAllUsers } from "@/db/queries";
 
 export async function GET() {
   try {
+    const result = await getAllUsers();
+    if (result instanceof NextResponse)
+      return result
+
     return NextResponse.json(
-      { data: await getAllUsers() },
+      { data: result },
       { status: HttpStatusCode.Ok }
     );
   } catch (ex) {
