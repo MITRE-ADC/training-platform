@@ -8,6 +8,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { P } from "../custom/text";
+import { Checkbox } from "../checkbox";
+import { ScrollArea, ScrollBar } from "../scroll-area";
 
 type AutocompleteProps = {
   tags: TagType[];
@@ -44,6 +47,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const popoverContentRef = useRef<HTMLDivElement | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // eslint-disable-next-line
   const [popoverWidth, setPopoverWidth] = useState<number>(0);
@@ -51,14 +55,37 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   const [inputFocused, setInputFocused] = useState(false);
   const [popooverContentTop, setPopoverContentTop] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [barClass, setBarClass] = useState<string>("invisible");
+  const [fadeClass, setFadeClass] = useState<string>("mask-none");
 
   // Dynamically calculate the top position for the popover content
   useEffect(() => {
-    if (!triggerContainerRef.current || !triggerRef.current) return;
-    setPopoverContentTop(
-      triggerContainerRef.current?.getBoundingClientRect().bottom -
-        triggerRef.current?.getBoundingClientRect().bottom
-    );
+    if (triggerContainerRef.current && triggerRef.current) {
+      setPopoverContentTop(
+        triggerContainerRef.current?.getBoundingClientRect().bottom -
+          triggerRef.current?.getBoundingClientRect().bottom
+      );
+    }
+
+    // hack: we want to call this function after all of emlor as updated, however that is not
+    // guaranteed (likely something about event registration order?). There doesn't really seem
+    // to be any way around this besides implementing a small pause, hence setTimeout(..., 50)
+    setTimeout(() => {
+      if (scrollAreaRef.current) {
+        const thumb = scrollAreaRef.current.querySelector(
+          "#scroll-area-thumb"
+        ) as HTMLElement;
+
+        if (thumb && thumb.parentElement) {
+          const max = thumb.parentElement.scrollWidth - thumb.scrollWidth;
+          const cur = thumb.style.transform.substring(12).split("px")[0];
+          const p = Number(cur) / max;
+
+          updateScrollNotif(p);
+        } else updateScrollNotif(-1);
+      }
+    }, 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tags]);
 
   // Close the popover when clicking outside of it
@@ -205,10 +232,23 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     }
   );
 
+  function updateScrollNotif(p: number) {
+    if (p == -1) {
+      if (barClass != "invisible") setBarClass("invisible");
+      if (fadeClass != "mask-none") setFadeClass("mask-none");
+    } else {
+      if (p > 0.05 && barClass == "invisible") setBarClass("visible");
+      else if (p <= 0.05 && barClass == "visible") setBarClass("invisible");
+
+      if (p > 0.9 && fadeClass == "fade-right") setFadeClass("mask-none");
+      else if (p <= 0.9 && fadeClass == "mask-none") setFadeClass("fade-right");
+    }
+  }
+
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col overflow-hidden bg-popover text-popover-foreground",
+        "flex h-full w-full flex-col bg-popover text-popover-foreground",
         classStyleProps?.command
       )}
     >
@@ -218,10 +258,12 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         modal={usePortal}
       >
         <div
-          className="relative flex h-full items-center bg-transparent"
+          className={
+            "group relative flex h-full items-center bg-transparent " +
+            classStyleProps?.span
+          }
           ref={triggerContainerRef}
         >
-          {childrenWithProps}
           <PopoverTrigger asChild ref={triggerRef}>
             <Button
               variant="ghost"
@@ -235,12 +277,37 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                 setIsPopoverOpen(!isPopoverOpen);
               }}
             >
-              <i className="ri-arrow-drop-left-fill ri-2x font-[100]"></i>
-              <p className="mr-2 -translate-y-[1px] font-sans text-base font-bold">
+              {/*<div className="w-[1px] h-3/4 bg-highlight mr-3 ml-2"></div>*/}
+              <P className="mx-2 translate-y-[1px] text-darkBlue">
                 {classStyleProps?.popoverTriggerName}
-              </p>
+              </P>
+              <i
+                className={
+                  "ri-add-line ri-1x font-[100] text-darkBlue " +
+                  classStyleProps?.title
+                }
+              ></i>
             </Button>
           </PopoverTrigger>
+          <div
+            className={cn(
+              "h-[32px] w-[2px] flex-shrink-0 bg-highlight2 group-[.flex-row-reverse]:order-1",
+              barClass
+            )}
+          ></div>
+          <div className="min-w-0 flex-grow" ref={scrollAreaRef}>
+            <div className={cn(fadeClass)}>
+              <ScrollArea
+                className="visible whitespace-nowrap"
+                type="always"
+                orientation="horizontal"
+                scrollbar="absolute translate-y-full h-2"
+                getScrollPercent={updateScrollNotif}
+              >
+                <div>{childrenWithProps}</div>
+              </ScrollArea>
+            </div>
+          </div>
         </div>
         <PopoverContent
           ref={popoverContentRef}
@@ -255,71 +322,62 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
             zIndex: 9999,
           }}
         >
-          <div
-            className={cn(
-              "max-h-[300px] overflow-y-auto overflow-x-hidden",
-              classStyleProps?.commandList
-            )}
-            style={{
-              minHeight: "68px",
-            }}
-            key={autocompleteOptions.length}
-          >
-            {autocompleteOptions.length > 0 ? (
-              <div
-                key={autocompleteOptions.length}
-                role="group"
-                className={cn(
-                  "overflow-hidden overflow-y-auto p-1 text-foreground",
-                  classStyleProps?.commandGroup
-                )}
-                style={{
-                  minHeight: "68px",
-                }}
-              >
-                <div role="separator" className="py-0.5" />
-                {autocompleteOptions.map((option, index) => {
-                  const isSelected = index === selectedIndex;
-                  return (
-                    <div
-                      key={option.id}
-                      role="option"
-                      aria-selected={isSelected}
-                      className={cn(
-                        "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-                        isSelected && "bg-accent text-accent-foreground",
-                        classStyleProps?.commandItem
-                      )}
-                      data-value={option.text}
-                      onClick={() => toggleTag(option)}
-                    >
-                      <div className="flex w-full items-center gap-2">
-                        {option.text}
-                        {tags.some((tag) => tag.text === option.text) && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-check"
-                          >
-                            <path d="M20 6 9 17l-5-5"></path>
-                          </svg>
+          <ScrollArea type="always">
+            <div
+              className={cn(
+                "h-full max-h-[300px] min-h-[68px]",
+                classStyleProps?.commandList
+              )}
+              key={autocompleteOptions.length}
+            >
+              {autocompleteOptions.length > 0 ? (
+                <div
+                  key={autocompleteOptions.length}
+                  role="group"
+                  className={cn(
+                    "overflow-hidden overflow-y-auto p-1 text-foreground",
+                    classStyleProps?.commandGroup
+                  )}
+                  style={{
+                    minHeight: "68px",
+                  }}
+                >
+                  <div role="separator" className="py-0.5" />
+                  {autocompleteOptions.map((option, index) => {
+                    const isSelected = index === selectedIndex;
+                    return (
+                      <div
+                        key={option.id}
+                        role="option"
+                        aria-selected={isSelected}
+                        className={cn(
+                          "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+                          isSelected && "bg-accent text-accent-foreground",
+                          classStyleProps?.commandItem
                         )}
+                        data-value={option.text}
+                        onClick={() => toggleTag(option)}
+                      >
+                        <div className="flex w-full items-center gap-2">
+                          <Checkbox
+                            className="pointer-events-none"
+                            checked={tags.some(
+                              (tag) => tag.text === option.text
+                            )}
+                          ></Checkbox>
+                          <P className="font-[600] text-dark">{option.text}</P>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-6 text-center text-sm">No results found.</div>
-            )}
-          </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-6 text-center text-sm">
+                  No results found.
+                </div>
+              )}
+            </div>
+          </ScrollArea>
         </PopoverContent>
       </Popover>
     </div>

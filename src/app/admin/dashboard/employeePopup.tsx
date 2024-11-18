@@ -1,4 +1,11 @@
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
@@ -8,11 +15,18 @@ import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
-  getCourseData,
+  getEmployeeData,
+  EMPTY_EMPLOYEE,
+  _ROLETAGS,
 } from "./employeeDefinitions";
 import { roleToSpan } from "./employeeList";
-import { H2, Text } from "@/components/ui/custom/text";
+import { H2, P, Text } from "@/components/ui/custom/text";
 import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
+import { useState } from "react";
+import { TagSelector } from "@/components/ui/custom/tagSelector";
+import { Tag } from "@/components/ui/tag/tag-input";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Input } from "@/components/ui/input";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -39,21 +53,17 @@ const columns: ColumnDef<employeeAssignment>[] = [
     accessorKey: "due",
     header: ({ column }) => <SortableColumn column={column} title="Date Due" />,
     cell: ({ row }) => {
-      const but = (
-        <Button
-          variant="secondary"
-          className="main-outline ml-2 h-5 px-2 py-1 text-xs"
-        >
-          Edit
-        </Button>
-      );
-
       const v: undefined | string = row.getValue("due");
 
       return (
         <>
-          <Text disabled={!v}>{v ? v : "None"}</Text>
-          <DatePopup title="Assign Due Date" openBut={but} />
+          <P>{v ? v : "None"}</P>
+          <DatePopup
+            title="Assign Due Date"
+            openBut={
+              <i className="ri-edit-2-line ml-2 cursor-pointer text-darkBlue"></i>
+            }
+          />
         </>
       );
     },
@@ -63,77 +73,131 @@ const columns: ColumnDef<employeeAssignment>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Status" />,
     cell: ({ row }) => {
       const v = row.getValue("status");
-      return v == "done" ? (
-        <Text status="good">Completed</Text>
-      ) : v == "overdue" ? (
-        <Text status="alert">Overdue</Text>
-      ) : (
-        <Text>Incomplete</Text>
+      return (
+        <div className="flex items-center">
+          {v == "done" ? (
+            <P className="w-min rounded-xl bg-green px-4 py-[6px] text-[11px] font-[600] text-white">
+              Completed
+            </P>
+          ) : v == "overdue" ? (
+            <P className="w-min rounded-xl bg-red px-4 py-[6px] text-[11px] font-[600] text-white">
+              Overdue
+            </P>
+          ) : (
+            <P className="w-min rounded-xl bg-yellow px-4 py-[6px] text-[11px] font-[600] text-white">
+              Incomplete
+            </P>
+          )}
+        </div>
       );
     },
   },
   {
     id: "delete",
-    cell: () => <i className="ri-delete-bin-2-line"></i>,
+    cell: () => <i className="ri-close-large-line text-darkBlue"></i>,
   },
 ];
 
-function EmployeeInfo({
-  title,
-  value,
-  children,
-}: {
-  title: string;
-  value: string | JSX.Element;
-  children: React.ReactNode;
-}) {
+function EmployeeInfo({ title, value }: { title: string; value: string }) {
   return (
     <TableRow className="border-b-0">
-      <TableCell className="p-0 pr-6 text-lg font-bold">{title}</TableCell>
-      <TableCell className="p-0 pr-6">{value}</TableCell>
-      <TableCell className="p-0 pr-6">{children}</TableCell>
+      <TableCell className="p-0 pr-6">
+        <P>{title}</P>
+      </TableCell>
+      <TableCell className="p-0">
+        <P className="flex h-9 w-min items-center text-darkBlue">
+          <Input
+            defaultValue={value}
+            className="h-min w-min rounded-none border-0 py-0 pl-1 shadow-none focus-visible:border-b-[1px] focus-visible:ring-0"
+          />
+          <i className="ri-edit-2-line -translate-x-full"></i>
+        </P>
+      </TableCell>
       <TableCell className="w-full"></TableCell>
     </TableRow>
   );
 }
 
-export default function EmployeePopup({ data }: { data: employee }) {
+export default function EmployeePopup({ employee }: { employee: string }) {
+  const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
+  const [roles, setRoles] = useState<Tag[]>([]);
+
+  function load() {
+    setTimeout(() => {
+      //const d = getEmployeeData(employee);
+      const d = getEmployeeData("email@email.org");
+      if (d) {
+        console.log(d);
+        setData(d);
+        setRoles(d.roles);
+      } else console.error("Trying to find unknown employee " + employee);
+    }, 500);
+  }
+
   return (
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="default">Expand</Button>
+          <Button variant="default" onClick={load}>
+            Expand
+          </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[75vw]">
-          <div className="flex h-full w-full flex-col gap-4 p-8 pt-4">
+          <SheetHeader>
+            <VisuallyHidden>
+              <SheetTitle>Employee Popup</SheetTitle>
+              <SheetDescription>
+                Course and assignment information for {employee}
+              </SheetDescription>
+              {/* hidden field to take away auto focus on name field */}
+              <input></input>
+            </VisuallyHidden>
+          </SheetHeader>
+          <div className="flex h-full w-full flex-col gap-4 px-16 pb-8 pt-12">
             <H2>Employee Information</H2>
-            <div className="h-4"></div>
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
                 <EmployeeInfo
                   title="Name"
-                  value={data["firstName"] + " " + data["lastName"]}
-                >
-                  <StringPopup title="Update Name" />
-                </EmployeeInfo>
-                <EmployeeInfo title="Email" value={data["email"]}>
-                  <StringPopup title="Update Email" />
-                </EmployeeInfo>
-                <EmployeeInfo title="Role" value={roleToSpan(data["roles"])}>
-                  <StringPopup title="Set Roles" />
-                </EmployeeInfo>
+                  value={
+                    data.firstName && data.lastName
+                      ? data.firstName + " " + data.lastName
+                      : ""
+                  }
+                />
+                <EmployeeInfo title="Email" value={data.email} />
+                <TableRow className="border-b-0">
+                  <TableCell className="p-0 pr-6">
+                    <P>Role</P>
+                  </TableCell>
+                  <TableCell className="w-full p-0">
+                    <P className="block translate-y-[2px] text-darkBlue">
+                      <div className="w-min max-w-[750px]">
+                        <TagSelector
+                          title=""
+                          id="roles"
+                          tags={_ROLETAGS}
+                          selectedTags={roles}
+                          setSelectedTags={setRoles}
+                          span="flex-row-reverse justify-end"
+                          popoverTrigger="flex-row-reverse justify-end"
+                        />
+                      </div>
+                    </P>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <CourseSelectorPopup title="Add Course" data={getCourseData()}>
-                <Button variant="ghost" className="text-md font-sans">
-                  + Add Course
+              <CourseSelectorPopup title="Add Course" email={data.email}>
+                <Button variant="outline" className="text-darkLight">
+                  <P className="text-darkLight">Add Courses</P>
                 </Button>
               </CourseSelectorPopup>
             </div>
-            <div className="main-outline w-full flex-grow">
+            <div className="w-full flex-grow shadow-md">
               <DataTable
                 columns={columns}
                 data={data["assignments"]}
@@ -142,12 +206,18 @@ export default function EmployeePopup({ data }: { data: employee }) {
             </div>
             <div className="flex justify-end gap-4 font-sans">
               <Close asChild>
-                <Button className="h-12 w-52 text-lg" variant="secondary">
-                  Cancel
+                <Button
+                  className="h-[40px] w-[140px] rounded-md bg-blue hover:bg-blue/80"
+                  variant="secondary"
+                >
+                  <P className="font-[600] text-white">Cancel</P>
                 </Button>
               </Close>
-              <Button className="h-12 w-52 text-lg" variant="outline">
-                Submit Changes
+              <Button
+                className="h-[40px] w-[140px] rounded-md bg-navy hover:bg-navy/80"
+                variant="secondary"
+              >
+                <P className="font-[600] text-white">Submit Changes</P>
               </Button>
             </div>
           </div>

@@ -44,6 +44,8 @@ export interface TagInputStyleClassesProps {
     commandGroup?: string;
     commandItem?: string;
     popoverTriggerName?: string;
+    title?: string;
+    span?: string;
   };
   tag?: {
     body?: string;
@@ -554,6 +556,8 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                 commandItem: styleClasses?.autoComplete?.commandItem,
                 popoverTriggerName:
                   styleClasses?.autoComplete?.popoverTriggerName,
+                span: styleClasses?.autoComplete?.span,
+                title: styleClasses?.autoComplete?.title,
               }}
             >
               {!usePopoverForTags ? (
@@ -605,7 +609,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                 ) : (
                   <div
                     className={cn(
-                      `flex h-fit flex-row flex-wrap items-center gap-2 bg-background text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`,
+                      `flex h-fit flex-row items-center gap-2 bg-background text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`,
                       styleClasses?.inlineTagsContainer
                     )}
                   >
