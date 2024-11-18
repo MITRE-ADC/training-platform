@@ -50,4 +50,4 @@ CREATE TABLE Accounts (
     session_state TEXT
 );
 
-INSERT INTO Courses(course_name) INSERT ('NONE COURSE');
+INSERT INTO Courses(course_name) VALUES ('NONE COURSE');

@@ -3,7 +3,7 @@ import { cache } from "react";
 import { db } from "../db/index";
 import { eq, or } from "drizzle-orm";
 
-var jwt = require('jsonwebtoken');
+let jwt = require('jsonwebtoken');
 import { users } from "@/db/schema";
 import type { User}  from "../db/schema"
 import { NextRequest } from "next/server";

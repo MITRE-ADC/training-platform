@@ -8,10 +8,12 @@ import { getCurrentUser } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 
 export async function GET(req: NextRequest) {
-  const user = await getCurrentUser(await cookies() as any);
-  if (user.user == null){
-    return NextResponse.json({}, {status:403});
+  if (req.method === "GET") {
+    const user = await getCurrentUser(await cookies() as any);
+    if (user.user == null){
+      return NextResponse.json({}, {status:403});
+    }
+    return NextResponse.json(await getCurrentUser(req.cookies), {status: HttpStatusCode.Ok});
   }
   return NextResponse.json(await getCurrentUser(req.cookies), {status: HttpStatusCode.MethodNotAllowed});
-
 }

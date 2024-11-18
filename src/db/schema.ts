@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { eq, or } from "drizzle-orm";
 import { db } from "./index";
-import type { AdapterAccount } from "next-auth/adapters";
+// import type { AdapterAccount } from "next-auth/adapters";
 
 export async function locateUser(user: User) {
   const existingUsers = await db

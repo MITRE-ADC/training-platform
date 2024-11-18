@@ -1,11 +1,44 @@
+'use client';
 import EmployeeList from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
+//import { getCurrentUser } from "@/lib/auth-middleware";
+import { HttpStatusCode } from "axios";
 import Image from 'next/image'
+// import { useRouter } from 'next/navigation';
+// import useSWR from 'swr'
+//import { useParams } from "next/navigation";
+//import { cookies } from "next/headers";
+
+// const whoami_url = "/api/auth/whoami";
+// const get_json = { method: "GET"};
+
+// const fetcher = (...args : Parameters<typeof fetch>) => fetch(...args).then(res => res)
 
 export default function AdminDashBoard() {
+  // const router = useRouter();
+  // const response = await fetch("/api/auth/whoami", {
+  //   method: "GET"
+  // });
+
+  // if (response.status != HttpStatusCode.Ok) {
+  //   console.log("get fucked cuh");
+  //   return;
+  // }
+
+  // const { data, error } = useSWR('/api/auth/whoami', fetcher)
+
+  // if (error || (data && data.status != HttpStatusCode.Ok)) {
+  //   router.push('/signin');
+  //   return;
+  // }
+
+
+
+  // const user = (await response.json()).user;
+  
   return (
     <div>
       <div className="mt-[calc(26px+18px)] ml-[calc(43px+18px)]">
