@@ -23,7 +23,7 @@ import {
 import { roleToSpan } from "./employeeList";
 import { H2, P, Text } from "@/components/ui/custom/text";
 import CourseSelectorPopup, { CourseSelectorChildData, CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
-import { useState } from "react";
+import { MutableRefObject, forwardRef, useRef, useState } from "react";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import { Tag } from "@/components/ui/tag/tag-input";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { req } from "@/lib/utils";
 import { Assignment, Course, User, User_Assignment, User_Course } from "@/db/schema";
+import { assignAssignments, assignCourse, updateUser } from "./dashboardServer";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -102,7 +103,12 @@ const columns: ColumnDef<employeeAssignment>[] = [
   },
 ];
 
-function EmployeeInfo({ title, value }: { title: string; value: string }) {
+interface EmployeeInfoProps {
+  title: string;
+  value: string;
+}
+
+const EmployeeInfo = forwardRef<HTMLInputElement, EmployeeInfoProps>(function EmployeeInfo({ title, value }, ref) {
   return (
     <TableRow className="border-b-0">
       <TableCell className="p-0 pr-6">
@@ -111,6 +117,7 @@ function EmployeeInfo({ title, value }: { title: string; value: string }) {
       <TableCell className="p-0">
         <P className="flex h-9 w-min items-center text-darkBlue">
           <Input
+            ref={ref}
             defaultValue={value}
             className="h-min w-min rounded-none border-0 py-0 pl-1 shadow-none focus-visible:border-b-[1px] focus-visible:ring-0"
           />
@@ -120,7 +127,7 @@ function EmployeeInfo({ title, value }: { title: string; value: string }) {
       <TableCell className="w-full"></TableCell>
     </TableRow>
   );
-}
+});
 
 export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
@@ -128,6 +135,9 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
   const [courseData, setCourseData] = useState<CourseSelectorData[]>([]);
   const [defaultCourses, setDefaultCourses] = useState<string[]>([]);
+
+  const emailInput = useRef<HTMLInputElement | null>(null);
+  const nameInput = useRef<HTMLInputElement | null>(null);
 
   async function load() {
     // TODO: replace with user id get once that route is implemented
@@ -217,6 +227,27 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
     })).catch(() => setPlaceholder('No Results.'));
   }
 
+  function handleSubmit() {
+    if (emailInput.current && nameInput.current) {
+      const email = emailInput.current.value;
+      const name = nameInput.current.value;
+      if (email != data.email || name != data.firstName + " " + data.lastName) {
+        updateUser(employeeId, email, name);
+      }
+    }
+  }
+
+  function handleCourseUpdate(courses: Record<string, boolean>) {
+    console.log(courses);
+    for (let entry in courses) {
+      // currently do not support removing 
+      if (!courses[entry]) continue;
+
+      if (entry.startsWith('c_')) assignCourse(employeeId, entry.substring(2));
+      else assignAssignments(employeeId, entry.substring(2));
+    }
+  }
+
   return (
     <>
       <Sheet>
@@ -243,6 +274,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
                 <EmployeeInfo
+                  ref={nameInput}
                   title="Name"
                   value={
                     data.firstName && data.lastName
@@ -250,7 +282,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
                       : ""
                   }
                 />
-                <EmployeeInfo title="Email" value={data.email} />
+                <EmployeeInfo ref={emailInput} title="Email" value={data.email} />
                 <TableRow className="border-b-0">
                   <TableCell className="p-0 pr-6">
                     <P>Role</P>
@@ -276,7 +308,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <CourseSelectorPopup title="Add Course" data={courseData} setData={setCourseData} defaultCourses={defaultCourses}>
+              <CourseSelectorPopup title="Add Course" data={courseData} setData={setCourseData} defaultCourses={defaultCourses} handle={handleCourseUpdate}>
                 <Button variant="outline" className="text-darkLight">
                   <P className="text-darkLight">Add Courses</P>
                 </Button>
@@ -299,12 +331,15 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
                   <P className="font-[600] text-white">Cancel</P>
                 </Button>
               </Close>
-              <Button
-                className="h-[40px] w-[140px] rounded-md bg-navy hover:bg-navy/80"
-                variant="secondary"
-              >
-                <P className="font-[600] text-white">Submit Changes</P>
-              </Button>
+              <Close asChild>
+                <Button
+                  className="h-[40px] w-[140px] rounded-md bg-navy hover:bg-navy/80"
+                  variant="secondary"
+                  onClick={handleSubmit}
+                >
+                  <P className="font-[600] text-white">Submit Changes</P>
+                </Button>
+              </Close>
             </div>
           </div>
         </SheetContent>

@@ -6,8 +6,6 @@ import { HttpStatusCode } from "axios";
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) 
 {
   try {
-      console.log("here");
-      console.log((await context.params).id);
       return NextResponse.json(
         { data: await getAssignmentsByUser((await context.params).id) },
         { status: HttpStatusCode.Ok }

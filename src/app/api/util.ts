@@ -55,7 +55,7 @@ export async function processLinkAssignmentRequest(request: NextRequest) {
       `Request requires user_id and course_id in body or request parameters`
     );
 
-  processLinkAssignment(
+  return processLinkAssignment(
     body?.user_id ?? user_id!,
     body?.assignment_id ?? parseInt(assignment_id!)
   );
@@ -77,6 +77,7 @@ export async function processLinkAssignment(
     assignment_id: _assignment_id,
     completed: false,
   });
+
   return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
 }
 
@@ -84,7 +85,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const user_id = request.nextUrl.searchParams?.get("user_id");
   const course_id = request.nextUrl.searchParams?.get("course_id");
   const assigned_date = request.nextUrl.searchParams?.get("assigned_date");
-  const due_date = request.nextUrl.searchParams?.get("assigned_date");
+  const due_date = request.nextUrl.searchParams?.get("due_date");
 
   let body: AddUserCourse | undefined = undefined;
   try {
@@ -119,6 +120,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
     assigned_date: _assigned_date,
     due_date: _due_date,
   });
+
   return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
 }
 

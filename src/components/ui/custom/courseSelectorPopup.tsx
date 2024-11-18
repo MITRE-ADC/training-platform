@@ -20,9 +20,6 @@ import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import axios from "axios";
-import { req } from "@/lib/utils";
-import { Assignment, Course } from "@/db/schema";
 import { P } from "./text";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
@@ -94,10 +91,10 @@ function CourseSelectorAccordion({
     setChildIsChecked(v);
     form.setValue(course.children[ind].id, value);
 
-    if (!value) {
-      form.setValue(course.id, false);
-    } else if (!v.includes(false)) {
+    if (value) {
       form.setValue(course.id, true);
+    } else if (!v.includes(true)) {
+      form.setValue(course.id, false);
     }
   }
 
@@ -155,13 +152,15 @@ export default function CourseSelectorPopup({
   children,
   data,
   setData,
-  defaultCourses
+  defaultCourses,
+  handle,
 }: {
   title: string;
   children: JSX.Element;
   data: CourseSelectorData[],
   setData: Dispatch<SetStateAction<CourseSelectorData[]>>;
   defaultCourses: string[];
+  handle: (r: Record<string, boolean>) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -191,7 +190,7 @@ export default function CourseSelectorPopup({
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit((v) => {
-                    console.log(v);
+                    handle(v);
                     setOpen(false);
                   })}
                 >
