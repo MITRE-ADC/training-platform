@@ -62,10 +62,10 @@ export async function GET(request: NextRequest) {
       .from(user_assignments)
       .where(inArray(user_assignments.assignment_id, filteredAssignmentIds))
       .groupBy(user_assignments.user_id)
-        .having(
-          sql`COUNT(DISTINCT ${user_assignments.assignment_id}) = ${filteredAssignmentIds.length}`
-        ) 
-        .execute();
+      .having(
+        sql`COUNT(DISTINCT ${user_assignments.assignment_id}) = ${filteredAssignmentIds.length}`
+      )
+      .execute();
 
     const filteredUserIdsForAssignments = userAssignments.map(
       (row) => row.user_id
