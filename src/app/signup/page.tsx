@@ -22,7 +22,7 @@ export default function SignUpPage() {
     confirmPassword: false,
   });
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     const errors = {
       firstName: false,
       lastName: false,
@@ -49,20 +49,33 @@ export default function SignUpPage() {
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
     } else {
-      console.log('starting sending');
-      const response = fetch("/api/auth/signup", {
+      console.log("starting sending");
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
-        body: JSON.stringify({ name: firstName + " " + lastName, email: email, password: password }),
+        body: JSON.stringify({
+          name: firstName + " " + lastName,
+          email: email,
+          password: password,
+        }),
       });
-      
-      response.then(function(res) {
-        if (res.status != HttpStatusCode.Ok) {
-          setErrorMessage("wrong stuff bro");
-          return;
-        } else {
-          setErrorMessage("It worked bro");
-          return;
-        }});
+
+      if (response.status != HttpStatusCode.Ok) {
+        setErrorMessage("Something Went Wrong");
+        return;
+      } else {
+        setErrorMessage("SignUp Successful");
+        const data = new URLSearchParams();
+        data.append("name", firstName + " " + lastName);
+        data.append("password", password);
+        const res = await fetch("/api/webgoat/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: data,
+        });
+        return;
+      }
     }
   };
 

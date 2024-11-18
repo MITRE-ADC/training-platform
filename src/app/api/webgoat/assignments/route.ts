@@ -49,14 +49,12 @@ export async function POST(request: NextRequest) {
 
     // TODO: auth into our system as well
     const user = await getUserByName(username);
-    if (user instanceof NextResponse)
-      return user;
+    if (user instanceof NextResponse) return user;
 
     const user_id = user.id;
 
-    const err = await CHECK_UNAUTHORIZED(user_id)
-    if(err)
-      return err;
+    const err = await CHECK_UNAUTHORIZED(user_id);
+    if (err) return err;
 
     const { cookie, response } = await login_user(username, password);
 
@@ -141,8 +139,7 @@ export async function POST(request: NextRequest) {
           user_id,
           webgoat_name
         );
-        if (user_assignment instanceof NextResponse)
-          return user_assignment
+        if (user_assignment instanceof NextResponse) return user_assignment;
 
         if (user_assignment && complete != user_assignment.completed) {
           updateUserAssignment(
