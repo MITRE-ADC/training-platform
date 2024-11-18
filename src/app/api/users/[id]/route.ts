@@ -1,53 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
-import { selectUsersSchema, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { error, processCreateUserRequest } from "../../util";
-import { getUserByEmail } from "@/db/queries";
+import { error, processCreateUserRequest, processUpdateUser } from "../../util";
+import { getUser, userIdExists } from "@/db/queries";
+import { User } from "@/db/schema"
 import { HttpStatusCode } from "axios";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "../../auth";
 
-// Get data for a single user -- detailed
-export async function GET(request: NextRequest) {
-  const user_email = request.nextUrl.searchParams?.get("user_email");
-  if (!user_email)
+// GET assignment info
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> })
+{
+  try {
+    console.log(request.url);
+    const user_id = (await context.params).id
+    const err = await CHECK_UNAUTHORIZED(user_id)
+    if(err)
+      return err;
+
+
     return NextResponse.json(
-      { message: "API Route Error" },
-      { status: HttpStatusCode.BadRequest }
+      { data: await getUser((await context.params).id) },
+      { status: HttpStatusCode.Ok }
     );
-
-  const user = await getUserByEmail(user_email);
-  if (users == null) {
-    return NextResponse.json(
-      { message: "No user with the given email." },
-      { status: HttpStatusCode.NotFound }
-    );
-  }
-
-  return NextResponse.json({ data: user }, { status: HttpStatusCode.Ok });
+    } catch (ex) {
+      return NextResponse.json(
+        {
+          message: `Error: ${ex}\n`,
+        },
+        {
+          status: HttpStatusCode.InternalServerError,
+        }
+      );
+    }
 }
 
 // Create new user
 export async function PUT(request: NextRequest) {
+    const err = await CHECK_ADMIN()
+    if(err)
+      return err;
+
   return await processCreateUserRequest(request);
 }
+
 // Modify user data -- detailed
-export async function POST(request: NextRequest) {
-
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try{
-    const body = selectUsersSchema.parse(await request.json());
+    const user_id = (await context.params).id
+    const err = await CHECK_UNAUTHORIZED(user_id)
+    if(err)
+      return err;
 
-    const exists =
-      (await db.selectDistinct().from(users).where(eq(users.id, body.id)))
-        .length > 0;
+    const body : User = await request.json();
 
-    if (!exists) return processCreateUserRequest(request);
+    const exists = userIdExists(user_id);
 
-    await db.insert(users).values(body).onConflictDoUpdate({
-      target: users.id,
-      set: body
-    });
-
-    return NextResponse.json({message: `Updated user:\n${JSON.stringify(body)}`})
+    if (!exists) 
+      return processCreateUserRequest(request);
+    else
+      return processUpdateUser(body);
   }
   catch(ex){
     return error(`processing update request failed: ${ex}`)

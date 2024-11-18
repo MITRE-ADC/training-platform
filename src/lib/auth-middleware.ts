@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { db } from "../db/index";
 import { eq} from "drizzle-orm";
-const jwt = require("jsonwebtoken")
+const { default: jwt } = await import("jsonwebtoken");
 
 import { users } from "@/db/schema";
 import type { User}  from "../db/schema"

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { error } from "../../util";
 // import { register_user } from "../util";
 import { HttpStatusCode } from "axios";
+import { CHECK_ADMIN } from "../../auth";
 
 
 /**
@@ -11,6 +12,10 @@ import { HttpStatusCode } from "axios";
  */
 export async function POST(request: NextRequest) {
   try {
+      const err = await CHECK_ADMIN()
+      if(err)
+        return err;
+
     const username = request.nextUrl.searchParams?.get("name");
     const password = request.nextUrl.searchParams?.get("password");
 

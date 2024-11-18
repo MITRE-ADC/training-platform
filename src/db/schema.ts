@@ -46,12 +46,12 @@ export type Course = z.infer<typeof selectCoursesSchema>;
 export type AddCourse = Omit<Course, "course_id">;
 
 export const assignments = pgTable("assignments", {
-  webgoat_info: varchar({ length: 255 }).notNull(),
-  assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  assignment_name: varchar({ length: 255 }).notNull(),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
+  webgoat_info: varchar({ length: 255 }).notNull(),
 });
 
 export const selectAssignmentsSchema = createSelectSchema(assignments);

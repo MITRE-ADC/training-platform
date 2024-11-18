@@ -25,6 +25,7 @@ import {
   addUserAssignment,
   assignmentIdExists,
 } from "@/db/queries";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "./auth";
 
 export function error(
   message: string,
@@ -65,7 +66,11 @@ export async function processLinkAssignment(
   _user_id: string,
   _assignment_id: number
 ) {
+  const err = await CHECK_ADMIN();
+  if(err) return err
+
   if (!(await userIdExists(_user_id))) return error("User not found");
+
   if (!(await assignmentIdExists(_assignment_id)))
     return error("Assignment not found");
 
@@ -106,6 +111,8 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const _due_date =
     body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
 
+  const err = await CHECK_UNAUTHORIZED(_user_id);
+  if (err) return err;
   if (!(await userIdExists(_user_id))) return error("User not found");
   if (!(await courseIdExists(_course_id))) return error("Course not found");
 
@@ -203,6 +210,8 @@ export async function processCreateCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateCourse(course_name: string) {
+  const err = await CHECK_ADMIN();
+  if(err) return err
   if (await courseNameExists(course_name)) return error("Course exists");
 
   const [first] = await addCourse({
@@ -238,11 +247,36 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
   );
 }
 
+export async function processUpdateUser(
+  body: User
+){
+  if (!(await userIdExists(body.id)))
+    return error("user does not exist", HttpStatusCode.NotFound)
+
+
+  const err = await CHECK_UNAUTHORIZED(body.id);
+  if(err) return err
+
+  await db.insert(users).values(body).onConflictDoUpdate({
+    target: users.id,
+    set: body
+  });
+
+  return NextResponse.json({
+    data: body
+  }, {
+    status: HttpStatusCode.Ok
+  });
+}
+
 export async function processCreateAssignment(
   assignment_name: string,
   webgoat_info: string,
   course_id: number
 ) {
+  const err = await CHECK_ADMIN();
+  if(err) return err
+
   if (!(await courseIdExists(course_id)))
     return error("Course does not exist", HttpStatusCode.NotFound);
 

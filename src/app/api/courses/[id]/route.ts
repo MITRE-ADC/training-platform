@@ -7,8 +7,8 @@ import { error } from "../../util";
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) 
 {
   try {
-      console.log(request);
       const id = (await context.params).id;
+      console.log(request);
       if (!userIdExists(id)){
       return error("User does not exist");
     }
