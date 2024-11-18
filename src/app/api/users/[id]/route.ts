@@ -52,6 +52,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const body : User = await request.json();
 
     const exists = userIdExists(user_id);
+    if (exists instanceof NextResponse)
+      return exists;
 
     if (!exists) 
       return processCreateUserRequest(request);

@@ -69,7 +69,11 @@ export async function processLinkAssignment(
   const err = await CHECK_ADMIN();
   if(err) return err
 
-  if (!(await userIdExists(_user_id))) return error("User not found");
+  const exists = userIdExists(_user_id);
+  if (exists instanceof NextResponse)
+      return exists;
+  
+  // if (!(await userIdExists(_user_id))) return error("User not found");
 
   if (!(await assignmentIdExists(_assignment_id)))
     return error("Assignment not found");
@@ -113,7 +117,12 @@ export async function processLinkCourseRequest(request: NextRequest) {
 
   const err = await CHECK_UNAUTHORIZED(_user_id);
   if (err) return err;
-  if (!(await userIdExists(_user_id))) return error("User not found");
+
+  const exists = userIdExists(_user_id);
+  if (exists instanceof NextResponse)
+      return exists;
+  
+  // if (!(await userIdExists(_user_id))) return error("User not found");
   if (!(await courseIdExists(_course_id))) return error("Course not found");
 
   if (await userCourseExists(_course_id, _user_id))
@@ -214,10 +223,13 @@ export async function processCreateCourse(course_name: string) {
   if(err) return err
   if (await courseNameExists(course_name)) return error("Course exists");
 
-  const [first] = await addCourse({
+  const result = await addCourse({
     course_name: course_name,
   });
-  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+  if (result instanceof NextResponse)
+    return result
+  else
+    return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
 export async function processCreateAssignmentRequest(request: NextRequest) {
@@ -285,11 +297,20 @@ export async function processCreateAssignment(
       "Assignment with same name already exists",
       HttpStatusCode.Conflict
     );
-
-  const [first] = await addAssignment({
+    
+  const result = await addAssignment({
     course_id: course_id,
     assignment_name: assignment_name,
     webgoat_info: webgoat_info,
   });
-  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+  if (result instanceof NextResponse)
+    return result;
+ else 
+    return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+  /* const [first] = await addAssignment({
+    course_id: course_id,
+    assignment_name: assignment_name,
+    webgoat_info: webgoat_info,
+  }); */
+  
 }
