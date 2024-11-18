@@ -5,7 +5,7 @@ import { db } from "./index";
 import { getUserByEmail } from "./queries";
 
 export const {
-  handler,
+  handlers,
   signIn,
   signOut,
   auth,
