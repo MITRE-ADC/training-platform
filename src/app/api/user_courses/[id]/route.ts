@@ -12,12 +12,11 @@ export async function GET(
     const user_id = (await context.params).id;
     const err = await CHECK_UNAUTHORIZED(user_id);
     if (err) return err;
+    const res = await getCoursesByUser((await context.params).id);
+    if (res instanceof NextResponse) return res;
 
     console.log(request.url);
-    return NextResponse.json(
-      { data: await getCoursesByUser((await context.params).id) },
-      { status: HttpStatusCode.Ok }
-    );
+    return NextResponse.json({ data: res }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {
