@@ -18,7 +18,7 @@ export async function POST(req: Request) {
         );
       }
       const user = await getUserByEmail(email);
-      if (user.pass == password) {
+      if (user && user.pass == password) {
         const maxAge = 24 * 3600 * 7;
         setJwtCookie(user.id, maxAge);
 

@@ -10,18 +10,26 @@ import {
   AddUser,
   AddCourse,
   AddAssignment,
-  // AddUserCourse,
   AddUserAssignment,
   statusEnumSchema,
   AddUserCourse,
 } from "./schema";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 
 // Users
 export async function getAllUsers() {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.select().from(users);
 }
 
 export async function addUser(user: AddUser) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.insert(users).values(user).returning();
 }
 
@@ -49,21 +57,31 @@ export async function addUser(user: AddUser) {
 // }
 
 export async function userIdExists(id: string) {
-  return (await db.$count(db.select().from(users).where(eq(users.id, id)))) > 0;
+  const err = await CHECK_UNAUTHORIZED(id)
+  if(err)
+    return err;
+
+
+  return (
+    (await db.$count(db.select().from(users).where(eq(users.id, id)))) > 0
+  );
 }
 export async function userEmailExists(email: string) {
+  // TODO: see below
   return (
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
   );
 }
 
 export async function userNameExists(name: string) {
+  // TODO: see below
   return (
     (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
   );
 }
 
 export async function courseIdExists(id: number) {
+  // TODO: see below
   return (
     (await db.$count(
       db.select().from(courses).where(eq(courses.course_id, id))
@@ -72,6 +90,7 @@ export async function courseIdExists(id: number) {
 }
 
 export async function courseNameExists(course_name: string) {
+  // TODO: see below
   return (
     (await db.$count(
       db.select().from(courses).where(eq(courses.course_name, course_name))
@@ -80,6 +99,7 @@ export async function courseNameExists(course_name: string) {
 }
 
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
+  // TODO: see below
   return (
     (await db.$count(
       db
@@ -91,6 +111,7 @@ export async function assignmentWebgoatIdExists(webgoat_info: string) {
 }
 
 export async function userAssignmentIdExists(id: number) {
+  // TODO: determine which auth check to run -- generally auth'd in?
   return (
     (await db.$count(
       db
@@ -105,6 +126,10 @@ export async function userAssignmentWebgoatIdExists(
   user_id: string,
   webgoat_info: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     (await db.$count(
       db
@@ -128,6 +153,10 @@ export async function userAssignmentExists(
   assignment_id: number,
   user_id: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     (await db.$count(
       db
@@ -147,6 +176,10 @@ export async function getUserAssignmentByWebgoatId(
   user_id: string,
   webgoat_info: string
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if(err)
+    return err;
+
   return (
     await db
       .select({
@@ -175,6 +208,10 @@ export async function getAllCourses() {
 }
 
 export async function getCoursesByUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .select()
     .from(user_courses)
@@ -182,6 +219,10 @@ export async function getCoursesByUser(user_id: string) {
 }
 
 export async function getAllUserCourses() {
+  const err = await CHECK_ADMIN()
+  if(err)
+    return err;
+
   return await db.select().from(user_courses);
 }
 
@@ -202,6 +243,10 @@ export async function userCourseExists(course_id: number, user_id: string) {
 }
 
 export async function addUserCourse(userCourse: AddUserCourse) {
+  const err = await CHECK_ADMIN()
+  if(err)
+    return err;
+
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
@@ -210,6 +255,10 @@ export async function updateUserCourseStatus(
   course_id: number,
   status: typeof statusEnumSchema._type
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .update(user_courses)
     .set({ course_status: status })
@@ -222,6 +271,10 @@ export async function updateUserCourseStatus(
 }
 
 export async function deleteUserCourse(user_id: string, course_id: number) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .delete(user_courses)
     .where(
@@ -258,10 +311,18 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function getAllUserAssignments() {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.select().from(user_assignments);
 }
 
 export async function getAssignmentsByUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .select()
     .from(user_assignments)
@@ -277,6 +338,10 @@ export async function assignmentNameExists(name: string) {
 }
 
 export async function addUserAssignment(userAssignment: AddUserAssignment) {
+  const err = await CHECK_UNAUTHORIZED(userAssignment.user_id)
+  if (err)
+    return err
+
   return await db.insert(user_assignments).values(userAssignment).returning();
 }
 
@@ -285,6 +350,10 @@ export async function updateUserAssignment(
   assignment_id: number,
   completed: boolean
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .update(user_assignments)
     .set({ completed })
@@ -300,6 +369,10 @@ export async function deleteUserAssignment(
   user_id: string,
   assignment_id: number
 ) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db
     .delete(user_assignments)
     .where(
@@ -317,26 +390,55 @@ export async function getCourseByName(course_name: string) {
 }
 
 export async function getUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id)
+  if (err)
+    return err
+
   return await db.select().from(users).where(eq(users.id, user_id));
 }
 
 export async function getUserByEmail(user_email: string) {
-  return (await db.select().from(users).where(eq(users.email, user_email)))[0];
+  // TODO: select id by email, then check authorization, then return
+  const user = (await db.select().from(users).where(eq(users.email, user_email)))[0];
+
+  const err = await CHECK_UNAUTHORIZED(user.id);
+  if (err)
+    return err;
+  
+  return user;
 }
 
 export async function getUserByName(user_name: string) {
-  return (await db.select().from(users).where(eq(users.name, user_name)))[0];
+  const user = (await db.select().from(users).where(eq(users.name, user_name)))[0];
+
+  const err = await CHECK_UNAUTHORIZED(user.id);
+  if (err)
+    return err;
+
+  return user;
 }
 
 export async function deleteCourse(courseId: number) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.delete(courses).where(eq(courses.course_id, courseId));
 }
 
 export async function addCourse(course: AddCourse) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.insert(courses).values(course).returning();
 }
 
 export async function updateCourse(course: Course) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db
     .update(courses)
     .set(course)
@@ -362,5 +464,9 @@ export async function getAssignmentByWebgoatId(webgoat_info: string) {
 }
 
 export async function addAssignment(assignment: AddAssignment) {
+  const err = await CHECK_ADMIN()
+  if (err)
+    return err
+
   return await db.insert(assignments).values(assignment).returning();
 }

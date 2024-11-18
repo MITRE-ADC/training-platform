@@ -53,15 +53,15 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center">
+    <div className="absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 transform text-center md:w-1/3">
       <Card className="mb-4 text-left">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+          <CardTitle className="text-center text-2xl">Sign In</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.email ? "border-customRed border-2" : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -71,7 +71,7 @@ export default function SignInPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.password ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -80,13 +80,15 @@ export default function SignInPage() {
             />
           </div>
           {errorMessage && (
-            <p className="text-customRed mb-4">{errorMessage}</p>
+            <p className="text-customRed mb-4 text-lg">{errorMessage}</p>
           )}
-          <p>
-            <a href="/recover_password">Forgot Password?</a>
-          </p>
+          <div className="mt-1">
+            <a className="text-lg" href="/recover_password">
+              Forgot Password?
+            </a>
+          </div>
           <br />
-          <Button className="w-full" onClick={handleSignIn}>
+          <Button className="h-12 w-full text-xl" onClick={handleSignIn}>
             Sign In
           </Button>
         </CardContent>
