@@ -1,6 +1,6 @@
 import { aggregateUserCoursesStatusByUser } from "@/db/queries";
 import { HttpStatusCode } from "axios";
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 
 // return number of completed/in progress/not started for every user
 export async function GET() {
