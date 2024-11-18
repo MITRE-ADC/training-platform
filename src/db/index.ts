@@ -1,7 +1,6 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
-// import { users, accounts } from "./schema";
 import * as schema from "./schema";
 
 export const client = new Client({
