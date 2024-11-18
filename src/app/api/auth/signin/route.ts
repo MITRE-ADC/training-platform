@@ -4,6 +4,7 @@ import { HttpStatusCode } from "axios";
 import { getUserByEmail, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
+import type { User } from "@/db/schema";
 
 export async function POST(req: Request) {
   if (req.method === "POST") {
@@ -11,13 +12,13 @@ export async function POST(req: Request) {
     try {
       const exists = await userEmailExists(email);
       if (!exists) {
-        console.log("querying error / may not exist idk");
         return NextResponse.json(
-          { error: "This email has not been registered." },
+          { error: "This Email Has Not Been Registered" },
           { status: HttpStatusCode.BadRequest }
         );
       }
-      const user = await getUserByEmail(email);
+      const user = (await getUserByEmail(email)) as User;
+
       if (user && user.pass == password) {
         const maxAge = 24 * 3600 * 7;
         setJwtCookie(user.id, maxAge);
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
         return response;
       }
       return NextResponse.json(
-        { error: "wrong pass lil bro" },
+        { error: "Wrong Password or Username" },
         { status: HttpStatusCode.BadRequest }
       );
     } catch (error) {

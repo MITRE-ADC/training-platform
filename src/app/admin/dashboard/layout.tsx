@@ -18,18 +18,12 @@ export default async function DashboardLayout({
   const readonlyCookies = cookies();
   const headers = new Headers();
 
-  // Populate the headers object with the cookies from ReadonlyRequestCookies
   readonlyCookies.getAll().forEach(({ name, value }) => {
     headers.append("cookie", `${name}=${value}`);
   });
 
   const user = await getCurrentUser(new RequestCookies(headers));
 
-  // const resp = await fetch('/api/auth/usercheck', {
-  //   method: "GET"
-  // });
-
-  // fudgy solution
   if (!user || !user.user || user.user.email != admin_email) {
     if (user && user.user) {
       redirect("/challenges");

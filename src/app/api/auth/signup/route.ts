@@ -6,9 +6,9 @@ import { HttpStatusCode } from "axios";
 import { getUserByEmail, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
+import type { User } from "@/db/schema";
 
 export async function POST(req: NextRequest) {
-  console.log("lmao");
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
 
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       const x = await userEmailExists(email);
       if (x) {
         return NextResponse.json(
-          { error: "This email has already been registered." },
+          { error: "This Email Has Already Been Registered" },
           { status: HttpStatusCode.BadRequest }
         );
       }
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       // await addUser({name: name, email: email, pass: password});
       const exists = await userEmailExists(email);
       if (exists) {
-        const user = await getUserByEmail(email);
+        const user = (await getUserByEmail(email)) as User;
         const maxAge = 24 * 3600 * 7;
         setJwtCookie(user.id, maxAge);
       }
