@@ -21,10 +21,6 @@ export async function getAllUsers() {
   return await db.select().from(users);
 }
 
-export async function getUserByEmail(email: string) {
-  return await db.select().from(users).where(eq(users.email, email));
-}
-
 export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
@@ -81,31 +77,7 @@ export async function courseIdExists(id: number) {
 export async function courseNameExists(course_name: string) {
   return (
     (await db.$count(
-      db.select().from(courses).where(eq(courses.course_name, name))
-    )) > 0
-  );
-}
-
-export async function userCourseIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(user_courses).where(eq(user_courses.user_course_id, id))
-    )) > 0
-  );
-}
-
-export async function userCourseExists(course_id: number, user_id: number) {
-  return (
-    (await db.$count(
-      db
-        .select()
-        .from(user_courses)
-        .where(
-          and(
-            eq(user_courses.course_id, course_id),
-            eq(user_courses.user_id, user_id)
-          )
-        )
+      db.select().from(courses).where(eq(courses.course_name, course_name))
     )) > 0
   );
 }
@@ -184,21 +156,6 @@ export async function aggregateUserCoursesStatusByUser() {
   });
 
   return res;
-}
-
-export async function assignmentIdExists(id: number) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_id, id))
-    )) > 0
-  );
-}
-export async function assignmentNameExists(name: string) {
-  return (
-    (await db.$count(
-      db.select().from(assignments).where(eq(assignments.assignment_name, name))
-    )) > 0
-  );
 }
 
 export async function assignmentWebgoatIdExists(webgoat_info: string) {

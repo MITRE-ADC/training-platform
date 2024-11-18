@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken")
 import { users } from "@/db/schema";
 import type { User}  from "../db/schema"
 import { NextRequest } from "next/server";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 const JWT_SECRET = "change_to_something_else"; // Define your secret in env variables
 
@@ -72,7 +74,7 @@ export async function deleteJwtCookie(): Promise<void> {
 	});
 }
 
-export async function getCurrentUser(cookieStore: NextRequest["cookies"]): Promise<SessionValidationResult> {
+export async function getCurrentUser(cookieStore: ReadonlyRequestCookies | RequestCookies): Promise<SessionValidationResult> {
 	// const cookieStore = await cookies();
 	const token = cookieStore.get("session")?.value ?? null;
 	console.log("I AM YOUR TOKEN!" + token)
