@@ -13,8 +13,9 @@ import {
   AddUserAssignment,
   statusEnumSchema,
   AddUserCourse,
+  UserPublic,
 } from "./schema";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
+import { CHECK_ADMIN, CHECK_SESSION, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
 // Users
@@ -64,12 +65,12 @@ export async function userIdExists(id: string) {
 
 export async function userEmailExists(email: string) {
   const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
-  if(exists){
-    const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
-  }
-
+  // if(exists){
+  //   const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
+  //   if (error instanceof NextResponse)
+  //     return error;
+  // }
+  //
   return exists;
 }
 
@@ -386,31 +387,99 @@ export async function getCourseByName(course_name: string) {
   )[0];
 }
 
-export async function getUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
-  if (err) return err;
-
-  return await db.select().from(users).where(eq(users.id, user_id));
-}
-
+/**
+ * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
+ */
 export async function getUserByEmail(user_email: string) {
-  // TODO: select id by email, then check authorization, then return
-  const user = (
+  const user : UserPublic = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  const err = await CHECK_UNAUTHORIZED(user.id);
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return user;
 }
 
+/**
+ * gets ANY user's complete (including sensitive) data given their id requiring a user to be logged in
+ */
+export async function getCompleteUser(user_id: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  return (await db.select().from(users).where(eq(users.id, user_id)))[0];
+}
+
+/**
+ * gets ANY user's data given their id requiring a user to be logged in
+ */
+export async function getUser(user_id: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  return (await db.select().from(users).where(eq(users.id, user_id)))[0] as UserPublic;
+}
+
+/**
+ * checks ANY user's password against the passed-in password, without passing back unprotected data
+ */
+export async function checkUserPassword(user_email: string, user_password: string){
+  const user = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
+
+  return user.pass == user_password;
+}
+
+/**
+ * gets ANY user's complete (including sensitive) information requiring a user to be logged in (but not necessarily the same one whose data is requested)
+ */
+export async function getCompleteUserByEmail(user_email: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  const user = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
+  return user;
+}
+
+/**
+ * gets ANY user's complete (including sensitive) information without requiring a user to be logged in
+ * NOTE: this function is dangerous, use with care and only for authentication 
+ */
+export async function getCompleteUserByEmailNoAuth(user_email: string) {
+  const user = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
+
+  return user;
+}
+
+/**
+ * gets ANY user's data given their user_name
+ */
 export async function getUserByName(user_name: string) {
   const user = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
-  const err = await CHECK_UNAUTHORIZED(user.id);
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  return user as UserPublic;
+}
+
+/**
+ * gets ANY user's complete (including sensitive) data given their user_name
+ */
+export async function getCompleteUserByName(user_name: string) {
+  const user = (
+    await db.select().from(users).where(eq(users.name, user_name))
+  )[0];
+
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return user;

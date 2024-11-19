@@ -11,6 +11,7 @@ import {
   assignmentWebgoatIdExists,
   courseNameExists,
   getAssignmentByWebgoatId,
+  getCompleteUserByName,
   getCourseByName,
   getUserAssignmentByWebgoatId,
   getUserByName,
@@ -51,12 +52,10 @@ export async function POST(request: NextRequest) {
     if (!exists)
       return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
 
-    // TODO: auth into our system as well
-    const user = await getUserByName(username);
+    const user = await getCompleteUserByName(username);
     if (user instanceof NextResponse) return user;
 
     const user_id = user.id;
-
     const err = await CHECK_UNAUTHORIZED(user_id);
     if (err) return err;
 

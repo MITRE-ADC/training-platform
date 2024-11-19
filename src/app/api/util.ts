@@ -96,6 +96,48 @@ export async function processLinkAssignment(
   return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
+export async function processLinkCourse(course : AddUserCourse) {
+  if(!course.user_id)
+    return error("Must provide user id");
+
+  const err = await CHECK_UNAUTHORIZED(course.user_id);
+  if (err) return err;
+
+  const exists = await userIdExists(course.user_id);
+  if (exists instanceof NextResponse)
+      return exists;
+
+  if(!exists)
+    return error("User does not exist")
+
+  if (!(await courseIdExists(course.course_id))) 
+    return error("Course not found");
+
+  const _userCourseExists = await userCourseExists(course.course_id, course.user_id);
+  if (_userCourseExists instanceof NextResponse)
+    return _userCourseExists;
+
+  if (_userCourseExists)
+    return error("Record already exists!");
+
+  const result = await addUserCourse({
+    user_id: course.user_id,
+    course_id: course.course_id,
+    course_status: course.course_status,
+    assigned_date: course.assigned_date,
+    due_date: course.due_date,
+  });
+
+  if (result instanceof NextResponse)
+    return result;
+
+  if (result.length == 0)
+    return error("unknown", HttpStatusCode.InternalServerError);
+
+  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+}
+
+
 export async function processLinkCourseRequest(request: NextRequest) {
   const user_id = request.nextUrl.searchParams?.get("user_id");
   const course_id = request.nextUrl.searchParams?.get("course_id");
@@ -108,9 +150,6 @@ export async function processLinkCourseRequest(request: NextRequest) {
     const date = new Date(json.date);
 
     body = json;
-    
-
-
   } catch (ex) {
     console.log(`Error reading request body: ${ex}`);
   }
@@ -128,41 +167,12 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const _due_date =
     body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
 
-  const err = await CHECK_UNAUTHORIZED(_user_id);
-  if (err) return err;
-
-  const exists = await userIdExists(_user_id);
-  if (exists instanceof NextResponse)
-      return exists;
-  
-  if(!exists)
-    return error("User does not exist")
-
-  if (!(await courseIdExists(_course_id))) 
-    return error("Course not found");
-
-  const _userCourseExists = await userCourseExists(_course_id, _user_id);
-  if (_userCourseExists instanceof NextResponse)
-    return _userCourseExists;
-
-  if (_userCourseExists)
-    return error("Record already exists!");
-
-  const result = await addUserCourse({
-    user_id: _user_id,
-    course_id: _course_id,
-    course_status: "Not Started",
-    assigned_date: _assigned_date,
-    due_date: _due_date,
-  });
-
-  if (result instanceof NextResponse)
-    return result;
-
-  if (result.length == 0)
-    return error("unknown", HttpStatusCode.InternalServerError);
-
-  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+  return processLinkCourse({
+      assigned_date: _assigned_date, 
+      course_id: _course_id, 
+      course_status: "Not Started",
+      due_date: _due_date, 
+      user_id: _user_id});
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
@@ -197,8 +207,6 @@ export async function processCreateUserRequest(request: NextRequest) {
     );
     
   const exists = await userEmailExists(user_email);
-  if (exists instanceof NextResponse)
-    return exists;
   if (exists)
     return error(
       "User with this email already exists",

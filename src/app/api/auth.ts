@@ -15,7 +15,7 @@ export async function CHECK_ADMIN() {
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 /**
- * returns a response to send to user if they are unauthoried, undefined if authorized
+ * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_id matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_id: string) {
   const cookieStore = cookies();
@@ -28,4 +28,16 @@ export async function CHECK_UNAUTHORIZED(user_id: string) {
   }
 
   return undefined;
+}
+
+/**
+ * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user
+ */
+export async function CHECK_SESSION() {
+  const cookieStore = cookies();
+  const result = await getCurrentUser(cookieStore);
+  if (!result || !result.user) 
+    return error(`unauthorized`, HttpStatusCode.Unauthorized);
+  else
+    return undefined;
 }
