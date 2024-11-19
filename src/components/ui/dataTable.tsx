@@ -10,6 +10,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -87,7 +88,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: defaultSort ? defaultSort : "",
+      id: defaultSort ?? '',
       desc: true,
     },
   ]);
@@ -96,12 +97,13 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
     state: {
       sorting,
       globalFilter: filter?.filter,
     },
+    onSortingChange: setSorting,
     onGlobalFilterChange: filter?.setFilter,
     globalFilterFn: filter?.filterFn,
   });

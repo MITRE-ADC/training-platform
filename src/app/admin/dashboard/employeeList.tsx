@@ -65,6 +65,17 @@ const columns: ColumnDef<employeeOverview>[] = [
         </div>
       );
     },
+    sortingFn: (_a, _b, _) => {
+      const a = _a.getValue('tasks') as employeeTasks;
+      const b = _b.getValue('tasks') as employeeTasks;
+
+      // sort by overdue, then todo, then completed
+      if (a.overdue == b.overdue) {
+        if (a.todo == b.todo) {
+          return a.completed - b.completed;
+        } else return a.todo - b.todo;
+      } else return a.overdue - b.overdue;
+    }
   },
   {
     id: "expand",
