@@ -11,20 +11,24 @@ export async function GET(
   try {
     console.log(request);
     const id = (await context.params).id;
-    if (!userIdExists(id)) return error("User does not exist");
-
-    return NextResponse.json(
-      { data: await getAssignmentsByUser(id) },
-      { status: HttpStatusCode.Ok }
-    );
-  } catch (ex) {
-    return NextResponse.json(
-      {
-        message: `Error: ${ex}\n`,
-      },
-      {
-        status: HttpStatusCode.InternalServerError,
-      }
-    );
-  }
+    const exists = userIdExists(id);
+    if (exists instanceof NextResponse)
+      return exists;
+    if(!exists)
+      return error("User does not exist");
+    
+      return NextResponse.json(
+        { data: await getAssignmentsByUser(id) },
+        { status: HttpStatusCode.Ok }
+      );
+    } catch (ex) {
+      return NextResponse.json(
+        {
+          message: `Error: ${ex}\n`,
+        },
+        {
+          status: HttpStatusCode.InternalServerError,
+        }
+      );
+    }
 }

@@ -94,10 +94,16 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const course_id = request.nextUrl.searchParams?.get("course_id");
   const assigned_date = request.nextUrl.searchParams?.get("assigned_date");
   const due_date = request.nextUrl.searchParams?.get("assigned_date");
-
   let body: AddUserCourse | undefined = undefined;
+
   try {
-    body = await request.json();
+    const json = await request.json()
+    const date = new Date(json.date);
+
+    body = json;
+    
+
+
   } catch (ex) {
     console.log(`Error reading request body: ${ex}`);
   }
