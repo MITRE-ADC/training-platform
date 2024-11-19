@@ -3,9 +3,13 @@
 import {
   Column,
   ColumnDef,
+  ColumnFiltersState,
+  FilterFn,
   SortingState,
+  filterFns,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -17,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./button";
 import { P } from "./custom/text";
 import { ScrollArea } from "./scroll-area";
@@ -27,6 +31,13 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   defaultSort?: string;
   placeholder?: string;
+  filter?: DataTableFilteringProps;
+}
+
+interface DataTableFilteringProps {
+  filter: string;
+  setFilter: Dispatch<SetStateAction<string>>;
+  filterFn: FilterFn<any>;
 }
 
 export function SortableColumn<TData, TValue>({
@@ -72,6 +83,7 @@ export function DataTable<TData, TValue>({
   data,
   defaultSort,
   placeholder,
+  filter,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -84,11 +96,14 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     state: {
       sorting,
+      globalFilter: filter?.filter,
     },
-    manualSorting: true, // NOTE: we expect sorting to be done server side!
+    onGlobalFilterChange: filter?.setFilter,
+    globalFilterFn: filter?.filterFn,
   });
 
   return (

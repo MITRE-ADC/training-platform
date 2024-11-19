@@ -1,14 +1,14 @@
 "use client";
 
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import EmployeePopup from "./employeePopup";
 import {
   MountStatus,
   employeeOverview,
   employeeTasks,
 } from "./employeeDefinitions";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { P } from "@/components/ui/custom/text";
 import axios from "axios";
 import { req } from "@/lib/utils";
@@ -80,7 +80,7 @@ export function roleToSpan(roles: string[]) {
   );
 }
 
-export default function EmployeeList() {
+export default function EmployeeList({ searchFilter, setSearchFilter }: {searchFilter: string, setSearchFilter: Dispatch<SetStateAction<string>>}) {
   const [data, setData] = useState<employeeOverview[]>([]);
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
@@ -124,6 +124,27 @@ export default function EmployeeList() {
       data={data}
       defaultSort="tasks"
       placeholder={placeholder}
+      filter={{
+        filter: searchFilter,
+        setFilter: setSearchFilter,
+        filterFn: (row, _, _f: string) => {
+          const f = _f.trim().toLowerCase().split(' ');
+
+          if (f.length == 0) return true;
+
+          // scuffed
+          const match = (row.getValue('firstName') as string +
+                         row.getValue('lastName') as string +
+                         row.getValue('email') as string)
+                        .toLowerCase();
+
+          for (let i = 0; i < f.length; i++) {
+            if (!match.includes(f[i])) return false;
+          }
+
+          return true;
+        }
+      }}
     />
   );
 }
