@@ -7,7 +7,7 @@ import { getAllUserCourses } from "@/db/queries";
 export async function GET() {
   try {
     const res = await getAllUserCourses();
-    if (res) return res;
+    if (res instanceof NextResponse) return res;
 
     return NextResponse.json({ data: res }, { status: HttpStatusCode.Ok });
   } catch (ex) {

@@ -13,11 +13,11 @@ export async function GET(
   try {
     console.log(request.url);
     const user_id = (await context.params).id;
-    const err = await CHECK_UNAUTHORIZED(user_id);
-    if (err) return err;
+    const result = await getUser(user_id);
+    if (result instanceof NextResponse) return result;
 
     return NextResponse.json(
-      { data: await getUser((await context.params).id) },
+      { data: result },
       { status: HttpStatusCode.Ok }
     );
   } catch (ex) {
@@ -52,7 +52,7 @@ export async function POST(
 
     const body: User = await request.json();
 
-    const exists = userIdExists(user_id);
+    const exists = await userIdExists(user_id);
     if (exists instanceof NextResponse)
       return exists;
 

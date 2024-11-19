@@ -11,7 +11,10 @@ export async function GET(
   try {
     const id = (await context.params).id;
     console.log(request);
-    if (!userIdExists(id)) {
+    const exists = await userIdExists(id);
+    if (exists instanceof NextResponse)
+      return exists;
+    if (!exists) {
       return error("User does not exist");
     }
 

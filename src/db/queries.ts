@@ -15,6 +15,7 @@ import {
   AddUserCourse,
 } from "./schema";
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
+import { NextResponse } from "next/server";
 
 // Users
 export async function getAllUsers() {
@@ -60,18 +61,27 @@ export async function userIdExists(id: string) {
 
   return (await db.$count(db.select().from(users).where(eq(users.id, id)))) > 0;
 }
+
 export async function userEmailExists(email: string) {
-  // TODO: see below
-  return (
-    (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0
-  );
+  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
+  if(exists){
+    const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
+    if (error instanceof NextResponse)
+      return error;
+  }
+
+  return exists;
 }
 
 export async function userNameExists(name: string) {
-  // TODO: see below
-  return (
-    (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0
-  );
+  const exists = (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
+  if(exists){
+    const error = getUserByName(name); // will check unauthorized and return err if that's the case
+    if (error instanceof NextResponse)
+      return error;
+  }
+
+  return exists;
 }
 
 export async function courseIdExists(id: number) {
@@ -216,6 +226,9 @@ export async function getAllUserCourses() {
 }
 
 export async function userCourseExists(course_id: number, user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
   return (
     (await db.$count(
       db
@@ -280,6 +293,9 @@ export async function assignmentIdExists(id: number) {
 }
 
 export async function deleteAssignment(assignmentId: number) {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
   return await db
     .delete(assignments)
     .where(eq(assignments.assignment_id, assignmentId));

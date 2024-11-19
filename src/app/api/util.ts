@@ -56,7 +56,7 @@ export async function processLinkAssignmentRequest(request: NextRequest) {
       `Request requires user_id and course_id in body or request parameters`
     );
 
-  processLinkAssignment(
+  return processLinkAssignment(
     body?.user_id ?? user_id!,
     body?.assignment_id ?? parseInt(assignment_id!)
   );
@@ -69,7 +69,7 @@ export async function processLinkAssignment(
   const err = await CHECK_ADMIN();
   if (err) return err;
 
-  const exists = userIdExists(_user_id);
+  const exists = await userIdExists(_user_id);
   if (exists instanceof NextResponse)
       return exists;
   
@@ -81,12 +81,19 @@ export async function processLinkAssignment(
   if (await userAssignmentExists(_assignment_id, _user_id))
     return error("Record already exists!");
 
-  const [first] = await addUserAssignment({
+  const result = await addUserAssignment({
     user_id: _user_id,
     assignment_id: _assignment_id,
     completed: false,
   });
-  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+
+  if(result instanceof NextResponse)
+    return result;
+
+  if (result.length == 0)
+    return error("unknown", HttpStatusCode.InternalServerError);
+
+  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
 export async function processLinkCourseRequest(request: NextRequest) {
@@ -124,24 +131,38 @@ export async function processLinkCourseRequest(request: NextRequest) {
   const err = await CHECK_UNAUTHORIZED(_user_id);
   if (err) return err;
 
-  const exists = userIdExists(_user_id);
+  const exists = await userIdExists(_user_id);
   if (exists instanceof NextResponse)
       return exists;
   
-  // if (!(await userIdExists(_user_id))) return error("User not found");
-  if (!(await courseIdExists(_course_id))) return error("Course not found");
+  if(!exists)
+    return error("User does not exist")
 
-  if (await userCourseExists(_course_id, _user_id))
+  if (!(await courseIdExists(_course_id))) 
+    return error("Course not found");
+
+  const _userCourseExists = await userCourseExists(_course_id, _user_id);
+  if (_userCourseExists instanceof NextResponse)
+    return _userCourseExists;
+
+  if (_userCourseExists)
     return error("Record already exists!");
 
-  const [first] = await addUserCourse({
+  const result = await addUserCourse({
     user_id: _user_id,
     course_id: _course_id,
     course_status: "Not Started",
     assigned_date: _assigned_date,
     due_date: _due_date,
   });
-  return NextResponse.json({ data: first }, { status: HttpStatusCode.Created });
+
+  if (result instanceof NextResponse)
+    return result;
+
+  if (result.length == 0)
+    return error("unknown", HttpStatusCode.InternalServerError);
+
+  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
@@ -174,8 +195,11 @@ export async function processCreateUserRequest(request: NextRequest) {
     return error(
       "Please provide a hashed password as query paramter pass to associate with the created account\n"
     );
-
-  if (await userEmailExists(user_email))
+    
+  const exists = await userEmailExists(user_email);
+  if (exists instanceof NextResponse)
+    return exists;
+  if (exists)
     return error(
       "User with this email already exists",
       HttpStatusCode.Conflict
@@ -266,7 +290,11 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 }
 
 export async function processUpdateUser(body: User) {
-  if (!(await userIdExists(body.id)))
+  const exists = await userIdExists(body.id);
+  if (exists instanceof NextResponse)
+    return exists;
+
+  if (!exists)
     return error("user does not exist", HttpStatusCode.NotFound);
 
   const err = await CHECK_UNAUTHORIZED(body.id);

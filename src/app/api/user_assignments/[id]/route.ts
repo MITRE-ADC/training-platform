@@ -10,11 +10,12 @@ export async function GET(
 ) {
   try {
     const user_id = (await context.params).id;
-    const err = await CHECK_UNAUTHORIZED(user_id);
-    if (err) return err;
+    const data = await getAssignmentsByUser(user_id);
+    if (data instanceof NextResponse)
+      return data;
 
     return NextResponse.json(
-      { data: await getAssignmentsByUser((await context.params).id) },
+      { data: data },
       { status: HttpStatusCode.Ok }
     );
   } catch (ex) {

@@ -1,4 +1,4 @@
-import { getAssignmentsByUser, userIdExists } from "@/db/queries";
+import { assignmentIdExists, getAssignment, getAssignmentsByUser, userIdExists } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { error } from "../../util";
@@ -6,21 +6,19 @@ import { error } from "../../util";
 // GET assignment info
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: number }> }
 ) {
   try {
     console.log(request);
     const id = (await context.params).id;
-    const exists = userIdExists(id);
-    if (exists instanceof NextResponse)
-      return exists;
+    const exists = assignmentIdExists(id);
     if(!exists)
-      return error("User does not exist");
+      return error("Assignment does not exist");
     
-      return NextResponse.json(
-        { data: await getAssignmentsByUser(id) },
-        { status: HttpStatusCode.Ok }
-      );
+    return NextResponse.json(
+      { data: await getAssignment(id) },
+      { status: HttpStatusCode.Ok }
+    );
     } catch (ex) {
       return NextResponse.json(
         {
