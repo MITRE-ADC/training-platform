@@ -13,12 +13,16 @@ import {
   AddUserAssignment,
   statusEnumSchema,
   AddUserCourse,
-  UserPublic,
 } from "./schema";
 import { CHECK_ADMIN, CHECK_SESSION, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
 // Users
+
+/**
+ * gets complete (including sensitive) data on ALL uesrs -- must be admin to use
+ *
+ */
 export async function getAllUsers() {
   const err = await CHECK_ADMIN();
   if (err) return err;
@@ -391,14 +395,14 @@ export async function getCourseByName(course_name: string) {
  * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
  */
 export async function getUserByEmail(user_email: string) {
-  const user : UserPublic = (
+  const {id, pass, ...userFields} = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  return user;
+  return {...userFields};
 }
 
 /**
@@ -418,7 +422,8 @@ export async function getUser(user_id: string) {
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  return (await db.select().from(users).where(eq(users.id, user_id)))[0] as UserPublic;
+  const {id, pass, ...userFields} = (await db.select().from(users).where(eq(users.id, user_id)))[0];
+  return {...userFields};
 }
 
 /**
@@ -461,14 +466,14 @@ export async function getCompleteUserByEmailNoAuth(user_email: string) {
  * gets ANY user's data given their user_name
  */
 export async function getUserByName(user_name: string) {
-  const user = (
+  const {id, pass, ...userFields} = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  return user as UserPublic;
+  return {...userFields};
 }
 
 /**
