@@ -20,7 +20,7 @@ import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { P } from "./text";
+import { H2, H3, P } from "./text";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export interface CourseSelectorData {
@@ -60,11 +60,12 @@ function CourseSelectorAssignment({
           <FormItem className="ml-10 flex items-center gap-2">
             <FormControl>
               <Checkbox
+                className="rounded-[3px]"
                 checked={value}
                 onCheckedChange={(v) => notify(v as boolean, ind)}
               ></Checkbox>
             </FormControl>
-            {child.name}
+            <P className="font-[500] leading-[20px]">{child.name}</P>
           </FormItem>
         );
       }}
@@ -115,6 +116,7 @@ function CourseSelectorAccordion({
           <FormItem className="mx-4 flex items-center gap-2">
             <FormControl>
               <Checkbox
+                className="rounded-[3px]"
                 checked={field.value}
                 onCheckedChange={(v) => {
                   setChildIsChecked(
@@ -127,11 +129,13 @@ function CourseSelectorAccordion({
                 }}
               ></Checkbox>
             </FormControl>
-            <AccordionTrigger className="py-2">{course.name}</AccordionTrigger>
+            <AccordionTrigger className="py-2">
+              <P className="font-[500] leading-[20px]">{course.name}</P>
+            </AccordionTrigger>
           </FormItem>
         )}
       />
-      <AccordionContent className="flex flex-col gap-1">
+      <AccordionContent className="flex flex-col gap-2">
         {course.children.map((child, ind) => (
           <CourseSelectorAssignment
             key={ind}
@@ -186,7 +190,7 @@ export default function CourseSelectorPopup({
               </DialogDescription>
             </VisuallyHidden>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
-              <p className="text-lg font-bold">{title}</p>
+              <H2>{title}</H2>
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit((v) => {
@@ -194,7 +198,7 @@ export default function CourseSelectorPopup({
                     setOpen(false);
                   })}
                 >
-                  <ScrollArea className="main-outline mb-2 h-[500px] w-full">
+                  <ScrollArea className="rounded-md border-lightBlue border-[1px] mb-2 h-[500px] w-full">
                     <Accordion type="multiple" defaultValue={data.map((c) => c.name)}>
                       {data.length != 0 ? (
                         data.map((course, ind) => (
@@ -212,21 +216,18 @@ export default function CourseSelectorPopup({
                       )}
                     </Accordion>
                   </ScrollArea>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full">
                     <Close asChild>
-                      <Button
-                        variant="secondary"
-                        className="w-1/2 py-4 font-sans text-base"
-                      >
-                        Cancel
+                      <Button className="h-[40px] rounded-md bg-blue hover:bg-blue/80 w-1/2" variant="secondary">
+                        <P className="font-[600] text-white">Cancel</P>
                       </Button>
                     </Close>
                     <Button
-                      variant="outline"
-                      className="w-1/2 py-4 font-sans text-base"
+                      className="h-[40px] w-1/2 rounded-md bg-navy hover:bg-navy/80"
+                      variant="secondary"
                       type="submit"
                     >
-                      Submit Changes
+                      <P className="font-[600] text-white">Submit Changes</P>
                     </Button>
                   </div>
                 </form>
