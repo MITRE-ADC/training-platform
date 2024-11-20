@@ -63,22 +63,23 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+    0;
+  if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;
 }
 
 export async function userNameExists(name: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
+  if (exists) {
     const error = getUserByName(name); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;
@@ -284,6 +285,20 @@ export async function deleteUserCourse(user_id: string, course_id: number) {
     );
 }
 
+export async function deleteCourseForUser(user_id: string, course_id: number) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
+  return await db
+    .delete(user_courses)
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    );
+}
+
 export async function assignmentIdExists(id: number) {
   return (
     (await db.$count(
@@ -446,7 +461,7 @@ export async function updateCourseDueDate(course_id: number, date: Date) {
 
   await db
     .update(user_courses)
-    .set({due_date: date})
+    .set({ due_date: date })
     .where(eq(user_courses.course_id, course_id));
 }
 
