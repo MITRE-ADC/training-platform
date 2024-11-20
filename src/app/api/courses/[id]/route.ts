@@ -51,11 +51,14 @@ export async function PUT(
     }
     const { course_id, due_date } = await request.json();
     if (!course_id || !due_date) {
-      return NextResponse.json({
-        error: "Missing Course ID or Due Date field"
-      }, {
-        status: HttpStatusCode.BadRequest
-      });
+      return NextResponse.json(
+        {
+          error: "Missing Course ID or Due Date field",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        }
+      );
     }
 
     return NextResponse.json(

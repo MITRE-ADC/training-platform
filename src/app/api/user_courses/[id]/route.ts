@@ -37,26 +37,27 @@ export async function DELETE(
     const user_id = (await context.params).id;
     const err = await CHECK_UNAUTHORIZED(user_id);
     if (err) return err;
-    const res = await getCoursesByUser((await context.params).id);
-    if (res instanceof NextResponse) return res;
 
     const { course_id } = await request.json();
     if (!course_id) {
-      return NextResponse.json({
-        error: "Missing Course ID"
-      }, {
-        status: HttpStatusCode.BadRequest
-      });
+      return NextResponse.json(
+        {
+          error: "Missing Course ID",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        }
+      );
     }
 
     return NextResponse.json(
       {
-        data: deleteCourseForUser(user_id, course_id)
-      }, {
-        status: HttpStatusCode.Ok
+        data: deleteCourseForUser(user_id, course_id),
+      },
+      {
+        status: HttpStatusCode.Ok,
       }
     );
-
   } catch (ex) {
     return NextResponse.json(
       {

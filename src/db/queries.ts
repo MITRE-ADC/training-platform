@@ -316,6 +316,20 @@ export async function deleteAssignment(assignmentId: number) {
     .where(eq(assignments.assignment_id, assignmentId));
 }
 
+export async function deleteAssignmentForUser(user_id: string, assignment_id: number) {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
+  return await db
+    .delete(user_assignments)
+    .where(
+      and(
+        eq(user_assignments.user_id, user_id),
+        eq(user_assignments.assignment_id, assignment_id)
+      )
+    )
+}
+
 export async function getAllAssignments() {
   return await db.select().from(assignments);
 }
