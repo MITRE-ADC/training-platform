@@ -18,11 +18,11 @@ export async function GET(request: NextRequest) {
     request.nextUrl.searchParams?.get("course_filter")?.split(",") || [];
   const assignment_filter =
     request.nextUrl.searchParams?.get("assignment_filter")?.split(",") || [];
-  //const status_filter = request.nextUrl.searchParams?.get("status_filter")?.split(',') || [];
+  const status_filter = request.nextUrl.searchParams?.get("status_filter")?.split(',') || [];
 
   console.log(course_filter);
   console.log(assignment_filter);
-  //console.log(status_filter);
+  console.log(status_filter);
 
   let query;
   const conditions = [];
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Implementing the status filter
-  /* if (status_filter.length > 0) {
+  if (status_filter.length > 0) {
     const validStatusFilters: ("Not Started" | "In Progress" | "Completed")[] = status_filter as (
         | "Not Started"
         | "In Progress"
@@ -90,8 +90,8 @@ export async function GET(request: NextRequest) {
     .execute();
 
   const filteredUserIdsForStatus = userCoursesWithStatus.map((row) => row.user_id);
-  conditions.push(inArray(users.user_id, filteredUserIdsForStatus));
-  } */
+  conditions.push(inArray(users.id, filteredUserIdsForStatus));
+  }
 
   if (conditions.length > 0) {
     query = db
