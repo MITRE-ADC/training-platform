@@ -1,8 +1,10 @@
+"use client";
 import EmployeeList from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
+import { HttpStatusCode } from "axios";
 import Image from "next/image";
 import { _COURSETAGS } from "./employeeDefinitions";
 

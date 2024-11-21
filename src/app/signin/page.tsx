@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 //import { db } from "@/db/index";
 //import { userEmailExists } from "@/db/queries"
 import { HttpStatusCode } from "axios";
-
-
+// import { useRouter } from 'next/router';
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -19,8 +18,9 @@ export default function SignInPage() {
     password: false,
   });
   const [errorMessage, setErrorMessage] = useState("");
+  // const router = useRouter();
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     const errors = {
       email: false,
       password: false,
@@ -38,25 +38,18 @@ export default function SignInPage() {
 
     // signIn("credentials", {email: email, password: password})
 
-    const response = fetch("/api/auth/signin", {
+    const response = await fetch("/api/auth/signin", {
       method: "POST",
       body: JSON.stringify({ email: email, password: password }),
     });
 
-    response.then(function(res) {
-      if (res.status != HttpStatusCode.Ok) {
-        setErrorMessage("SOMETHING WENT WRONG bro");
-        return;
-      } else {
-        setErrorMessage("SUCCESSS bro");
-        return;
-      }
-      
-      
-    })
-
-    
-
+    if (response.status != HttpStatusCode.Ok) {
+      setErrorMessage("Something Went Wrong");
+      return;
+    } else {
+      setErrorMessage("Login Successful");
+      return;
+    }
   };
 
   return (

@@ -51,3 +51,7 @@ CREATE TABLE Accounts (
     id_token TEXT,
     session_state TEXT
 );
+
+INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
+INSERT INTO Users(name, email, pass) 
+    VALUES ('Admin', 'admin@mitre.com', 'changeme');
