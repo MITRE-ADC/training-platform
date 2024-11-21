@@ -6,6 +6,7 @@ import {
   varchar,
   text,
   timestamp,
+  date,
   boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
@@ -89,8 +90,8 @@ export const user_courses = pgTable("user_courses", {
     .notNull()
     .references(() => courses.course_id),
   course_status: statusEnum(),
-  due_date: timestamp("due_date", { mode: "date" }).notNull(),
-  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
+  due_date: date("due_date", { mode: "date" }).notNull(),
+  assigned_date: date("assigned_date", { mode: "date" }).notNull(),
 });
 
 export const selectUserCoursesSchema = createSelectSchema(user_courses);

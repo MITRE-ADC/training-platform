@@ -248,7 +248,8 @@ export async function userCourseExists(course_id: number, user_id: string) {
 export async function addUserCourse(userCourse: AddUserCourse) {
   const err = await CHECK_ADMIN();
   if (err) return err;
-
+  userCourse.assigned_date = new Date(userCourse.assigned_date)
+  userCourse.due_date = new Date(userCourse.due_date)
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
