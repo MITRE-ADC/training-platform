@@ -63,22 +63,23 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+    0;
+  if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;
 }
 
 export async function userNameExists(name: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
+  if (exists) {
     const error = getUserByName(name); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;

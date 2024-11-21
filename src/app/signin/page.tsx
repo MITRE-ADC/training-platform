@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 //import { userEmailExists } from "@/db/queries"
 import { HttpStatusCode } from "axios";
 // import { redirect } from "next/navigation";
-import { useRouter } from 'next/navigation'
-
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -51,10 +50,10 @@ export default function SignInPage() {
       return;
     } else {
       setErrorMessage("Login Successful");
-      if ((await response.json()).email == 'admin@mitre.com') {
-        router.push('/admin/dashboard');
+      if ((await response.json()).email == "admin@mitre.com") {
+        router.push("/admin/dashboard");
       } else {
-        router.push('/challenges');
+        router.push("/challenges");
       }
       return;
     }
