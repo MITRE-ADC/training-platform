@@ -19,8 +19,8 @@ import { NextResponse } from "next/server";
 
 // Users
 export async function getAllUsers() {
-  const err = await CHECK_ADMIN();
-  if (err) return err;
+  // const err = await CHECK_ADMIN();
+  // if (err) return err;
 
   return await db.select().from(users);
 }
@@ -399,8 +399,8 @@ export async function getUserByEmail(user_email: string) {
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  const err = await CHECK_UNAUTHORIZED(user.id);
-  if (err) return err;
+  // const err = await CHECK_UNAUTHORIZED(user.id);
+  // if (err) return err;
 
   return user;
 }
