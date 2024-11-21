@@ -44,15 +44,21 @@ export async function POST(request: NextRequest) {
         "Please provide the WebGoat username and password of the user for which records should be updated"
       );
 
-    if (!(await userNameExists(username)))
+    const exists = await userNameExists(username);
+    if (exists instanceof NextResponse)
+      return exists;
+
+    if (!exists)
       return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
 
     // TODO: auth into our system as well
-    const user_id = (await getUserByName(username)).id;
+    const user = await getUserByName(username);
+    if (user instanceof NextResponse) return user;
 
-    const err = await CHECK_UNAUTHORIZED(user_id)
-    if(err)
-      return err;
+    const user_id = user.id;
+
+    const err = await CHECK_UNAUTHORIZED(user_id);
+    if (err) return err;
 
     const { cookie, response } = await login_user(username, password);
 
@@ -137,15 +143,18 @@ export async function POST(request: NextRequest) {
           user_id,
           webgoat_name
         );
-        if (user_assignment instanceof NextResponse)
-          return user_assignment
+        if (user_assignment instanceof NextResponse) return user_assignment;
 
         if (user_assignment && complete != user_assignment.completed) {
-          updateUserAssignment(
+          const response = await updateUserAssignment(
             user_assignment.user_id,
             user_assignment.assignment_id,
             complete
           );
+
+          if(response instanceof NextResponse)
+            return response;
+
           changes++;
         }
       }

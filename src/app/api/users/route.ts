@@ -6,10 +6,10 @@ import { getAllUsers } from "@/db/queries";
 
 export async function GET() {
   try {
-    return NextResponse.json(
-      { data: await getAllUsers() },
-      { status: HttpStatusCode.Ok }
-    );
+    const result = await getAllUsers();
+    if (result instanceof NextResponse) return result;
+
+    return NextResponse.json({ data: result }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {

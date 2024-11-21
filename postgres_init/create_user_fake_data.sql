@@ -65,47 +65,47 @@ INSERT INTO Courses(course_name)
 -- Assignments Creation
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('216 task 1', 1, 'puzzle box');
+    VALUES ('216 task 1', 2, 'puzzle box');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('216 project 2', 1, 'nelsons shellito');
+    VALUES ('216 project 2', 2, 'nelsons shellito');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 1', 2, 'lexer parser interpreter');
+    VALUES ('330 project 1', 3, 'lexer parser interpreter');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 2', 2, 'optimizer');
+    VALUES ('330 project 2', 3, 'optimizer');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 3', 2, 'microcaml');
+    VALUES ('330 project 3', 3, 'microcaml');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 4', 2, 'rust project');
+    VALUES ('330 project 4', 3, 'rust project');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('351 exam', 3, 'graphs and trees');
+    VALUES ('351 exam', 4, 'graphs and trees');
 
 
 -- User Courses
 
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (1, 1, 'Not Started', '2024-06-01', '2024-05-01');
+    VALUES (1, 2, 'Not Started', '2024-06-01', '2024-05-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
     VALUES (1, 2, 'In Progress', '2024-08-01', '2024-01-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (2, 3, 'Completed', '2024-05-01', '2024-01-07');
+    VALUES (2, 4, 'Completed', '2024-05-01', '2024-01-07');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (2, 4, 'In Progress', '2024-08-06', '2024-01-07');
+    VALUES (2, 5, 'In Progess', '2024-08-06', '2024-01-07');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (3, 1, 'Not Started', '2024-04-01', '2024-01-07');
+    VALUES (3, 2, 'Not Started', '2024-04-01', '2024-01-07');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (5, 2, 'Completed', '2024-04-01', '2024-01-07');
+    VALUES (5, 3, 'Completed', '2024-04-01', '2024-01-07');
 
 -- User Assignments
 
