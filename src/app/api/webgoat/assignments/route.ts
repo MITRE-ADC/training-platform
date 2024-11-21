@@ -45,8 +45,7 @@ export async function POST(request: NextRequest) {
       );
 
     const exists = await userNameExists(username);
-    if (exists instanceof NextResponse)
-      return exists;
+    if (exists instanceof NextResponse) return exists;
 
     if (!exists)
       return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
@@ -152,8 +151,7 @@ export async function POST(request: NextRequest) {
             complete
           );
 
-          if(response instanceof NextResponse)
-            return response;
+          if (response instanceof NextResponse) return response;
 
           changes++;
         }

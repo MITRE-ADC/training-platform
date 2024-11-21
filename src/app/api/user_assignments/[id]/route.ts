@@ -11,13 +11,9 @@ export async function GET(
   try {
     const user_id = (await context.params).id;
     const data = await getAssignmentsByUser(user_id);
-    if (data instanceof NextResponse)
-      return data;
+    if (data instanceof NextResponse) return data;
 
-    return NextResponse.json(
-      { data: data },
-      { status: HttpStatusCode.Ok }
-    );
+    return NextResponse.json({ data: data }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {

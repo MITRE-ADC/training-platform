@@ -13,6 +13,7 @@ import {
   AddUserAssignment,
   statusEnumSchema,
   AddUserCourse,
+  User,
 } from "./schema";
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
@@ -32,23 +33,16 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
-// // Update a user
-// export async function updateUser(user: User) {
-//   return await db
-//     .update(users)
-//     .set(user)
-//     .where(eq(users.id, user.user_id));
-// }
+// Update a user
+export async function updateUser(user: User) {
+  return await db.update(users).set(user).where(eq(users.id, user.id));
+}
 
 // export async function userEmailExists(email: string) {
 //   return await db.select().from(users).where(eq(users.email, email)).limit(1);
 // }
-
-// export async function updateUser(user: User) {
-//   return await db
-//     .update(users)
-//     .set(user)
-//     .where(eq(users.user_id, user.user_id));
+// export async function userEmailExists(email: string) {
+//   return await db.select().from(users).where(eq(users.email, email)).limit(1);
 // }
 
 // export async function deleteUser(id: number) {
@@ -63,22 +57,23 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+    0;
+  if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;
 }
 
 export async function userNameExists(name: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
-  if(exists){
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.name, name)))) > 0;
+  if (exists) {
     const error = getUserByName(name); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse)
-      return error;
+    if (error instanceof NextResponse) return error;
   }
 
   return exists;
