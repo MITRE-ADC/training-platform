@@ -68,7 +68,9 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+    0;
   return exists;
 }
 
@@ -322,8 +324,8 @@ export async function userCourseExists(course_id: number, user_id: string) {
 export async function addUserCourse(userCourse: AddUserCourse) {
   const err = await CHECK_ADMIN();
   if (err) return err;
-  userCourse.assigned_date = new Date(userCourse.assigned_date)
-  userCourse.due_date = new Date(userCourse.due_date)
+  userCourse.assigned_date = new Date(userCourse.assigned_date);
+  userCourse.due_date = new Date(userCourse.due_date);
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
@@ -391,7 +393,10 @@ export async function deleteAssignment(assignmentId: number) {
     .where(eq(assignments.assignment_id, assignmentId));
 }
 
-export async function deleteAssignmentForUser(user_id: string, assignment_id: number) {
+export async function deleteAssignmentForUser(
+  user_id: string,
+  assignment_id: number
+) {
   const err = await CHECK_ADMIN();
   if (err) return err;
 
@@ -402,7 +407,7 @@ export async function deleteAssignmentForUser(user_id: string, assignment_id: nu
         eq(user_assignments.user_id, user_id),
         eq(user_assignments.assignment_id, assignment_id)
       )
-    )
+    );
 }
 
 export async function getAllAssignments() {
@@ -494,14 +499,14 @@ export async function getCourseByName(course_name: string) {
  * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
  */
 export async function getUserByEmail(user_email: string) {
-  const {id, pass, ...userFields} = (
+  const { id, pass, ...userFields } = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  return {...userFields};
+  return { ...userFields };
 }
 
 /**
@@ -521,14 +526,19 @@ export async function getUser(user_id: string) {
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  const {id, pass, ...userFields} = (await db.select().from(users).where(eq(users.id, user_id)))[0];
-  return {...userFields};
+  const { id, pass, ...userFields } = (
+    await db.select().from(users).where(eq(users.id, user_id))
+  )[0];
+  return { ...userFields };
 }
 
 /**
  * checks ANY user's password against the passed-in password, without passing back unprotected data
  */
-export async function checkUserPassword(user_email: string, user_password: string){
+export async function checkUserPassword(
+  user_email: string,
+  user_password: string
+) {
   const user = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
@@ -551,7 +561,7 @@ export async function getCompleteUserByEmail(user_email: string) {
 
 /**
  * gets ANY user's complete (including sensitive) information without requiring a user to be logged in
- * NOTE: this function is dangerous, use with care and only for authentication 
+ * NOTE: this function is dangerous, use with care and only for authentication
  */
 export async function getCompleteUserByEmailNoAuth(user_email: string) {
   const user = (
@@ -565,14 +575,14 @@ export async function getCompleteUserByEmailNoAuth(user_email: string) {
  * gets ANY user's data given their user_name
  */
 export async function getUserByName(user_name: string) {
-  const {id, pass, ...userFields} = (
+  const { id, pass, ...userFields } = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
   const err = await CHECK_SESSION();
   if (err) return err;
 
-  return {...userFields};
+  return { ...userFields };
 }
 
 /**

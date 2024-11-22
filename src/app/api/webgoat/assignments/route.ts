@@ -33,8 +33,7 @@ import { CHECK_UNAUTHORIZED } from "../../auth";
 export async function POST(request: NextRequest) {
   try {
     const user_id = request.nextUrl.searchParams?.get("user_id");
-    if(!user_id)
-      return error("Please provide a user_id query parameter")
+    if (!user_id) return error("Please provide a user_id query parameter");
 
     const err = await CHECK_UNAUTHORIZED(user_id!);
     if (err) return err;
@@ -139,8 +138,7 @@ export async function POST(request: NextRequest) {
             complete
           );
 
-          if(response instanceof NextResponse)
-            return response;
+          if (response instanceof NextResponse) return response;
 
           changes++;
         }

@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { checkUserPassword, getUserByEmail, getCompleteUserByEmailNoAuth, userEmailExists } from "@/db/queries";
+import {
+  checkUserPassword,
+  getUserByEmail,
+  getCompleteUserByEmailNoAuth,
+  userEmailExists,
+} from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";

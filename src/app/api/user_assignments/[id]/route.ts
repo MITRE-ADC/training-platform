@@ -26,7 +26,6 @@ export async function GET(
   }
 }
 
-
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

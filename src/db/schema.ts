@@ -36,7 +36,7 @@ export const users = pgTable("users", {
 export const selectUsersSchema = createSelectSchema(users);
 export type User = z.infer<typeof selectUsersSchema>;
 export type AddUser = Omit<User, "id">;
-export type UserPublic = Omit<User, "id"|"pass">;
+export type UserPublic = Omit<User, "id" | "pass">;
 
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),

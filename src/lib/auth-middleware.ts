@@ -11,7 +11,9 @@ import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 const JWT_SECRET = "change_to_something_else"; // Define your secret in env variables
 
-export type SessionValidationResult = { user: Omit<User, "pass"> } | { user: null };
+export type SessionValidationResult =
+  | { user: Omit<User, "pass"> }
+  | { user: null };
 // ...
 
 export async function validateJwtToken(
@@ -34,7 +36,7 @@ export async function validateJwtToken(
     }
     console.log("User found");
 
-    const user : Omit<User, "pass"> = result[0];
+    const user: Omit<User, "pass"> = result[0];
 
     // Extend expiration if token is near expiry (15 days or less remaining)
     const expiresIn = 1000 * 60 * 60 * 24 * 30; // 30 days

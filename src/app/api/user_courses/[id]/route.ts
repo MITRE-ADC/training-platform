@@ -45,7 +45,7 @@ export async function POST(
   let body: AddUserCourse | undefined = undefined;
 
   try {
-    const json = await request.json()
+    const json = await request.json();
     const due = new Date(json.due_date);
     const assigned = new Date(json.assigned_date);
     body = json;
@@ -67,11 +67,12 @@ export async function POST(
     body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
 
   return processLinkCourse({
-    assigned_date: _assigned_date, 
-    course_id: _course_id, 
+    assigned_date: _assigned_date,
+    course_id: _course_id,
     course_status: "Not Started",
-    due_date: _due_date, 
-    user_id: _user_id});
+    due_date: _due_date,
+    user_id: _user_id,
+  });
 }
 
 export async function DELETE(
