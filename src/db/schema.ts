@@ -84,7 +84,9 @@ const statusEnum = pgEnum("c_status", [
 export const statusEnumSchema = z.enum(statusEnum.enumValues);
 
 export const user_courses = pgTable("user_courses", {
-  user_id: text(),
+  user_id: text()
+    .notNull()
+    .references(() => users.id),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
