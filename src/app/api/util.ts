@@ -105,10 +105,10 @@ export async function processLinkCourseRequest(request: NextRequest) {
 
   try {
     const json = await request.json()
-    const date = new Date(json.date);
+    const date = new Date(json.due_date);
 
     body = json;
-    
+
 
 
   } catch (ex) {
@@ -119,14 +119,12 @@ export async function processLinkCourseRequest(request: NextRequest) {
     return error(
       `Request requires user_id and course_id in body or request parameters`
     );
-
+  
   const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
-  const _assigned_date =
-    body?.assigned_date ??
-    ((assigned_date && new Date(assigned_date!)) || new Date());
-  const _due_date =
-    body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
+  const _assigned_date = body?.assigned_date ?? new Date()
+  const _due_date = body?.due_date ?? new Date()
+    
 
   const err = await CHECK_UNAUTHORIZED(_user_id);
   if (err) return err;
@@ -159,10 +157,8 @@ export async function processLinkCourseRequest(request: NextRequest) {
   if (result instanceof NextResponse)
     return result;
 
-  if (result.length == 0)
-    return error("unknown", HttpStatusCode.InternalServerError);
+  return NextResponse.json({ data: result }, { status: HttpStatusCode.Created });
 
-  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
@@ -291,8 +287,8 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 
 export async function processUpdateUser(body: User) {
   const exists = await userIdExists(body.id);
-  if (exists instanceof NextResponse)
-    return exists;
+  // if (exists instanceof NextResponse)
+  //   return exists;
 
   if (!exists)
     return error("user does not exist", HttpStatusCode.NotFound);
