@@ -147,7 +147,7 @@ export async function processLinkCourseRequest(request: NextRequest) {
 
   try {
     const json = await request.json()
-    const date = new Date(json.date);
+    const date = new Date(json.due_date);
 
     body = json;
   } catch (ex) {
@@ -158,14 +158,12 @@ export async function processLinkCourseRequest(request: NextRequest) {
     return error(
       `Request requires user_id and course_id in body or request parameters`
     );
-
+  
   const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
-  const _assigned_date =
-    body?.assigned_date ??
-    ((assigned_date && new Date(assigned_date!)) || new Date());
-  const _due_date =
-    body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
+  const _assigned_date = body?.assigned_date ?? new Date()
+  const _due_date = body?.due_date ?? new Date()
+    
 
   return processLinkCourse({
       assigned_date: _assigned_date, 
@@ -299,8 +297,8 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 
 export async function processUpdateUser(body: User) {
   const exists = await userIdExists(body.id);
-  if (exists instanceof NextResponse)
-    return exists;
+  // if (exists instanceof NextResponse)
+  //   return exists;
 
   if (!exists)
     return error("user does not exist", HttpStatusCode.NotFound);

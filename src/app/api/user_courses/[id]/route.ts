@@ -1,4 +1,4 @@
-import { getCoursesByUser } from "@/db/queries";
+import { deleteCourseForUser, getCoursesByUser } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
@@ -72,4 +72,45 @@ export async function POST(
     course_status: "Not Started",
     due_date: _due_date, 
     user_id: _user_id});
+}
+
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user_id = (await context.params).id;
+    const err = await CHECK_ADMIN(user_id); // only admin should be able to unassign work -- users could use this to cheat
+    if (err) return err;
+
+    const { course_id } = await request.json();
+    if (!course_id) {
+      return NextResponse.json(
+        {
+          error: "Missing Course ID",
+        },
+        {
+          status: HttpStatusCode.BadRequest,
+        }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        data: deleteCourseForUser(user_id, course_id),
+      },
+      {
+        status: HttpStatusCode.Ok,
+      }
+    );
+  } catch (ex) {
+    return NextResponse.json(
+      {
+        message: `Error: ${ex}\n`,
+      },
+      {
+        status: HttpStatusCode.InternalServerError,
+      }
+    );
+  }
 }
