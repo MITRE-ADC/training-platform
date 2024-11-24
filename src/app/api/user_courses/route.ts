@@ -6,10 +6,10 @@ import { getAllUserCourses } from "@/db/queries";
 // Get data for a single user -- detailed
 export async function GET() {
   try {
-    return NextResponse.json(
-      { data: await getAllUserCourses() },
-      { status: HttpStatusCode.Ok }
-    );
+    const res = await getAllUserCourses();
+    if (res instanceof NextResponse) return res;
+
+    return NextResponse.json({ data: res }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {

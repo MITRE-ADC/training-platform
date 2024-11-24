@@ -11,6 +11,8 @@ import {
   assignmentWebgoatIdExists,
   courseNameExists,
   getAssignmentByWebgoatId,
+  getCompleteUser,
+  getCompleteUserByName,
   getCourseByName,
   getUserAssignmentByWebgoatId,
   getUserByName,
@@ -18,6 +20,7 @@ import {
   userAssignmentWebgoatIdExists,
   userNameExists,
 } from "@/db/queries";
+import { CHECK_UNAUTHORIZED } from "../../auth";
 
 // export const autopopulate_courses_from_webgoat = true;
 // export const assign_all_assignments_in_webgoat = true;
@@ -29,8 +32,14 @@ import {
  */
 export async function POST(request: NextRequest) {
   try {
-    const username = request.nextUrl.searchParams?.get("username");
-    const password = request.nextUrl.searchParams?.get("password");
+    const user_id = request.nextUrl.searchParams?.get("user_id");
+    if (!user_id) return error("Please provide a user_id query parameter");
+
+    const err = await CHECK_UNAUTHORIZED(user_id!);
+    if (err) return err;
+
+    const user = await getCompleteUser(user_id);
+    if (user instanceof NextResponse) return user;
 
     const autopopulate_courses_from_webgoat = request.nextUrl.searchParams?.get(
       "autopopulate_courses"
@@ -38,18 +47,7 @@ export async function POST(request: NextRequest) {
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
-    if (!username || !password)
-      return error(
-        "Please provide the WebGoat username and password of the user for which records should be updated"
-      );
-
-    if (!(await userNameExists(username)))
-      return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
-
-    // TODO: auth into our system as well
-    const user_id = (await getUserByName(username)).id;
-    const { cookie, response } = await login_user(username, password);
-
+    const { cookie, response } = await login_user(user.name, user.pass);
     if (response) return response;
 
     const response2 = await fetch(URL_webgoat_lessonmenu, {
@@ -131,12 +129,17 @@ export async function POST(request: NextRequest) {
           user_id,
           webgoat_name
         );
+        if (user_assignment instanceof NextResponse) return user_assignment;
+
         if (user_assignment && complete != user_assignment.completed) {
-          updateUserAssignment(
+          const response = await updateUserAssignment(
             user_assignment.user_id,
             user_assignment.assignment_id,
             complete
           );
+
+          if (response instanceof NextResponse) return response;
+
           changes++;
         }
       }

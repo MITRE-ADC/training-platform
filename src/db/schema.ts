@@ -6,6 +6,7 @@ import {
   varchar,
   text,
   timestamp,
+  date,
   boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
@@ -35,6 +36,7 @@ export const users = pgTable("users", {
 export const selectUsersSchema = createSelectSchema(users);
 export type User = z.infer<typeof selectUsersSchema>;
 export type AddUser = Omit<User, "id">;
+export type UserPublic = Omit<User, "id" | "pass">;
 
 export const courses = pgTable("courses", {
   course_id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -46,12 +48,12 @@ export type Course = z.infer<typeof selectCoursesSchema>;
 export type AddCourse = Omit<Course, "course_id">;
 
 export const assignments = pgTable("assignments", {
-  webgoat_info: varchar({ length: 255 }).notNull(),
-  assignment_name: varchar({ length: 255 }).notNull(),
   assignment_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  assignment_name: varchar({ length: 255 }).notNull(),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
+  webgoat_info: varchar({ length: 255 }).notNull(),
 });
 
 export const selectAssignmentsSchema = createSelectSchema(assignments);
@@ -84,15 +86,28 @@ const statusEnum = pgEnum("c_status", [
 export const statusEnumSchema = z.enum(statusEnum.enumValues);
 
 export const user_courses = pgTable("user_courses", {
-  user_id: text(),
+  user_id: text()
+    .notNull()
+    .references(() => users.id),
   course_id: integer()
     .notNull()
     .references(() => courses.course_id),
   course_status: statusEnum(),
-  due_date: timestamp("due_date", { mode: "date" }).notNull(),
-  assigned_date: timestamp("assigned_date", { mode: "date" }).notNull(),
+  due_date: date("due_date", { mode: "date" }).notNull(),
+  assigned_date: date("assigned_date", { mode: "date" }).notNull(),
 });
 
 export const selectUserCoursesSchema = createSelectSchema(user_courses);
 export type User_Course = z.infer<typeof selectUserCoursesSchema>;
 export type AddUserCourse = Omit<User_Course, "user_course_id">;
+
+const sessionTable = pgTable("session", {
+  id: text("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
+});

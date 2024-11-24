@@ -1,19 +1,19 @@
 CREATE TABLE Users (
     -- id SERIAL PRIMARY KEY,
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    pass VARCHAR(100) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    pass VARCHAR(255) NOT NULL,
     emailVerified TIMESTAMP,
     image TEXT
 );
 
 CREATE TABLE Courses (
     course_id SERIAL PRIMARY KEY,
-    course_name VARCHAR(100)
+    course_name VARCHAR(255)
 );
 
-CREATE TYPE c_status AS ENUM ('Not Started', 'In Progess', 'Completed');
+CREATE TYPE c_status AS ENUM ('Not Started', 'In Progress', 'Completed');
 
 CREATE TABLE User_Courses (
     user_course_id SERIAL PRIMARY KEY,
@@ -26,9 +26,9 @@ CREATE TABLE User_Courses (
 
 CREATE TABLE Assignments (
     assignment_id SERIAL PRIMARY KEY,
-    assignment_name VARCHAR(100),
+    assignment_name VARCHAR(255),
     course_id int REFERENCES Courses(course_id),
-    webgoat_info VARCHAR(200)
+    webgoat_info VARCHAR(255)
 );
 
 CREATE TABLE User_Assignments (
@@ -51,3 +51,7 @@ CREATE TABLE Accounts (
     id_token TEXT,
     session_state TEXT
 );
+
+INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
+INSERT INTO Users(name, email, pass) 
+    VALUES ('Admin', 'admin@mitre.com', 'changeme');

@@ -104,9 +104,16 @@ export function CourseList() {
   const closeModal = () => setModalOpen(false);
 
   return (
-    <div className="space-y-4">
+    <div id="card-container" className="space-y-4">
       {_DATA.map((courseData: Course, courseIndex: number) => (
-        <Card key={courseIndex} className="w-full p-4 shadow-md">
+        <Card
+          key={courseIndex}
+          id={
+            courseData.course +
+            courseData.assignments.map((element) => element.name).join()
+          }
+          className="w-full p-4 shadow-md"
+        >
           <CardHeader className="mb-0 pb-0">
             <CardTitle className="mb-4 pb-0 text-2xl font-bold">
               {courseData.course}

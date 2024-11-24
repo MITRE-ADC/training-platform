@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { getAllUserAssignments } from "@/db/queries";
 import { processLinkAssignmentRequest } from "../util";
+import { CHECK_ADMIN } from "../auth";
 
 // GET method for all trainings
 export async function GET() {
   try {
-    return NextResponse.json(
-      { data: await getAllUserAssignments() },
-      { status: HttpStatusCode.Ok }
-    );
+    const data = await getAllUserAssignments();
+    if (data instanceof NextResponse) return data;
+
+    return NextResponse.json({ data: data }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {

@@ -22,7 +22,7 @@ export default function SignUpPage() {
     confirmPassword: false,
   });
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     const errors = {
       firstName: false,
       lastName: false,
@@ -49,33 +49,46 @@ export default function SignUpPage() {
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
     } else {
-      console.log('starting sending');
-      const response = fetch("/api/auth/signup", {
+      console.log("starting sending");
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
-        body: JSON.stringify({ name: firstName + " " + lastName, email: email, password: password }),
+        body: JSON.stringify({
+          name: firstName + " " + lastName,
+          email: email,
+          password: password,
+        }),
       });
-      
-      response.then(function(res) {
-        if (res.status != HttpStatusCode.Ok) {
-          setErrorMessage("wrong stuff bro");
-          return;
-        } else {
-          setErrorMessage("It worked bro");
-          return;
-        }});
+
+      if (response.status != HttpStatusCode.Ok) {
+        setErrorMessage("Something Went Wrong");
+        return;
+      } else {
+        setErrorMessage("SignUp Successful");
+        const data = new URLSearchParams();
+        data.append("name", firstName + " " + lastName);
+        data.append("password", password);
+        const res = await fetch("/api/webgoat/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: data,
+        });
+        return;
+      }
     }
   };
 
   return (
-    <div className="absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center">
+    <div className="absolute left-1/2 top-1/2 w-1/3 -translate-x-1/2 -translate-y-1/2 transform text-center">
       <Card className="mb-4 text-left">
         <CardHeader>
-          <CardTitle>Welcome</CardTitle>
+          <CardTitle className="text-center text-2xl">Sign Up</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.firstName ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.firstName ? "border-customRed border-2" : ""}`}
               placeholder="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -84,7 +97,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.lastName ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.lastName ? "border-customRed border-2" : ""}`}
               placeholder="Last name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -93,7 +106,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.email ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.email ? "border-customRed border-2" : ""}`}
               type="email"
               placeholder="Email"
               value={email}
@@ -103,7 +116,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.password ? "border-customRed border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-customRed border-2" : ""}`}
               type="password"
               placeholder="Password"
               value={password}
@@ -113,7 +126,7 @@ export default function SignUpPage() {
           </div>
           <div className="flex gap-4">
             <Input
-              className={`mb-4 ${fieldErrors.confirmPassword ? "border-customRed0 border-2" : ""}`}
+              className={`mb-4 py-6 text-lg ${fieldErrors.confirmPassword ? "border-customRed0 border-2" : ""}`}
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
@@ -127,7 +140,7 @@ export default function SignUpPage() {
           )}
 
           <br />
-          <Button className="w-full" onClick={handleSignUp}>
+          <Button className="h-12 w-full text-xl" onClick={handleSignUp}>
             Sign Up
           </Button>
         </CardContent>

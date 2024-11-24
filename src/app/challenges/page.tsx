@@ -33,6 +33,122 @@ const frameworks = [
 export default function ChallengeHomepage() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  const [originalOrder, setOriginalOrder] =
+    React.useState<Map<Element, number>>();
+
+  React.useEffect(() => {
+    const container = document.getElementById("card-container");
+    if (container) {
+      const cards = Array.from(container.children);
+      setOriginalOrder(new Map(cards.map((card, index) => [card, index])));
+    }
+  }, []);
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = event.target.value.toLowerCase();
+    setSearchQuery(searchValue);
+    const container = document.getElementById("card-container");
+    if (container) {
+      for (const child of container.children) {
+        const element = child as HTMLElement;
+        if (element.id.toLowerCase().includes(searchValue)) {
+          element.style.display = "block";
+        } else {
+          element.style.display = "none";
+        }
+      }
+    }
+  };
+
+  const handleSort = (currentValue: string) => {
+    setValue(currentValue === value ? "Default" : currentValue);
+    setOpen(false);
+
+    const container = document.getElementById("card-container");
+    if (!container) return;
+
+    const cards = Array.from(container.children);
+
+    const sortedCards = cards.sort((a, b) => {
+      const aTitle =
+        (a as HTMLElement).querySelector(".text-2xl")?.textContent || "";
+      const bTitle =
+        (b as HTMLElement).querySelector(".text-2xl")?.textContent || "";
+
+      switch (currentValue) {
+        case "A-Z (Courses)":
+          return aTitle.localeCompare(bTitle);
+        case "Z-A (Courses)":
+          return bTitle.localeCompare(aTitle);
+        case "Due First": {
+          const aDueDates = Array.from(
+            (a as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          const bDueDates = Array.from(
+            (b as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          if (aDueDates.length === 0 && bDueDates.length === 0) return 0;
+          if (aDueDates.length === 0) return 1;
+          if (bDueDates.length === 0) return -1;
+          const aEarliestDate = new Date(
+            Math.min(...aDueDates.map((date) => new Date(date).getTime()))
+          );
+          const bEarliestDate = new Date(
+            Math.min(...bDueDates.map((date) => new Date(date).getTime()))
+          );
+
+          return aEarliestDate.getTime() - bEarliestDate.getTime();
+        }
+        case "Due Last": {
+          const aDueDates = Array.from(
+            (a as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          const bDueDates = Array.from(
+            (b as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          if (aDueDates.length === 0 && bDueDates.length === 0) return 0;
+          if (aDueDates.length === 0) return -1;
+          if (bDueDates.length === 0) return 1;
+          const aLatestDate = new Date(
+            Math.max(...aDueDates.map((date) => new Date(date).getTime()))
+          );
+          const bLatestDate = new Date(
+            Math.max(...bDueDates.map((date) => new Date(date).getTime()))
+          );
+
+          return bLatestDate.getTime() - aLatestDate.getTime();
+        }
+        case "Default":
+          if (originalOrder)
+            return originalOrder.get(a)! - originalOrder.get(b)!;
+          else return 0;
+        default:
+          if (originalOrder)
+            return originalOrder.get(a)! - originalOrder.get(b)!;
+          else return 0;
+      }
+    });
+    container.innerHTML = "";
+    sortedCards.forEach((card) => container.appendChild(card));
+  };
 
   return (
     <div>
@@ -57,6 +173,8 @@ export default function ChallengeHomepage() {
                     <Input
                       placeholder="Search Lessons"
                       className="border-0 py-2 font-inter focus-visible:ring-0"
+                      onChange={handleSearch}
+                      value={searchQuery}
                     />
                   </div>
                   <div className="mb-5 mt-4 flex flex-col items-center justify-start justify-center rounded-md border-[1px] border-highlight2 shadow-md">
@@ -90,16 +208,7 @@ export default function ChallengeHomepage() {
                                   <CommandItem
                                     key={framework.value}
                                     value={framework.value}
-                                    onSelect={(
-                                      currentValue: React.SetStateAction<string>
-                                    ) => {
-                                      setValue(
-                                        currentValue === value
-                                          ? ""
-                                          : currentValue
-                                      );
-                                      setOpen(false);
-                                    }}
+                                    onSelect={handleSort}
                                   >
                                     <Check
                                       className={cn(
