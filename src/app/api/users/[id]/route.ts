@@ -16,10 +16,7 @@ export async function GET(
     const result = await getUser(user_id);
     if (result instanceof NextResponse) return result;
 
-    return NextResponse.json(
-      { data: result },
-      { status: HttpStatusCode.Ok }
-    );
+    return NextResponse.json({ data: result }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(
       {
@@ -53,8 +50,7 @@ export async function POST(
     const body: User = await request.json();
 
     const exists = await userIdExists(user_id);
-    if (exists instanceof NextResponse)
-      return exists;
+    if (exists instanceof NextResponse) return exists;
 
     if (!exists) return processCreateUserRequest(request);
     else return processUpdateUser(body);

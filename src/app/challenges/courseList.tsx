@@ -121,7 +121,6 @@ export function CourseList() {
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-
   // IN PROGRESS API CALLS
   // Trying to fetch data to replace the hard coded data which is currently being used for this page
   const [data, setData] = useState<employeeOverview[]>([]);

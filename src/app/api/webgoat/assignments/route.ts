@@ -11,6 +11,8 @@ import {
   assignmentWebgoatIdExists,
   courseNameExists,
   getAssignmentByWebgoatId,
+  getCompleteUser,
+  getCompleteUserByName,
   getCourseByName,
   getUserAssignmentByWebgoatId,
   getUserByName,
@@ -30,8 +32,14 @@ import { CHECK_UNAUTHORIZED } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    const username = request.nextUrl.searchParams?.get("username");
-    const password = request.nextUrl.searchParams?.get("password");
+    const user_id = request.nextUrl.searchParams?.get("user_id");
+    if (!user_id) return error("Please provide a user_id query parameter");
+
+    const err = await CHECK_UNAUTHORIZED(user_id!);
+    if (err) return err;
+
+    const user = await getCompleteUser(user_id);
+    if (user instanceof NextResponse) return user;
 
     const autopopulate_courses_from_webgoat = request.nextUrl.searchParams?.get(
       "autopopulate_courses"
@@ -39,29 +47,7 @@ export async function POST(request: NextRequest) {
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
-    if (!username || !password)
-      return error(
-        "Please provide the WebGoat username and password of the user for which records should be updated"
-      );
-
-    const exists = await userNameExists(username);
-    if (exists instanceof NextResponse)
-      return exists;
-
-    if (!exists)
-      return error(`User ${username} does not exist`, HttpStatusCode.NotFound);
-
-    // TODO: auth into our system as well
-    const user = await getUserByName(username);
-    if (user instanceof NextResponse) return user;
-
-    const user_id = user.id;
-
-    const err = await CHECK_UNAUTHORIZED(user_id);
-    if (err) return err;
-
-    const { cookie, response } = await login_user(username, password);
-
+    const { cookie, response } = await login_user(user.name, user.pass);
     if (response) return response;
 
     const response2 = await fetch(URL_webgoat_lessonmenu, {
@@ -152,8 +138,7 @@ export async function POST(request: NextRequest) {
             complete
           );
 
-          if(response instanceof NextResponse)
-            return response;
+          if (response instanceof NextResponse) return response;
 
           changes++;
         }

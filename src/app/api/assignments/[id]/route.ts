@@ -1,4 +1,10 @@
-import { assignmentIdExists, getAssignment, getAssignmentsByUser, userIdExists } from "@/db/queries";
+import {
+  assignmentIdExists,
+  deleteAssignmentForUser,
+  getAssignment,
+  getAssignmentsByUser,
+  userIdExists,
+} from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { error } from "../../util";
@@ -12,21 +18,20 @@ export async function GET(
     console.log(request);
     const id = (await context.params).id;
     const exists = assignmentIdExists(id);
-    if(!exists)
-      return error("Assignment does not exist");
-    
+    if (!exists) return error("Assignment does not exist");
+
     return NextResponse.json(
       { data: await getAssignment(id) },
       { status: HttpStatusCode.Ok }
     );
-    } catch (ex) {
-      return NextResponse.json(
-        {
-          message: `Error: ${ex}\n`,
-        },
-        {
-          status: HttpStatusCode.InternalServerError,
-        }
-      );
-    }
+  } catch (ex) {
+    return NextResponse.json(
+      {
+        message: `Error: ${ex}\n`,
+      },
+      {
+        status: HttpStatusCode.InternalServerError,
+      }
+    );
+  }
 }

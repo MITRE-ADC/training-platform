@@ -70,9 +70,8 @@ export async function processLinkAssignment(
   if (err) return err;
 
   const exists = await userIdExists(_user_id);
-  if (exists instanceof NextResponse)
-      return exists;
-  
+  if (exists instanceof NextResponse) return exists;
+
   // if (!(await userIdExists(_user_id))) return error("User not found");
 
   if (!(await assignmentIdExists(_assignment_id)))
@@ -87,13 +86,56 @@ export async function processLinkAssignment(
     completed: false,
   });
 
-  if(result instanceof NextResponse)
-    return result;
+  if (result instanceof NextResponse) return result;
 
   if (result.length == 0)
     return error("unknown", HttpStatusCode.InternalServerError);
 
-  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+  return NextResponse.json(
+    { data: result[0] },
+    { status: HttpStatusCode.Created }
+  );
+}
+
+export async function processLinkCourse(course: AddUserCourse) {
+  if (!course.user_id) return error("Must provide user id");
+
+  const err = await CHECK_UNAUTHORIZED(course.user_id);
+  if (err) return err;
+
+  const exists = await userIdExists(course.user_id);
+  if (exists instanceof NextResponse) return exists;
+
+  if (!exists) return error("User does not exist");
+
+  if (!(await courseIdExists(course.course_id)))
+    return error("Course not found");
+
+  const _userCourseExists = await userCourseExists(
+    course.course_id,
+    course.user_id
+  );
+  if (_userCourseExists instanceof NextResponse) return _userCourseExists;
+
+  if (_userCourseExists) return error("Record already exists!");
+
+  const result = await addUserCourse({
+    user_id: course.user_id,
+    course_id: course.course_id,
+    course_status: course.course_status,
+    assigned_date: course.assigned_date,
+    due_date: course.due_date,
+  });
+
+  if (result instanceof NextResponse) return result;
+
+  if (result.length == 0)
+    return error("unknown", HttpStatusCode.InternalServerError);
+
+  return NextResponse.json(
+    { data: result[0] },
+    { status: HttpStatusCode.Created }
+  );
 }
 
 export async function processLinkCourseRequest(request: NextRequest) {
@@ -104,13 +146,10 @@ export async function processLinkCourseRequest(request: NextRequest) {
   let body: AddUserCourse | undefined = undefined;
 
   try {
-    const json = await request.json()
-    const date = new Date(json.date);
+    const json = await request.json();
+    const date = new Date(json.due_date);
 
     body = json;
-    
-
-
   } catch (ex) {
     console.log(`Error reading request body: ${ex}`);
   }
@@ -122,47 +161,16 @@ export async function processLinkCourseRequest(request: NextRequest) {
 
   const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
-  const _assigned_date =
-    body?.assigned_date ??
-    ((assigned_date && new Date(assigned_date!)) || new Date());
-  const _due_date =
-    body?.due_date ?? ((due_date && new Date(due_date!)) || new Date());
+  const _assigned_date = body?.assigned_date ?? new Date();
+  const _due_date = body?.due_date ?? new Date();
 
-  const err = await CHECK_UNAUTHORIZED(_user_id);
-  if (err) return err;
-
-  const exists = await userIdExists(_user_id);
-  if (exists instanceof NextResponse)
-      return exists;
-  
-  if(!exists)
-    return error("User does not exist")
-
-  if (!(await courseIdExists(_course_id))) 
-    return error("Course not found");
-
-  const _userCourseExists = await userCourseExists(_course_id, _user_id);
-  if (_userCourseExists instanceof NextResponse)
-    return _userCourseExists;
-
-  if (_userCourseExists)
-    return error("Record already exists!");
-
-  const result = await addUserCourse({
-    user_id: _user_id,
+  return processLinkCourse({
+    assigned_date: _assigned_date,
     course_id: _course_id,
     course_status: "Not Started",
-    assigned_date: _assigned_date,
     due_date: _due_date,
+    user_id: _user_id,
   });
-
-  if (result instanceof NextResponse)
-    return result;
-
-  if (result.length == 0)
-    return error("unknown", HttpStatusCode.InternalServerError);
-
-  return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
 }
 
 export async function processCreateUserRequest(request: NextRequest) {
@@ -195,10 +203,8 @@ export async function processCreateUserRequest(request: NextRequest) {
     return error(
       "Please provide a hashed password as query paramter pass to associate with the created account\n"
     );
-    
+
   const exists = await userEmailExists(user_email);
-  if (exists instanceof NextResponse)
-    return exists;
   if (exists)
     return error(
       "User with this email already exists",
@@ -256,10 +262,12 @@ export async function processCreateCourse(course_name: string) {
   const result = await addCourse({
     course_name: course_name,
   });
-  if (result instanceof NextResponse)
-    return result
+  if (result instanceof NextResponse) return result;
   else
-    return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+    return NextResponse.json(
+      { data: result[0] },
+      { status: HttpStatusCode.Created }
+    );
 }
 
 export async function processCreateAssignmentRequest(request: NextRequest) {
@@ -291,11 +299,10 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 
 export async function processUpdateUser(body: User) {
   const exists = await userIdExists(body.id);
-  if (exists instanceof NextResponse)
-    return exists;
+  // if (exists instanceof NextResponse)
+  //   return exists;
 
-  if (!exists)
-    return error("user does not exist", HttpStatusCode.NotFound);
+  if (!exists) return error("user does not exist", HttpStatusCode.NotFound);
 
   const err = await CHECK_UNAUTHORIZED(body.id);
   if (err) return err;
@@ -331,20 +338,21 @@ export async function processCreateAssignment(
       "Assignment with same name already exists",
       HttpStatusCode.Conflict
     );
-    
+
   const result = await addAssignment({
     course_id: course_id,
     assignment_name: assignment_name,
     webgoat_info: webgoat_info,
   });
-  if (result instanceof NextResponse)
-    return result;
- else 
-    return NextResponse.json({ data: result[0] }, { status: HttpStatusCode.Created });
+  if (result instanceof NextResponse) return result;
+  else
+    return NextResponse.json(
+      { data: result[0] },
+      { status: HttpStatusCode.Created }
+    );
   /* const [first] = await addAssignment({
     course_id: course_id,
     assignment_name: assignment_name,
     webgoat_info: webgoat_info,
   }); */
-  
 }

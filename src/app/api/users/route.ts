@@ -6,8 +6,10 @@ import { getAllUsers } from "@/db/queries";
 
 export async function GET() {
   try {
-    const result = await getAllUsers();
+    let result = await getAllUsers();
     if (result instanceof NextResponse) return result;
+
+    result = result.filter((x) => x.email != process.env.ADMIN_USER_EMAIL);
 
     return NextResponse.json({ data: result }, { status: HttpStatusCode.Ok });
   } catch (ex) {
