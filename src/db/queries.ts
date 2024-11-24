@@ -17,10 +17,12 @@ import {
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
+
+
 // Users
 export async function getAllUsers() {
-  // const err = await CHECK_ADMIN();
-  // if (err) return err;
+  const err = await CHECK_ADMIN();
+  if (err) return err;
 
   return await db.select().from(users);
 }
@@ -400,6 +402,7 @@ export async function getUserByEmail(user_email: string) {
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
+  // wouldnt work
   // const err = await CHECK_UNAUTHORIZED(user.id);
   // if (err) return err;
 

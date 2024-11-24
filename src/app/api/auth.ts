@@ -9,7 +9,8 @@ import { error } from "./util";
 export async function CHECK_ADMIN() {
   const cookieStore = cookies();
   const result = await getCurrentUser(cookieStore);
-  if (result.user && result.user.id == process.env.ADMIN_USER_ID)
+  // if (result.user && result.user.id == process.env.ADMIN_USER_ID)
+  if (result.user && result.user.email == 'admin@mitre.com')
     return undefined;
 
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
@@ -20,7 +21,8 @@ export async function CHECK_ADMIN() {
 export async function CHECK_UNAUTHORIZED(user_id: string) {
   const cookieStore = cookies();
   const result = await getCurrentUser(cookieStore);
-  if (result.user && result.user.id == process.env.ADMIN_USER_ID)
+  // if (result.user && result.user.id == process.env.ADMIN_USER_ID)
+    if (result.user && result.user.email == 'admin@mitre.com')
     return undefined;
 
   if (!(result && result.user && result.user.id == user_id)) {
