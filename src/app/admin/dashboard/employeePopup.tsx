@@ -15,18 +15,18 @@ import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
-  getEmployeeData,
   EMPTY_EMPLOYEE,
   _ROLETAGS,
 } from "./employeeDefinitions";
-import { roleToSpan } from "./employeeList";
-import { H2, P, Text } from "@/components/ui/custom/text";
-import CourseSelectorPopup from "@/components/ui/custom/courseSelectorPopup";
-import { useState } from "react";
-import { TagSelector } from "@/components/ui/custom/tagSelector";
-import { Tag } from "@/components/ui/tag/tag-input";
+import { H2, P } from "@/components/ui/custom/text";
+import CourseSelectorPopup, { CourseSelectorChildData, CourseSelectorData } from "@/components/ui/custom/courseSelectorPopup";
+import { forwardRef, useRef, useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { Assignment, Course, User, User_Assignment, User_Course } from "@/db/schema";
+import { assignAssignments, assignCourse, updateUser } from "./dashboardServer";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -98,7 +98,12 @@ const columns: ColumnDef<employeeAssignment>[] = [
   },
 ];
 
-function EmployeeInfo({ title, value }: { title: string; value: string }) {
+interface EmployeeInfoProps {
+  title: string;
+  value: string;
+}
+
+const EmployeeInfo = forwardRef<HTMLInputElement, EmployeeInfoProps>(function EmployeeInfo({ title, value }, ref) {
   return (
     <TableRow className="border-b-0">
       <TableCell className="p-0 pr-6">
@@ -107,6 +112,7 @@ function EmployeeInfo({ title, value }: { title: string; value: string }) {
       <TableCell className="p-0">
         <P className="flex h-9 w-min items-center text-darkBlue">
           <Input
+            ref={ref}
             defaultValue={value}
             className="h-min w-min rounded-none border-0 py-0 pl-1 shadow-none focus-visible:border-b-[1px] focus-visible:ring-0"
           />
@@ -116,29 +122,131 @@ function EmployeeInfo({ title, value }: { title: string; value: string }) {
       <TableCell className="w-full"></TableCell>
     </TableRow>
   );
-}
+});
 
-export default function EmployeePopup({ employee }: { employee: string }) {
+export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [data, setData] = useState<employee>(EMPTY_EMPLOYEE);
-  const [roles, setRoles] = useState<Tag[]>([]);
+  const [placeholder, setPlaceholder] = useState<string>("Loading...");
+  const [courseData, setCourseData] = useState<CourseSelectorData[]>([]);
+  const [defaultCourses, setDefaultCourses] = useState<string[]>([]);
 
-  function load() {
-    setTimeout(() => {
-      //const d = getEmployeeData(employee);
-      const d = getEmployeeData("email@email.org");
-      if (d) {
-        console.log(d);
-        setData(d);
-        setRoles(d.roles);
-      } else console.error("Trying to find unknown employee " + employee);
-    }, 500);
+  const emailInput = useRef<HTMLInputElement | null>(null);
+  const nameInput = useRef<HTMLInputElement | null>(null);
+
+  async function load() {
+    // TODO: replace with user id get once that route is implemented
+    setPlaceholder('Loading...');
+
+    axios.all([
+      axios.get(req('api/user_assignments/' + employeeId)),
+      axios.get(req('api/user_courses')),
+      axios.get(req('api/assignments')),
+      axios.get(req('api/courses')),
+      axios.get(req('api/users')),
+    ]).then(axios.spread((_ua, _uc, _a, _c, _u) => {
+      const _uassignments: User_Assignment[] = _ua.data.data;
+      const _ucourses: User_Course[] = _uc.data.data;
+      const _assignments: Assignment[] = _a.data.data;
+      const _courses: Course[] = _c.data.data;
+      const _users: User[] = _u.data.data;
+
+      const user = _users.find((u) => u.id == employeeId);
+      const uassignments = _uassignments.filter((a) => a.user_id == employeeId);
+      const ucourses = _ucourses.filter((c) => c.user_id == employeeId);
+
+      if (!user) return;
+
+      const date = new Date();
+
+      const formattedUser: employee = {
+        firstName: user.name.split(' ')[0],
+        lastName: user.name.split(' ')[1],
+        email: user.email,
+        tasks: {
+          overdue: 0,
+          completed: 0,
+          todo: 0,
+        },
+        assignments: uassignments.flatMap((a) => {
+            const assignment = _assignments.find((x) => x.assignment_id == a.assignment_id);
+            const course = _courses.find((x) => x.course_id == assignment?.course_id);
+            const ucourse = ucourses.find((x) => x.course_id == assignment?.course_id);
+
+            if (!assignment || !course || !ucourse) {
+              console.error("Could not find assignment " + a.assignment_id + " or its related course.");
+              return [];
+            }
+
+            return {
+              course: course.course_name,
+              assignment: assignment.assignment_name,
+              assigned: ucourse.assigned_date ? new Date(ucourse.assigned_date).toLocaleDateString() : 'Unknown',
+              due: ucourse.due_date ? new Date(ucourse.due_date).toLocaleDateString() : 'No Deadline',
+              status: a.completed ? 'done' : (
+                ucourse.due_date ? (ucourse.due_date > date ? 'todo' : 'overdue') : 'todo'
+              ),
+            }
+        })
+      };
+
+      const formattedCourses: CourseSelectorData[] = _courses.map((c) => ({
+          name: c.course_name,
+          id: "c_" + c.course_id,
+          children: _assignments.flatMap((a) => (
+            a.course_id == c.course_id ? {
+              name: a.assignment_name,
+              id: "a_" + a.assignment_id,
+              webgoat: a.webgoat_info,
+              courseId: "" + a.course_id,
+            } : []
+          ))
+        })
+      );
+
+      const selectedCourses: string[] = uassignments.flatMap((a) => {
+        const _a = _assignments.find((x) => x.assignment_id == a.assignment_id);
+        return _a ? 'a_' + _a.assignment_id : [];
+      });
+
+      setData(formattedUser);
+      setCourseData(formattedCourses);
+      setDefaultCourses(selectedCourses);
+
+      if (formattedUser.assignments.length == 0) {
+        setPlaceholder('No Results.');
+      }
+
+    })).catch(() => setPlaceholder('No Results.'));
+  }
+
+  function handleSubmit() {
+    if (emailInput.current && nameInput.current) {
+      const email = emailInput.current.value;
+      const name = nameInput.current.value;
+      if (email != data.email || name != data.firstName + " " + data.lastName) {
+        updateUser(employeeId, email, name);
+      }
+    }
+  }
+
+  function handleCourseUpdate(courses: Record<string, boolean>) {
+    console.log(courses);
+    for (let entry in courses) {
+      // currently do not support removing 
+      if (!courses[entry]) continue;
+
+      if (entry.startsWith('c_')) assignCourse(employeeId, entry.substring(2));
+      else assignAssignments(employeeId, entry.substring(2));
+    }
   }
 
   return (
     <>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="default" onClick={load}>
+          {/* Even though load should be async, it causes animation lag when the sheet opens, so
+            * delay the call until the sheet fully opens */}
+          <Button variant="default" onClick={() => setTimeout(() => load(), 500)}>
             Expand
           </Button>
         </SheetTrigger>
@@ -147,7 +255,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <VisuallyHidden>
               <SheetTitle>Employee Popup</SheetTitle>
               <SheetDescription>
-                Course and assignment information for {employee}
+                Course and assignment information for employee {employeeId}
               </SheetDescription>
               {/* hidden field to take away auto focus on name field */}
               <input></input>
@@ -158,6 +266,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
             <Table>
               <TableBody className="whitespace-nowrap font-sans">
                 <EmployeeInfo
+                  ref={nameInput}
                   title="Name"
                   value={
                     data.firstName && data.lastName
@@ -165,33 +274,13 @@ export default function EmployeePopup({ employee }: { employee: string }) {
                       : ""
                   }
                 />
-                <EmployeeInfo title="Email" value={data.email} />
-                <TableRow className="border-b-0">
-                  <TableCell className="p-0 pr-6">
-                    <P>Role</P>
-                  </TableCell>
-                  <TableCell className="w-full p-0">
-                    <P className="block translate-y-[2px] text-darkBlue">
-                      <div className="w-min max-w-[750px]">
-                        <TagSelector
-                          title=""
-                          id="roles"
-                          tags={_ROLETAGS}
-                          selectedTags={roles}
-                          setSelectedTags={setRoles}
-                          span="flex-row-reverse justify-end"
-                          popoverTrigger="flex-row-reverse justify-end"
-                        />
-                      </div>
-                    </P>
-                  </TableCell>
-                </TableRow>
+                <EmployeeInfo ref={emailInput} title="Email" value={data.email} />
               </TableBody>
             </Table>
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
-              <CourseSelectorPopup title="Add Course" email={data.email}>
+              <CourseSelectorPopup title="Add Course" data={courseData} setData={setCourseData} defaultCourses={defaultCourses} handle={handleCourseUpdate}>
                 <Button variant="outline" className="text-darkLight">
                   <P className="text-darkLight">Add Courses</P>
                 </Button>
@@ -202,6 +291,7 @@ export default function EmployeePopup({ employee }: { employee: string }) {
                 columns={columns}
                 data={data["assignments"]}
                 defaultSort="status"
+                placeholder={placeholder}
               />
             </div>
             <div className="flex justify-end gap-4 font-sans">
@@ -213,12 +303,15 @@ export default function EmployeePopup({ employee }: { employee: string }) {
                   <P className="font-[600] text-white">Cancel</P>
                 </Button>
               </Close>
-              <Button
-                className="h-[40px] w-[140px] rounded-md bg-navy hover:bg-navy/80"
-                variant="secondary"
-              >
-                <P className="font-[600] text-white">Submit Changes</P>
-              </Button>
+              <Close asChild>
+                <Button
+                  className="h-[40px] w-[140px] rounded-md bg-navy hover:bg-navy/80"
+                  variant="secondary"
+                  onClick={handleSubmit}
+                >
+                  <P className="font-[600] text-white">Submit Changes</P>
+                </Button>
+              </Close>
             </div>
           </div>
         </SheetContent>
