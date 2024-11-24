@@ -136,14 +136,18 @@ export default function ChallengeHomepage() {
 
           return bLatestDate.getTime() - aLatestDate.getTime();
         }
-        case "Default":
-          if (originalOrder)
+        case 'Default':
+          if (originalOrder) {
             return originalOrder.get(a)! - originalOrder.get(b)!;
-          else return 0;
+          } else {
+            return 0;
+          }
         default:
-          if (originalOrder)
+          if (originalOrder) {
             return originalOrder.get(a)! - originalOrder.get(b)!;
-          else return 0;
+          } else {
+            return 0;
+          }
       }
     });
     container.innerHTML = "";
