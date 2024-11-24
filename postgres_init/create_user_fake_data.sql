@@ -93,7 +93,7 @@ INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_
     VALUES (1, 2, 'Not Started', '2024-06-01', '2024-05-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
-    VALUES (1, 3, 'In Progess', '2024-08-01', '2024-01-01');
+    VALUES (1, 2, 'In Progress', '2024-08-01', '2024-01-01');
 
 INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
     VALUES (2, 4, 'Completed', '2024-05-01', '2024-01-07');

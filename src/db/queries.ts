@@ -97,6 +97,82 @@ export async function courseNameExists(course_name: string) {
   );
 }
 
+export async function aggregateUserCoursesStatusByUser() {
+  const data = (
+    await db.execute(
+      `
+      SELECT user_id, course_status, CAST(COUNT(*) AS int) 
+      FROM user_courses 
+      GROUP BY user_id, course_status 
+      ORDER BY user_id ASC;
+      `
+    )
+  ).rows;
+
+  interface Analysis {
+    completed: number;
+    in_progress: number;
+    not_started: number;
+  }
+
+  interface Entry {
+    user_id: number;
+    analysis: Analysis;
+  }
+
+  const res: Entry[] = [];
+  let lastId: number | null = null;
+  data.forEach((element) => {
+    if (Number(element["user_id"]) != lastId) {
+      lastId = Number(element["user_id"]);
+      const newEntry = {
+        user_id: Number(element["user_id"]),
+        analysis: {
+          completed: 0,
+          in_progress: 0,
+          not_started: 0,
+        },
+      };
+
+      switch (element["course_status"]) {
+        case "Completed": {
+          newEntry["analysis"]["completed"] = Number(element["count"]);
+          break;
+        }
+        case "In Progress": {
+          newEntry["analysis"]["in_progress"] = Number(element["count"]);
+          break;
+        }
+        case "Not Started": {
+          newEntry["analysis"]["not_started"] = Number(element["count"]);
+          break;
+        }
+      }
+
+      res.push(newEntry);
+    } else {
+      const entry = res[res.length - 1];
+
+      switch (element["course_status"]) {
+        case "Completed": {
+          entry["analysis"]["completed"] = Number(element["count"]);
+          break;
+        }
+        case "In Progress": {
+          entry["analysis"]["in_progress"] = Number(element["count"]);
+          break;
+        }
+        case "Not Started": {
+          entry["analysis"]["not_started"] = Number(element["count"]);
+          break;
+        }
+      }
+    }
+  });
+
+  return res;
+}
+
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
   // TODO: see below
   return (
@@ -242,7 +318,8 @@ export async function userCourseExists(course_id: number, user_id: string) {
 export async function addUserCourse(userCourse: AddUserCourse) {
   const err = await CHECK_ADMIN();
   if (err) return err;
-
+  userCourse.assigned_date = new Date(userCourse.assigned_date)
+  userCourse.due_date = new Date(userCourse.due_date)
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
@@ -279,6 +356,20 @@ export async function deleteUserCourse(user_id: string, course_id: number) {
     );
 }
 
+export async function deleteCourseForUser(user_id: string, course_id: number) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
+  return await db
+    .delete(user_courses)
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    );
+}
+
 export async function assignmentIdExists(id: number) {
   return (
     (await db.$count(
@@ -294,6 +385,20 @@ export async function deleteAssignment(assignmentId: number) {
   return await db
     .delete(assignments)
     .where(eq(assignments.assignment_id, assignmentId));
+}
+
+export async function deleteAssignmentForUser(user_id: string, assignment_id: number) {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
+  return await db
+    .delete(user_assignments)
+    .where(
+      and(
+        eq(user_assignments.user_id, user_id),
+        eq(user_assignments.assignment_id, assignment_id)
+      )
+    )
 }
 
 export async function getAllAssignments() {
@@ -433,6 +538,16 @@ export async function updateCourse(course: Course) {
     .update(courses)
     .set(course)
     .where(eq(courses.course_id, course.course_id));
+}
+
+export async function updateCourseDueDate(course_id: number, date: Date) {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
+  await db
+    .update(user_courses)
+    .set({ due_date: date })
+    .where(eq(user_courses.course_id, course_id));
 }
 
 export async function getAssignment(assignmentId: number) {
