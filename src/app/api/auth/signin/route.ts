@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
-//export { handler as GET, handler as POST} from "@/db/auth";
 import { HttpStatusCode } from "axios";
-import { getUserByEmail, userEmailExists } from "@/db/queries";
+import {
+  checkUserPassword,
+  getUserByEmail,
+  getCompleteUserByEmailNoAuth,
+  userEmailExists,
+} from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
@@ -17,10 +21,10 @@ export async function POST(req: Request) {
           { status: HttpStatusCode.BadRequest }
         );
       }
-      const user = (await getUserByEmail(email)) as User;
 
-      if (user && user.pass == password) {
+      if (await checkUserPassword(email, password)) {
         const maxAge = 24 * 3600 * 7;
+        const user = await getCompleteUserByEmailNoAuth(email); // FLAG: necessary?
         setJwtCookie(user.id, maxAge);
 
         await cookies();

@@ -14,10 +14,15 @@ import {
   statusEnumSchema,
   AddUserCourse,
 } from "./schema";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
+import { CHECK_ADMIN, CHECK_SESSION, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
 // Users
+
+/**
+ * gets complete (including sensitive) data on ALL uesrs -- must be admin to use
+ *
+ */
 export async function getAllUsers() {
   const err = await CHECK_ADMIN();
   if (err) return err;
@@ -66,11 +71,6 @@ export async function userEmailExists(email: string) {
   const exists =
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
-  if (exists) {
-    const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
-    if (error instanceof NextResponse) return error;
-  }
-
   return exists;
 }
 
@@ -324,8 +324,8 @@ export async function userCourseExists(course_id: number, user_id: string) {
 export async function addUserCourse(userCourse: AddUserCourse) {
   const err = await CHECK_ADMIN();
   if (err) return err;
-  userCourse.assigned_date = new Date(userCourse.assigned_date)
-  userCourse.due_date = new Date(userCourse.due_date)
+  userCourse.assigned_date = new Date(userCourse.assigned_date);
+  userCourse.due_date = new Date(userCourse.due_date);
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
@@ -393,7 +393,10 @@ export async function deleteAssignment(assignmentId: number) {
     .where(eq(assignments.assignment_id, assignmentId));
 }
 
-export async function deleteAssignmentForUser(user_id: string, assignment_id: number) {
+export async function deleteAssignmentForUser(
+  user_id: string,
+  assignment_id: number
+) {
   const err = await CHECK_ADMIN();
   if (err) return err;
 
@@ -404,7 +407,7 @@ export async function deleteAssignmentForUser(user_id: string, assignment_id: nu
         eq(user_assignments.user_id, user_id),
         eq(user_assignments.assignment_id, assignment_id)
       )
-    )
+    );
 }
 
 export async function getAllAssignments() {
@@ -492,31 +495,105 @@ export async function getCourseByName(course_name: string) {
   )[0];
 }
 
-export async function getUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+/**
+ * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
+ */
+export async function getUserByEmail(user_email: string) {
+  const { id, pass, ...userFields } = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
+
+  const err = await CHECK_SESSION();
   if (err) return err;
 
-  return await db.select().from(users).where(eq(users.id, user_id));
+  return { ...userFields };
 }
 
-export async function getUserByEmail(user_email: string) {
-  // TODO: select id by email, then check authorization, then return
+/**
+ * gets ANY user's complete (including sensitive) data given their id requiring a user to be logged in
+ */
+export async function getCompleteUser(user_id: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  return (await db.select().from(users).where(eq(users.id, user_id)))[0];
+}
+
+/**
+ * gets ANY user's data given their id requiring a user to be logged in
+ */
+export async function getUser(user_id: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  const { id, pass, ...userFields } = (
+    await db.select().from(users).where(eq(users.id, user_id))
+  )[0];
+  return { ...userFields };
+}
+
+/**
+ * checks ANY user's password against the passed-in password, without passing back unprotected data
+ */
+export async function checkUserPassword(
+  user_email: string,
+  user_password: string
+) {
   const user = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  const err = await CHECK_UNAUTHORIZED(user.id);
+  return user.pass == user_password;
+}
+
+/**
+ * gets ANY user's complete (including sensitive) information requiring a user to be logged in (but not necessarily the same one whose data is requested)
+ */
+export async function getCompleteUserByEmail(user_email: string) {
+  const err = await CHECK_SESSION();
   if (err) return err;
+
+  const user = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
+  return user;
+}
+
+/**
+ * gets ANY user's complete (including sensitive) information without requiring a user to be logged in
+ * NOTE: this function is dangerous, use with care and only for authentication
+ */
+export async function getCompleteUserByEmailNoAuth(user_email: string) {
+  const user = (
+    await db.select().from(users).where(eq(users.email, user_email))
+  )[0];
 
   return user;
 }
 
+/**
+ * gets ANY user's data given their user_name
+ */
 export async function getUserByName(user_name: string) {
+  const { id, pass, ...userFields } = (
+    await db.select().from(users).where(eq(users.name, user_name))
+  )[0];
+
+  const err = await CHECK_SESSION();
+  if (err) return err;
+
+  return { ...userFields };
+}
+
+/**
+ * gets ANY user's complete (including sensitive) data given their user_name
+ */
+export async function getCompleteUserByName(user_name: string) {
   const user = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
-  const err = await CHECK_UNAUTHORIZED(user.id);
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return user;

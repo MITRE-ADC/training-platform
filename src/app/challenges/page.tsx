@@ -35,20 +35,21 @@ export default function ChallengeHomepage() {
   const [value, setValue] = React.useState("");
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const [originalOrder, setOriginalOrder] = React.useState<Map<Element, number>>();
+  const [originalOrder, setOriginalOrder] =
+    React.useState<Map<Element, number>>();
 
   React.useEffect(() => {
-    const container = document.getElementById('card-container');
+    const container = document.getElementById("card-container");
     if (container) {
       const cards = Array.from(container.children);
       setOriginalOrder(new Map(cards.map((card, index) => [card, index])));
     }
-  }, []); 
+  }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchQuery(searchValue);
-    const container = document.getElementById('card-container');
+    const container = document.getElementById("card-container");
     if (container) {
       for (const child of container.children) {
         const element = child as HTMLElement;
@@ -64,49 +65,75 @@ export default function ChallengeHomepage() {
   const handleSort = (currentValue: string) => {
     setValue(currentValue === value ? "Default" : currentValue);
     setOpen(false);
-  
-    const container = document.getElementById('card-container');
+
+    const container = document.getElementById("card-container");
     if (!container) return;
-  
+
     const cards = Array.from(container.children);
-    
+
     const sortedCards = cards.sort((a, b) => {
-      const aTitle = (a as HTMLElement).querySelector('.text-2xl')?.textContent || '';
-      const bTitle = (b as HTMLElement).querySelector('.text-2xl')?.textContent || '';
-      
+      const aTitle =
+        (a as HTMLElement).querySelector(".text-2xl")?.textContent || "";
+      const bTitle =
+        (b as HTMLElement).querySelector(".text-2xl")?.textContent || "";
+
       switch (currentValue) {
-        case 'A-Z (Courses)':
+        case "A-Z (Courses)":
           return aTitle.localeCompare(bTitle);
-        case 'Z-A (Courses)':
+        case "Z-A (Courses)":
           return bTitle.localeCompare(aTitle);
-        case 'Due First': {
-          const aDueDates = Array.from((a as HTMLElement).querySelectorAll('.ri-calendar-schedule-line'))
-            .map(el => el.nextSibling?.textContent?.replace('Due: ', '') || '')
-            .filter(date => date && date !== 'No due date');
-          const bDueDates = Array.from((b as HTMLElement).querySelectorAll('.ri-calendar-schedule-line'))
-            .map(el => el.nextSibling?.textContent?.replace('Due: ', '') || '')
-            .filter(date => date && date !== 'No due date');
+        case "Due First": {
+          const aDueDates = Array.from(
+            (a as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          const bDueDates = Array.from(
+            (b as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
           if (aDueDates.length === 0 && bDueDates.length === 0) return 0;
           if (aDueDates.length === 0) return 1;
           if (bDueDates.length === 0) return -1;
-          const aEarliestDate = new Date(Math.min(...aDueDates.map(date => new Date(date).getTime())));
-          const bEarliestDate = new Date(Math.min(...bDueDates.map(date => new Date(date).getTime())));
-          
+          const aEarliestDate = new Date(
+            Math.min(...aDueDates.map((date) => new Date(date).getTime()))
+          );
+          const bEarliestDate = new Date(
+            Math.min(...bDueDates.map((date) => new Date(date).getTime()))
+          );
+
           return aEarliestDate.getTime() - bEarliestDate.getTime();
         }
-        case 'Due Last': {
-          const aDueDates = Array.from((a as HTMLElement).querySelectorAll('.ri-calendar-schedule-line'))
-            .map(el => el.nextSibling?.textContent?.replace('Due: ', '') || '')
-            .filter(date => date && date !== 'No due date');
-          const bDueDates = Array.from((b as HTMLElement).querySelectorAll('.ri-calendar-schedule-line'))
-            .map(el => el.nextSibling?.textContent?.replace('Due: ', '') || '')
-            .filter(date => date && date !== 'No due date');
+        case "Due Last": {
+          const aDueDates = Array.from(
+            (a as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
+          const bDueDates = Array.from(
+            (b as HTMLElement).querySelectorAll(".ri-calendar-schedule-line")
+          )
+            .map(
+              (el) => el.nextSibling?.textContent?.replace("Due: ", "") || ""
+            )
+            .filter((date) => date && date !== "No due date");
           if (aDueDates.length === 0 && bDueDates.length === 0) return 0;
           if (aDueDates.length === 0) return -1;
           if (bDueDates.length === 0) return 1;
-          const aLatestDate = new Date(Math.max(...aDueDates.map(date => new Date(date).getTime())));
-          const bLatestDate = new Date(Math.max(...bDueDates.map(date => new Date(date).getTime())));
-          
+          const aLatestDate = new Date(
+            Math.max(...aDueDates.map((date) => new Date(date).getTime()))
+          );
+          const bLatestDate = new Date(
+            Math.max(...bDueDates.map((date) => new Date(date).getTime()))
+          );
+
           return bLatestDate.getTime() - aLatestDate.getTime();
         }
         case 'Default':
@@ -121,8 +148,8 @@ export default function ChallengeHomepage() {
             return 0;
       }
     });
-    container.innerHTML = '';
-    sortedCards.forEach(card => container.appendChild(card));
+    container.innerHTML = "";
+    sortedCards.forEach((card) => container.appendChild(card));
   };
 
   return (
