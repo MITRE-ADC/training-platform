@@ -313,20 +313,10 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function getAllUserAssignments() {
-  const err = await CHECK_ADMIN();
-  if (err) return err;
+  //const err = await CHECK_ADMIN();
+  //if (err) return err;
 
   return await db.select().from(user_assignments);
-}
-
-export async function getAssignmentsByUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
-  if (err) return err;
-
-  return await db
-    .select()
-    .from(user_assignments)
-    .where(eq(user_assignments.user_id, user_id));
 }
 
 export async function assignmentNameExists(name: string) {
