@@ -318,8 +318,8 @@ export async function userCourseExists(course_id: number, user_id: string) {
 export async function addUserCourse(userCourse: AddUserCourse) {
   const err = await CHECK_ADMIN();
   if (err) return err;
-  userCourse.assigned_date = new Date(userCourse.assigned_date)
-  userCourse.due_date = new Date(userCourse.due_date)
+  userCourse.assigned_date = new Date(userCourse.assigned_date);
+  userCourse.due_date = new Date(userCourse.due_date);
   return await db.insert(user_courses).values(userCourse).returning();
 }
 
@@ -387,7 +387,10 @@ export async function deleteAssignment(assignmentId: number) {
     .where(eq(assignments.assignment_id, assignmentId));
 }
 
-export async function deleteAssignmentForUser(user_id: string, assignment_id: number) {
+export async function deleteAssignmentForUser(
+  user_id: string,
+  assignment_id: number
+) {
   const err = await CHECK_ADMIN();
   if (err) return err;
 
@@ -398,7 +401,7 @@ export async function deleteAssignmentForUser(user_id: string, assignment_id: nu
         eq(user_assignments.user_id, user_id),
         eq(user_assignments.assignment_id, assignment_id)
       )
-    )
+    );
 }
 
 export async function getAllAssignments() {
