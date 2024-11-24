@@ -180,8 +180,8 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             return {
               course: course.course_name,
               assignment: assignment.assignment_name,
-              assigned: ucourse.assigned_date ? ucourse.assigned_date.toDateString() : 'Unknown',
-              due: ucourse.due_date ? ucourse.due_date.toDateString() : 'No Deadline',
+              assigned: ucourse.assigned_date ? new Date(ucourse.assigned_date).toLocaleDateString() : 'Unknown',
+              due: ucourse.due_date ? new Date(ucourse.due_date).toLocaleDateString() : 'No Deadline',
               status: a.completed ? 'done' : (
                 ucourse.due_date ? (ucourse.due_date > date ? 'todo' : 'overdue') : 'todo'
               ),
