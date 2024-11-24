@@ -81,7 +81,7 @@ export async function DELETE(
 ) {
   try {
     const user_id = (await context.params).id;
-    const err = await CHECK_ADMIN(user_id); // only admin should be able to unassign work -- users could use this to cheat
+    const err = await CHECK_ADMIN(); // only admin should be able to unassign work -- users could use this to cheat
     if (err) return err;
 
     const { course_id } = await request.json();
