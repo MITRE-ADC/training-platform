@@ -17,8 +17,6 @@ import {
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
-
-
 // Users
 export async function getAllUsers() {
   const err = await CHECK_ADMIN();
