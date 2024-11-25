@@ -132,17 +132,17 @@ export async function aggregateUserCoursesStatusByUser() {
   }
 
   interface Entry {
-    user_id: number;
+    user_id: string;
     analysis: Analysis;
   }
 
   const res: Entry[] = [];
-  let lastId: number | null = null;
+  let lastId: string | null = null;
   data.forEach((element) => {
-    if (Number(element["user_id"]) != lastId) {
-      lastId = Number(element["user_id"]);
+    if (element["user_id"] != lastId) {
+      lastId = element["user_id"] as string;
       const newEntry = {
-        user_id: Number(element["user_id"]),
+        user_id: element["user_id"] as string,
         analysis: {
           completed: 0,
           in_progress: 0,
