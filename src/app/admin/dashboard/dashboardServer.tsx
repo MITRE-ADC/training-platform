@@ -44,7 +44,7 @@ export async function deleteAssignment(user_id: string, assignment_id: string) {
 }
 
 export async function updateCourseDueDate(user_id: string, course_id: string, due_date: Date) {
-    await axios.put(req('api/courses/' + user_id), {
+    await axios.put(req('api/user_courses/' + user_id), {
         params: { id: user_id },
         course_id: course_id, due_date: due_date
     }).catch((e) => console.log(e.data));
