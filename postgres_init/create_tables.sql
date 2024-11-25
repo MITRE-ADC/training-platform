@@ -55,5 +55,5 @@ CREATE TABLE Accounts (
 );
 
 INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
-INSERT INTO Users(name, email, pass) 
-    VALUES ('Admin', 'admin@mitre.com', 'changeme');
+INSERT INTO Users(name, email, pass, webgoatusername, webgoatpassword) 
+    VALUES ('Admin', 'admin@mitre.com', 'changeme', 'admin', 'changeme');
