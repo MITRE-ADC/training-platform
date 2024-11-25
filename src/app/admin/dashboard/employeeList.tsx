@@ -13,6 +13,7 @@ import { P } from "@/components/ui/custom/text";
 import axios from "axios";
 import { req } from "@/lib/utils";
 import { User } from "@/db/schema";
+import { removeAllListeners } from "process";
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
@@ -96,9 +97,18 @@ export default function EmployeeList({ searchFilter, setSearchFilter }: {searchF
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
 
-  useEffect(() => setMount(MountStatus.isFirstMounted), []);
+  useEffect(() => {
+    setMount(MountStatus.isFirstMounted);
 
-  if (didMount == MountStatus.isFirstMounted && data.length == 0) {
+    // moving signals out of data tables is very annoying, so just use events instead
+    removeAllListeners('request_employee_list_reload');
+    addEventListener('request_employee_list_reload', (e) => load());
+  }, []);
+
+  function load() {
+    setData([]);
+    setPlaceholder('Loading...');
+
     axios
       .get(req("api/users"))
       .then((r) => {
@@ -125,7 +135,10 @@ export default function EmployeeList({ searchFilter, setSearchFilter }: {searchF
       .catch(() => {
         setPlaceholder("No Results.");
       });
+  }
 
+  if (didMount == MountStatus.isFirstMounted && data.length == 0) {
+    load();
     setMount(MountStatus.isMounted);
   }
 

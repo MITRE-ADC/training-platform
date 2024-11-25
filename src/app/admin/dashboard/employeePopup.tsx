@@ -221,12 +221,15 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
     })).catch(() => setPlaceholder('No Results.'));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (emailInput.current && nameInput.current) {
       const email = emailInput.current.value;
       const name = nameInput.current.value;
       if (email != data.email || name != data.firstName + " " + data.lastName) {
-        updateUser(employeeId, email, name);
+        setData(EMPTY_EMPLOYEE);
+        await updateUser(employeeId, email, name);
+
+        dispatchEvent(new Event("request_employee_list_reload"));
       }
     }
   }

@@ -1,26 +1,13 @@
 // "use server"
 
 import axios from "axios";
-import { User } from "@/db/schema";
 import { req } from "@/lib/utils";
 
 export async function updateUser(id: string, email: string, name: string) {
-    return;
-    console.log("received", id, email, name);
-    // TODO replace with id get
-    axios.get(req('api/users')).then((u) => {
-        const users: User[] = u.data.data;
-        const user = users.find((x) => x.id == id);
-
-        if (!user) return;
-
-        axios.post(req('api/users/[id]'), {
-            user_id: id,
-            name: name,
-            email: email,
-            pass: user?.pass
-        }).then((e) => console.log(e.data)).catch(console.log);
-    })
+    await axios.post(req('api/users/' + id), {
+        name: name,
+        email: email,
+    }, { params: { id: id }});
 }
 
 export async function assignCourse(user_id: string, course_id: string) {

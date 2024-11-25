@@ -293,8 +293,6 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 
 export async function processUpdateUser(body: User) {
   const exists = await userIdExists(body.id);
-  // if (exists instanceof NextResponse)
-  //   return exists;
 
   if (!exists) return error("user does not exist", HttpStatusCode.NotFound);
 
