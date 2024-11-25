@@ -362,6 +362,22 @@ export async function deleteUserCourse(user_id: string, course_id: number) {
     );
 }
 
+export async function updateUserCourseDueDate(user_id: string, course_id: number, date: Date) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
+  return await db
+    .update(user_courses)
+    .set({ due_date: date })
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    )
+    .returning();
+}
+
 export async function deleteCourseForUser(user_id: string, course_id: number) {
   const err = await CHECK_UNAUTHORIZED(user_id);
   if (err) return err;
