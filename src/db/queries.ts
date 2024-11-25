@@ -362,6 +362,22 @@ export async function deleteUserCourse(user_id: string, course_id: number) {
     );
 }
 
+export async function updateUserCourseDueDate(user_id: string, course_id: number, date: Date) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
+  return await db
+    .update(user_courses)
+    .set({ due_date: date })
+    .where(
+      and(
+        eq(user_courses.user_id, user_id),
+        eq(user_courses.course_id, course_id)
+      )
+    )
+    .returning();
+}
+
 export async function deleteCourseForUser(user_id: string, course_id: number) {
   const err = await CHECK_UNAUTHORIZED(user_id);
   if (err) return err;
@@ -422,20 +438,10 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function getAllUserAssignments() {
-  const err = await CHECK_ADMIN();
-  if (err) return err;
+  //const err = await CHECK_ADMIN();
+  //if (err) return err;
 
   return await db.select().from(user_assignments);
-}
-
-export async function getAssignmentsByUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
-  if (err) return err;
-
-  return await db
-    .select()
-    .from(user_assignments)
-    .where(eq(user_assignments.user_id, user_id));
 }
 
 export async function assignmentNameExists(name: string) {
