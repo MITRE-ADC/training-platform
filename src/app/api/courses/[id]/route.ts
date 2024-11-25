@@ -42,7 +42,6 @@ export async function PUT(
 ) {
   try {
     const id = (await context.params).id;
-    console.log(request);
     const exists = await userIdExists(id);
     if (exists instanceof NextResponse) return exists;
     if (!exists) {

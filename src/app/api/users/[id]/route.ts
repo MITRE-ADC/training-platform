@@ -11,7 +11,6 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log(request.url);
     const user_id = (await context.params).id;
     const result = await getUser(user_id);
     if (result instanceof NextResponse) return result;

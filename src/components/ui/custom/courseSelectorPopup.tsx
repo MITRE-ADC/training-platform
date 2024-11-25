@@ -20,11 +20,15 @@ import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { H2, H3, P } from "./text";
+import { H2, H3, P, Small } from "./text";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { DatePopup } from "./editPopup";
+import { Popover, PopoverContent, PopoverTrigger } from "../popover";
+import { Calendar } from "../calendar";
 
 export interface CourseSelectorData {
   name: string;
+  due?: Date;
   id: string;
   children: CourseSelectorChildData[];
 }
@@ -40,20 +44,18 @@ export interface CourseSelectorChildData {
 function CourseSelectorAssignment({
   child,
   ind,
-  form,
-  value,
+  assignedForm,
   notify,
 }: {
   child: CourseSelectorChildData;
   ind: number;
-  form: UseFormReturn;
-  value: boolean;
+  assignedForm: UseFormReturn;
   notify: (value: boolean, ind: number) => void;
 }) {
   return (
     <FormField
       key={ind}
-      control={form.control}
+      control={assignedForm.control}
       name={child.id}
       render={() => {
         return (
@@ -61,7 +63,7 @@ function CourseSelectorAssignment({
             <FormControl>
               <Checkbox
                 className="rounded-[3px]"
-                checked={value}
+                checked={assignedForm.getValues(child.id) as boolean}
                 onCheckedChange={(v) => notify(v as boolean, ind)}
               ></Checkbox>
             </FormControl>
@@ -76,41 +78,39 @@ function CourseSelectorAssignment({
 function CourseSelectorAccordion({
   course,
   ind,
-  form,
+  assignedForm,
+  dueForm,
 }: {
   course: CourseSelectorData;
   ind: number;
-  form: UseFormReturn;
+  assignedForm: UseFormReturn;
+  dueForm: UseFormReturn;
 }) {
-  const [childIsChecked, setChildIsChecked] = useState<boolean[]>(
-    Array(course.children.length).fill(false)
-  );
+  const [dueDate, setDueDate] = useState<Date | undefined>(course.due);
+  const [dueDateOpen, setDueDateOpen] = useState<boolean>(false);
 
   function notify(value: boolean, ind: number) {
-    const v = [...childIsChecked];
-    v[ind] = value;
-    setChildIsChecked(v);
-    form.setValue(course.children[ind].id, value);
+    assignedForm.setValue(course.children[ind].id, value);
 
     if (value) {
-      form.setValue(course.id, true);
-    } else if (!v.includes(true)) {
-      form.setValue(course.id, false);
+      assignedForm.setValue(course.id, true);
+    } else {
+      let hasTrue = false;
+      for (let i = 0; i < course.children.length; i++) {
+        if (assignedForm.getValues(course.children[i].id)) {
+          hasTrue = true;
+          break;
+        }
+      }
+
+      if (!hasTrue) assignedForm.setValue(course.id, false);
     }
   }
-
-  // ensure internal state is consistent with form
-  course.children.map((child, ind) => {
-    const f = form.getValues(child.id);
-    if (f && f != childIsChecked[ind]) {
-      notify(f as boolean, ind);
-    }
-  });
 
   return (
     <AccordionItem value={course.name} key={ind}>
       <FormField
-        control={form.control}
+        control={assignedForm.control}
         name={course.id}
         render={({ field }) => (
           <FormItem className="mx-4 flex items-center gap-2">
@@ -119,31 +119,49 @@ function CourseSelectorAccordion({
                 className="rounded-[3px]"
                 checked={field.value}
                 onCheckedChange={(v) => {
-                  setChildIsChecked(
-                    Array(course.children.length).fill(v as boolean)
-                  );
                   course.children.forEach((c) =>
-                    form.setValue(c.id, v as boolean)
+                    assignedForm.setValue(c.id, v as boolean)
                   );
                   field.onChange(v);
                 }}
               ></Checkbox>
             </FormControl>
-            <AccordionTrigger className="py-2">
+            <AccordionTrigger className="py-1">
               <P className="font-[500] leading-[20px]">{course.name}</P>
             </AccordionTrigger>
           </FormItem>
         )}
       />
       <AccordionContent className="flex flex-col gap-2">
+        {dueDate ?
+          <Popover modal open={dueDateOpen} onOpenChange={setDueDateOpen}>
+            <PopoverTrigger className="flex items-center ml-10 italic">
+              <Small>Due: {dueDate.toLocaleDateString('en-US', { timeZone: 'UTC' })}</Small>
+              <i className="ri-edit-2-line ml-1 cursor-pointer text-darkBlue"></i>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={dueDate}
+                defaultMonth={dueDate}
+                onSelect={(d) => {
+                  if (!d) return;
+
+                  setDueDate(d);
+                  dueForm.setValue(course.id, d);
+                  setDueDateOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          : ''}
         {course.children.map((child, ind) => (
           <CourseSelectorAssignment
             key={ind}
             child={child}
             ind={ind}
-            form={form}
+            assignedForm={assignedForm}
             notify={notify}
-            value={childIsChecked[ind]}
           />
         ))}
       </AccordionContent>
@@ -164,18 +182,28 @@ export default function CourseSelectorPopup({
   data: CourseSelectorData[],
   setData: Dispatch<SetStateAction<CourseSelectorData[]>>;
   defaultCourses: string[];
-  handle: (r: Record<string, boolean>) => void;
+  handle: (assigned: Record<string, boolean>, due: Record<string, Date>) => void;
 }) {
   const [open, setOpen] = useState(false);
 
-  const schema = z.record(z.string(), z.boolean().default(false));
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const assignedSchema = z.record(z.string(), z.boolean().default(false));
+  const assignedForm = useForm<z.infer<typeof assignedSchema>>({
+    resolver: zodResolver(assignedSchema),
   });
 
-  defaultCourses.forEach((key) => {
-    form.setValue(key, true);
+  const dueSchema = z.record(z.string(), z.date());
+  const dueForm = useForm<z.infer<typeof dueSchema>>({
+    resolver: zodResolver(dueSchema),
   });
+
+  useEffect(() => {
+    assignedForm.reset({});
+    dueForm.reset({});
+
+    defaultCourses.forEach((key) => {
+      assignedForm.setValue(key, true);
+    });
+  }, [defaultCourses]);
 
   return (
     <>
@@ -191,14 +219,14 @@ export default function CourseSelectorPopup({
             </VisuallyHidden>
             <div className="ml-4 mr-4 flex flex-col gap-2 font-sans">
               <H2>{title}</H2>
-              <Form {...form}>
+              <Form {...assignedForm}>
                 <form
-                  onSubmit={form.handleSubmit((v) => {
-                    handle(v);
+                  onSubmit={assignedForm.handleSubmit((v) => {
+                    handle(v, dueForm.getValues());
                     setOpen(false);
                   })}
                 >
-                  <ScrollArea className="rounded-md border-lightBlue border-[1px] mb-2 h-[500px] w-full">
+                  <ScrollArea className="rounded-md border-lightBlue border-[1px] mb-2 h-[500px] w-full pt-1">
                     <Accordion type="multiple" defaultValue={data.map((c) => c.name)}>
                       {data.length != 0 ? (
                         data.map((course, ind) => (
@@ -206,7 +234,8 @@ export default function CourseSelectorPopup({
                             key={ind}
                             course={course}
                             ind={ind}
-                            form={form}
+                            assignedForm={assignedForm}
+                            dueForm={dueForm}
                           />
                         ))
                       ) : (

@@ -627,7 +627,7 @@ export async function updateCourseDueDate(course_id: number, date: Date) {
   const err = await CHECK_ADMIN();
   if (err) return err;
 
-  await db
+  return await db
     .update(user_courses)
     .set({ due_date: date })
     .where(eq(user_courses.course_id, course_id));

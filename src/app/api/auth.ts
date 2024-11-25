@@ -20,8 +20,10 @@ export async function CHECK_ADMIN() {
 export async function CHECK_UNAUTHORIZED(user_id: string) {
   const cookieStore = cookies();
   const result = await getCurrentUser(cookieStore);
-  if (result.user && result.user.email == process.env.ADMIN_USER_EMAIL)
+
+  if (result.user && result.user.email == process.env.ADMIN_USER_EMAIL) {
     return undefined;
+  }
 
   if (!(result && result.user && result.user.id == user_id)) {
     return error(`unauthorized`, HttpStatusCode.Unauthorized);
