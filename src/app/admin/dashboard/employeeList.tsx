@@ -24,6 +24,12 @@ interface analysisInterface {
   }
 }
 
+export interface analysisRequestInterface {
+  course_filter: string;
+  assignment_filter: string;
+  status_filter: string;
+}
+
 const columns: ColumnDef<employeeOverview>[] = [
   {
     id: "buffer",
@@ -101,7 +107,7 @@ export function roleToSpan(roles: string[]) {
   );
 }
 
-export default function EmployeeList({ searchFilter, setSearchFilter }: {searchFilter: string, setSearchFilter: Dispatch<SetStateAction<string>>}) {
+export default function EmployeeList({ searchFilter, setSearchFilter, filter }: {searchFilter: string, setSearchFilter: Dispatch<SetStateAction<string>>, filter?: analysisRequestInterface }) {
   const [data, setData] = useState<employeeOverview[]>([]);
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
@@ -114,17 +120,23 @@ export default function EmployeeList({ searchFilter, setSearchFilter }: {searchF
     addEventListener('request_employee_list_reload', () => load());
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [filter])
+
   function load() {
     setData([]);
     setPlaceholder('Loading...');
 
     axios
       .all([
-        axios.get(req("api/users")),
+        filter
+          ? axios.get(req('api/filters'), { params: filter })
+          : axios.get(req("api/users")),
         axios.get(req('api/analysis/courses')),
       ])
       .then(axios.spread((u, c) => {
-        const data: User[] = u.data.data;
+        const data: User[] = u.data.data
         const formatted: employeeOverview[] = [];
         const analysis: analysisInterface[] = c.data.data;
 
