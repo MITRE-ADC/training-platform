@@ -31,6 +31,8 @@ export const users = pgTable("users", {
   pass: varchar({ length: 255 }).notNull(),
   emailVerified: timestamp("emailverified", { mode: "date" }),
   image: text("image"),
+  webgoatusername: varchar({ length: 45 }).notNull().unique(),
+  webgoatpassword: varchar({ length: 10 }).notNull()
 });
 
 export const selectUsersSchema = createSelectSchema(users);
