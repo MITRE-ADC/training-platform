@@ -7,36 +7,39 @@ import { error } from "./util";
  * returns a response to send to user if they are not admin, undefined if admin
  */
 export async function CHECK_ADMIN() {
-  const cookieStore = cookies();
-  const result = await getCurrentUser(cookieStore);
-  if (result.user && result.user.email == process.env.ADMIN_USER_EMAIL)
-    return undefined;
-
+  const result = await fetch("/api/auth");
+  if (result && result.status == HttpStatusCode.Ok) {
+    const body = await result.json();
+    if (body && body.isAdmin && body.isAdmin == true) {
+      return undefined;
+    }
+  }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 /**
  * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_id matches current session)
  */
-export async function CHECK_UNAUTHORIZED(user_id: string) {
-  const cookieStore = cookies();
-  const result = await getCurrentUser(cookieStore);
-  if (result.user && result.user.email == process.env.ADMIN_USER_EMAIL)
-    return undefined;
-
-  if (!(result && result.user && result.user.id == user_id)) {
-    return error(`unauthorized`, HttpStatusCode.Unauthorized);
+export async function CHECK_UNAUTHORIZED(user_email: string) {
+  const result = await fetch("/api/auth");
+  if (result && result.status == HttpStatusCode.Ok) {
+    const body = await result.json();
+    if (body && body.user && body.user.email == user_email) {
+      return undefined;
+    }
   }
-
-  return undefined;
+  return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 
 /**
  * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user
  */
 export async function CHECK_SESSION() {
-  const cookieStore = cookies();
-  const result = await getCurrentUser(cookieStore);
-  if (!result || !result.user)
-    return error(`unauthorized`, HttpStatusCode.Unauthorized);
-  else return undefined;
+  const result = await fetch("/api/auth");
+  if (result && result.status == HttpStatusCode.Ok) {
+    const body = await result.json();
+    if (body && body.user) {
+      return undefined;
+    }
+  }
+  return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }

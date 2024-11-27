@@ -152,6 +152,7 @@ importers:
     devDependencies:
       '@types/node':
       '@types/node':
+      '@types/node':
         specifier: ^20.17.6
         version: 20.17.6
       '@types/pg':

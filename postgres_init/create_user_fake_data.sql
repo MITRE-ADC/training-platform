@@ -83,4 +83,48 @@ INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
     VALUES ('330 project 4', 2, 'rust project');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('351 exam', 3, 'graphs and trees');
+    VALUES ('351 exam', 4, 'graphs and trees');
+
+
+-- User Courses
+
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (1, 2, 'Not Started', '2024-06-01', '2024-05-01');
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (1, 2, 'In Progress', '2024-08-01', '2024-01-01');
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (2, 4, 'Completed', '2024-05-01', '2024-01-07');
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (2, 5, 'In Progess', '2024-08-06', '2024-01-07');
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (3, 2, 'Not Started', '2024-04-01', '2024-01-07');
+
+INSERT INTO User_Courses (user_id, course_id, course_status, due_date, assigned_date)
+    VALUES (5, 3, 'Completed', '2024-04-01', '2024-01-07');
+
+-- User Assignments
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (1, 3, TRUE);
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (1, 4, TRUE);
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (1, 5, FALSE);
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (2, 7, TRUE);
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (3, 1, TRUE);
+
+INSERT INTO User_Assignments (user_id, assignment_id, completed)
+    VALUES (3, 2, FALSE);
+
+

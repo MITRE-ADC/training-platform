@@ -78,6 +78,45 @@ export const _DATA: Course[] = [
       },
     ],
   },
+  {
+    course: "DateTest",
+    assignments: [
+      {
+        name: "Due Early",
+        assigned: "9/01/2020",
+        due: "9/01/2023",
+        status: "todo",
+      },
+    ],
+  },
+  {
+    course: "DateTest2",
+    assignments: [
+      {
+        name: "Due Late",
+        assigned: "9/01/2020",
+        due: "9/01/2025",
+        status: "todo",
+      },
+    ],
+  },
+  {
+    course: "Another Date Test",
+    assignments: [
+      {
+        name: "Due Latest",
+        assigned: "9/01/2020",
+        due: "9/02/2025",
+        status: "todo",
+      },
+      {
+        name: "Due Earliest",
+        assigned: "9/01/2020",
+        due: "9/02/2020",
+        status: "todo",
+      },
+    ],
+  },
 ];
 
 export function getAssignmentData(): Course[] {
