@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { error } from "../../util";
-// import { register_user } from "../util";
 import { HttpStatusCode } from "axios";
-import { CHECK_ADMIN } from "../../auth";
+import { register_user } from "../util";
 
 /**
  * Updates data in the DB for a user's progress
@@ -11,22 +10,21 @@ import { CHECK_ADMIN } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    const err = await CHECK_ADMIN();
-    if (err) return err;
-
+    console.log("Registering user in webgoat");
     const username = request.nextUrl.searchParams?.get("name");
     const password = request.nextUrl.searchParams?.get("password");
 
     if (!username || !password)
       return error("Please specify a name and password");
 
-    // const ok = await register_user(username, password);
-    // if(!ok)
-    //   return error("Error registering user");
-    //
+    const err = await register_user(username, password);
+    if (err) return err;
 
     return NextResponse.json(
-      { message: "Created user" },
+      {
+        message:
+          "Registered user in webgoat successfully; make sure to link to user record with the appropriate route (e.g. POST api/users)",
+      },
       { status: HttpStatusCode.Created }
     );
   } catch (ex) {

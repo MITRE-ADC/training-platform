@@ -1,14 +1,23 @@
 "use client";
+
 import EmployeeList from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
-import { HttpStatusCode } from "axios";
 import Image from "next/image";
-import { _COURSETAGS } from "./employeeDefinitions";
+import { useRef, useState } from "react";
 
 export default function AdminDashBoard() {
+  const [searchFilter, setSearchFilter] = useState<string>("");
+  const search = useRef<HTMLInputElement | null>(null);
+
+  function handleSearch() {
+    if (!search.current) return;
+
+    setSearchFilter(search.current.value);
+  }
+
   return (
     <div>
       <div className="ml-[calc(43px+18px)] mt-[calc(26px+18px)]">
@@ -49,8 +58,13 @@ export default function AdminDashBoard() {
                     <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                       <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
                       <Input
-                        placeholder="Search Employee"
+                        ref={search}
+                        placeholder="Search Name or Email"
                         className="border-0 py-2 font-inter focus-visible:ring-0"
+                        onBlur={handleSearch}
+                        onKeyDown={(k) =>
+                          k.key == "Enter" ? handleSearch() : null
+                        }
                       />
                     </div>
                     <div className="flex flex-col justify-end">
@@ -58,7 +72,10 @@ export default function AdminDashBoard() {
                     </div>
                   </div>
                   <div className="shadow-md" id="Employee-List-Table">
-                    <EmployeeList />
+                    <EmployeeList
+                      searchFilter={searchFilter}
+                      setSearchFilter={setSearchFilter}
+                    />
                   </div>
                 </div>
               </TabsContent>

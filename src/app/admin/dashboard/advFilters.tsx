@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { TagSelector } from "@/components/ui/custom/tagSelector";
 import {
+  MountStatus,
   _ASSIGNMENTTAGS,
   _COURSETAGS,
   _ROLETAGS,
@@ -16,22 +17,60 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { Assignment, Course } from "@/db/schema";
 
 export function AdvancedDashboardFilters() {
   const [courses, setCourses] = useState<Tag[]>([]);
   const [assignments, setAssignments] = useState<Tag[]>([]);
-  const [roles, setRoles] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
 
   const [tableWidth, setTableWidth] = useState<string>("w-auto");
+
+  const [courseTags, setCourseTags] = useState<Tag[]>([]);
+  const [assignmentTags, setAssignmentTags] = useState<Tag[]>([]);
+
+  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
 
   useEffect(() => {
     const table = document.getElementById("Employee-List-Table");
     if (table) {
       setTableWidth(table.scrollWidth + "px");
     }
+
+    setMount(MountStatus.isFirstMounted);
   }, []);
+
+  if (didMount == MountStatus.isFirstMounted) {
+    if (courseTags.length == 0) {
+      axios.get(req("/api/courses")).then((r) => {
+        const _courses: Course[] = r.data.data;
+
+        setCourseTags(
+          _courses.map((c) => ({
+            id: "" + c.course_id,
+            text: c.course_name,
+          })) as Tag[]
+        );
+      });
+    }
+
+    if (assignmentTags.length == 0) {
+      axios.get(req("/api/assignments")).then((r) => {
+        const _assignments: Assignment[] = r.data.data;
+
+        setAssignmentTags(
+          _assignments.map((a) => ({
+            id: "" + a.assignment_id,
+            text: a.assignment_name,
+          })) as Tag[]
+        );
+      });
+    }
+
+    setMount(MountStatus.isMounted);
+  }
 
   return (
     <Popover onOpenChange={() => console.log("trigger")}>
@@ -42,17 +81,17 @@ export function AdvancedDashboardFilters() {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="h-[200px] w-auto translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
+        className="h-[150px] w-auto translate-x-[1px] translate-y-[3px] rounded-md border-highlight bg-white"
         style={{
           maxWidth: tableWidth,
         }}
         align="end"
       >
-        <div className="ml-2 mr-4 flex h-full min-w-[200px] flex-col justify-around">
+        <div className="flex h-full min-w-[200px] flex-col justify-around">
           <TagSelector
             title="Courses"
             id="courses"
-            tags={_COURSETAGS}
+            tags={courseTags}
             selectedTags={courses}
             setSelectedTags={setCourses}
             titleClass="mr-2"
@@ -60,17 +99,9 @@ export function AdvancedDashboardFilters() {
           <TagSelector
             title="Assignments"
             id="assignments"
-            tags={_ASSIGNMENTTAGS}
+            tags={assignmentTags}
             selectedTags={assignments}
             setSelectedTags={setAssignments}
-            titleClass="mr-2"
-          />
-          <TagSelector
-            title="Roles"
-            id="roles"
-            tags={_ROLETAGS}
-            selectedTags={roles}
-            setSelectedTags={setRoles}
             titleClass="mr-2"
           />
           <TagSelector

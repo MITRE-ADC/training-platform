@@ -14,8 +14,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier . --write --check '!./postgres_data' '!./.gitignore'",
-    "format:check": "prettier . --check '!./postgres_data' '!./.gitignore'",
+    "format": "prettier . --write --check ",
+    "format:check": "prettier . --check ",
     "prepare": "husky"
   },
   "dependencies": {
