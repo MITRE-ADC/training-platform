@@ -107,9 +107,21 @@ export async function aggregateUserCoursesStatusByUser() {
   const data = (
     await db.execute(
       `
-      SELECT user_id, course_status, CAST(COUNT(*) AS int) 
-      FROM user_courses 
-      GROUP BY user_id, course_status 
+      SELECT 
+        user_id,
+        CASE
+          WHEN due_date < CURRENT_DATE THEN 'Overdue'
+          ELSE course_status::TEXT
+        END AS course_status_group,
+        CAST(COUNT(*) AS int) as count
+      FROM user_courses
+      GROUP BY
+        user_id,
+        CASE
+          WHEN due_date < CURRENT_DATE THEN 'Overdue'
+          ELSE course_status::TEXT
+        END
+
       ORDER BY user_id ASC;
       `
     )
@@ -119,28 +131,29 @@ export async function aggregateUserCoursesStatusByUser() {
     completed: number;
     in_progress: number;
     not_started: number;
+    overdue: number;
   }
 
   interface Entry {
-    user_id: number;
+    user_id: string;
     analysis: Analysis;
   }
-
+  console.log(data);
   const res: Entry[] = [];
-  let lastId: number | null = null;
+  let lastId: string | null = null;
   data.forEach((element) => {
-    if (Number(element["user_id"]) != lastId) {
-      lastId = Number(element["user_id"]);
+    if (String(element["user_id"]) != lastId) {
+      lastId = String(element["user_id"]);
       const newEntry = {
-        user_id: Number(element["user_id"]),
+        user_id: String(element["user_id"]),
         analysis: {
           completed: 0,
           in_progress: 0,
           not_started: 0,
+          overdue: 0
         },
       };
-
-      switch (element["course_status"]) {
+      switch (element["course_status_group"]) {
         case "Completed": {
           newEntry["analysis"]["completed"] = Number(element["count"]);
           break;
@@ -153,13 +166,16 @@ export async function aggregateUserCoursesStatusByUser() {
           newEntry["analysis"]["not_started"] = Number(element["count"]);
           break;
         }
+        case "Overdue": {
+          newEntry["analysis"]["overdue"] = Number(element["count"]);
+          break;
+        }
       }
-
       res.push(newEntry);
     } else {
       const entry = res[res.length - 1];
 
-      switch (element["course_status"]) {
+      switch (element["course_status_group"]) {
         case "Completed": {
           entry["analysis"]["completed"] = Number(element["count"]);
           break;
@@ -170,6 +186,10 @@ export async function aggregateUserCoursesStatusByUser() {
         }
         case "Not Started": {
           entry["analysis"]["not_started"] = Number(element["count"]);
+          break;
+        }
+        case "Overdue": {
+          entry["analysis"]["overdue"] = Number(element["count"]);
           break;
         }
       }
