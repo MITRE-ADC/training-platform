@@ -108,13 +108,13 @@ export async function processLinkCourse(course: AddUserCourse) {
 
   if (!exists) return error("User does not exist");
 
-  if (!(await courseIdExists(course.course_id)))
-    return error("Course not found");
+  if (!(await courseIdExists(course.course_id))) return error("Course not found");
 
   const _userCourseExists = await userCourseExists(
     course.course_id,
     course.user_id
   );
+
   if (_userCourseExists instanceof NextResponse) return _userCourseExists;
 
   if (_userCourseExists) return error("Record already exists!");
@@ -141,23 +141,17 @@ export async function processLinkCourse(course: AddUserCourse) {
 export async function processLinkCourseRequest(request: NextRequest) {
   const user_id = request.nextUrl.searchParams?.get("user_id");
   const course_id = request.nextUrl.searchParams?.get("course_id");
-  const assigned_date = request.nextUrl.searchParams?.get("assigned_date");
-  const due_date = request.nextUrl.searchParams?.get("assigned_date");
   let body: AddUserCourse | undefined = undefined;
 
   try {
-    const json = await request.json();
-    const date = new Date(json.due_date);
-
-    body = json;
+    body = await request.json();
   } catch (ex) {
     console.log(`Error reading request body: ${ex}`);
   }
 
-  if ((!user_id || !course_id) && (!body || !body.user_id || !body.course_id))
-    return error(
-      `Request requires user_id and course_id in body or request parameters`
-    );
+  if ((!user_id || !course_id) && (!body || !body.user_id || !body.course_id)) {
+    return error('Request requires user_id and course_id in body or request parameters');
+  }
 
   const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
@@ -318,8 +312,6 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
 
 export async function processUpdateUser(body: User) {
   const exists = await userIdExists(body.id);
-  // if (exists instanceof NextResponse)
-  //   return exists;
 
   if (!exists) return error("user does not exist", HttpStatusCode.NotFound);
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { error, processCreateUserRequest, processUpdateUser } from "../../util";
-import { getUser, userIdExists } from "@/db/queries";
+import { getCompleteUser, getUser, userIdExists } from "@/db/queries";
 import { User } from "@/db/schema";
 import { HttpStatusCode } from "axios";
 import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "../../auth";
@@ -11,7 +11,6 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log(request.url);
     const user_id = (await context.params).id;
     const result = await getUser(user_id);
     if (result instanceof NextResponse) return result;
@@ -53,7 +52,14 @@ export async function POST(
     if (exists instanceof NextResponse) return exists;
 
     if (!exists) return processCreateUserRequest(request);
-    else return processUpdateUser(body);
+    else {
+      // fill in non-updated info
+      let user = await getCompleteUser(user_id);
+      if (user instanceof NextResponse) return user;
+
+      user = {...user, ...body};
+      return processUpdateUser(user);
+    }
   } catch (ex) {
     return error(`processing update request failed: ${ex}`);
   }

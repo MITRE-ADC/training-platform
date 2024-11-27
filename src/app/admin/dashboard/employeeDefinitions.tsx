@@ -173,11 +173,11 @@ export const _STATUSTAGS: Tag[] = [
     text: "Completed",
   },
   {
-    id: "overdue",
-    text: "Overdue",
+    id: "not_started",
+    text: "Not Started",
   },
   {
-    id: "todo",
+    id: "in_progress",
     text: "In Progress",
   },
 ];

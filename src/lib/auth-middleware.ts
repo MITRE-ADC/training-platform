@@ -24,7 +24,7 @@ export async function validateJwtToken(
       userID: string;
       exp: number;
     };
-    console.log("THE USER ID IS " + decoded.userID);
+    // console.log("THE USER ID IS " + decoded.userID);
     const result = await db
       .select()
       .from(users)
@@ -34,7 +34,7 @@ export async function validateJwtToken(
       console.log("User not found");
       return { user: null };
     }
-    console.log("User found");
+    // console.log("User found");
 
     const user: Omit<User, "pass"> = result[0];
 
@@ -88,7 +88,7 @@ export async function getCurrentUser(
 ): Promise<SessionValidationResult> {
   // const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value ?? null;
-  console.log("I AM YOUR TOKEN!" + token);
+  // console.log("I AM YOUR TOKEN!" + token);
   if (token == null) {
     return { user: null };
   }

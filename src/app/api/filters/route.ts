@@ -14,16 +14,16 @@ import { db } from "@/db";
 // example URL: localhost:3000/api/filters?query="John Doe"&course_filters="Course 4,Course3"&status_filters="In Progress"
 export async function GET(request: NextRequest) {
   // const search_strings = request.nextUrl.searchParams?.get("search_string")?.split(',') || []; // NOT SURE HOW TO IMPLEMENT
-  const course_filter =
-    request.nextUrl.searchParams?.get("course_filter")?.split(",") || [];
-  const assignment_filter =
-    request.nextUrl.searchParams?.get("assignment_filter")?.split(",") || [];
-  const status_filter =
-    request.nextUrl.searchParams?.get("status_filter")?.split(",") || [];
+  let course_filter =
+    request.nextUrl.searchParams?.get("course_filter")?.replaceAll('"', '').split(",") || [];
+  let assignment_filter =
+    request.nextUrl.searchParams?.get("assignment_filter")?.replaceAll('"', '').split(",") || [];
+  let status_filter =
+    request.nextUrl.searchParams?.get("status_filter")?.replaceAll('"', '').split(",") || [];
 
-  console.log(course_filter);
-  console.log(assignment_filter);
-  console.log(status_filter);
+  if (course_filter.length == 1 && course_filter[0].length == 0) course_filter = [];
+  if (assignment_filter.length == 1 && assignment_filter[0].length == 0) assignment_filter = [];
+  if (status_filter.length == 1 && status_filter[0].length == 0) status_filter = [];
 
   let query;
   const conditions = [];
