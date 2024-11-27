@@ -5,7 +5,9 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL UNIQUE,
     pass VARCHAR(255) NOT NULL,
     emailVerified TIMESTAMP,
-    image TEXT
+    image TEXT,
+    webgoatusername VARCHAR(45) NOT NULL UNIQUE,
+    webgoatpassword VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE Courses (
@@ -53,5 +55,5 @@ CREATE TABLE Accounts (
 );
 
 INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
-INSERT INTO Users(name, email, pass) 
-    VALUES ('Admin', 'admin@mitre.com', 'changeme');
+INSERT INTO Users(name, email, pass, webgoatusername, webgoatpassword) 
+    VALUES ('Admin', 'admin@mitre.com', 'changeme', 'admin', 'changeme');

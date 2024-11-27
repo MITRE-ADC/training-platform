@@ -21,7 +21,15 @@ import axios from "axios";
 import { req } from "@/lib/utils";
 import { Assignment, Course } from "@/db/schema";
 
-export function AdvancedDashboardFilters() {
+export function AdvancedDashboardFilters({
+  handle,
+}: {
+  handle: (
+    courses: string[],
+    assignments: string[],
+    statuses: string[]
+  ) => void;
+}) {
   const [courses, setCourses] = useState<Tag[]>([]);
   const [assignments, setAssignments] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
@@ -73,7 +81,16 @@ export function AdvancedDashboardFilters() {
   }
 
   return (
-    <Popover onOpenChange={() => console.log("trigger")}>
+    <Popover
+      onOpenChange={(open) => {
+        if (!open)
+          handle(
+            courses.map((x) => x.text),
+            assignments.map((x) => x.text),
+            status.map((x) => x.text)
+          );
+      }}
+    >
       <PopoverTrigger asChild>
         <Button variant="outline" className="text-darkLight">
           <P className="text-darkLight">Advanced Filters</P>

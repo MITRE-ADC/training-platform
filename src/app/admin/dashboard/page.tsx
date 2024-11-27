@@ -1,6 +1,6 @@
 "use client";
 
-import EmployeeList from "./employeeList";
+import EmployeeList, { analysisRequestInterface } from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { H2, H3 } from "@/components/ui/custom/text";
@@ -11,6 +11,10 @@ import { useRef, useState } from "react";
 export default function AdminDashBoard() {
   const [searchFilter, setSearchFilter] = useState<string>("");
   const search = useRef<HTMLInputElement | null>(null);
+
+  const [advFilterReq, setAdvFilterReq] = useState<
+    analysisRequestInterface | undefined
+  >(undefined);
 
   function handleSearch() {
     if (!search.current) return;
@@ -68,13 +72,39 @@ export default function AdminDashBoard() {
                       />
                     </div>
                     <div className="flex flex-col justify-end">
-                      <AdvancedDashboardFilters />
+                      <AdvancedDashboardFilters
+                        handle={(c, a, s) => {
+                          let filter: analysisRequestInterface | undefined =
+                            undefined;
+
+                          if (
+                            !(c.length == 0 && a.length == 0 && s.length == 0)
+                          ) {
+                            filter = {
+                              course_filter: '"' + c.join(",") + '"',
+                              assignment_filter: '"' + a.join(",") + '"',
+                              status_filter: '"' + s.join(",") + '"',
+                            };
+                          }
+
+                          if (
+                            filter?.assignment_filter !=
+                              advFilterReq?.assignment_filter ||
+                            filter?.course_filter !=
+                              advFilterReq?.course_filter ||
+                            filter?.status_filter != advFilterReq?.status_filter
+                          ) {
+                            setAdvFilterReq(filter);
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="shadow-md" id="Employee-List-Table">
                     <EmployeeList
                       searchFilter={searchFilter}
                       setSearchFilter={setSearchFilter}
+                      filter={advFilterReq}
                     />
                   </div>
                 </div>

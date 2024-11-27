@@ -35,7 +35,14 @@ import {
   User_Assignment,
   User_Course,
 } from "@/db/schema";
-import { assignAssignments, assignCourse, updateUser } from "./dashboardServer";
+import {
+  assignAssignments,
+  assignCourse,
+  deleteAssignment,
+  deleteCourse,
+  updateCourseDueDate,
+  updateUser,
+} from "./dashboardServer";
 
 const columns: ColumnDef<employeeAssignment>[] = [
   {
@@ -64,17 +71,7 @@ const columns: ColumnDef<employeeAssignment>[] = [
     cell: ({ row }) => {
       const v: undefined | string = row.getValue("due");
 
-      return (
-        <>
-          <P>{v ? v : "None"}</P>
-          <DatePopup
-            title="Assign Due Date"
-            openBut={
-              <i className="ri-edit-2-line ml-2 cursor-pointer text-darkBlue"></i>
-            }
-          />
-        </>
-      );
+      return <P>{v ? v : "None"}</P>;
     },
   },
   {
@@ -100,10 +97,6 @@ const columns: ColumnDef<employeeAssignment>[] = [
         </div>
       );
     },
-  },
-  {
-    id: "delete",
-    cell: () => <i className="ri-close-large-line text-darkBlue"></i>,
   },
 ];
 
@@ -141,34 +134,36 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   const [courseData, setCourseData] = useState<CourseSelectorData[]>([]);
   const [defaultCourses, setDefaultCourses] = useState<string[]>([]);
 
+  const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
+  const [courseCache, setCourseCache] = useState<Course[]>([]);
+
   const emailInput = useRef<HTMLInputElement | null>(null);
   const nameInput = useRef<HTMLInputElement | null>(null);
 
   async function load() {
-    // TODO: replace with user id get once that route is implemented
     setPlaceholder("Loading...");
 
     axios
       .all([
         axios.get(req("api/user_assignments/" + employeeId)),
-        axios.get(req("api/user_courses")),
-        axios.get(req("api/assignments")),
-        axios.get(req("api/courses")),
-        axios.get(req("api/users")),
+        axios.get(req("api/user_courses/" + employeeId)),
+        assignmentCache.length == 0 ? axios.get(req("api/assignments")) : null,
+        courseCache.length == 0 ? axios.get(req("api/courses")) : null,
+        axios.get(req("api/users/" + employeeId)),
       ])
       .then(
         axios.spread((_ua, _uc, _a, _c, _u) => {
-          const _uassignments: User_Assignment[] = _ua.data.data;
-          const _ucourses: User_Course[] = _uc.data.data;
-          const _assignments: Assignment[] = _a.data.data;
-          const _courses: Course[] = _c.data.data;
-          const _users: User[] = _u.data.data;
+          if (!_ua || !_uc || !_u) return;
 
-          const user = _users.find((u) => u.id == employeeId);
-          const uassignments = _uassignments.filter(
-            (a) => a.user_id == employeeId
-          );
-          const ucourses = _ucourses.filter((c) => c.user_id == employeeId);
+          const uassignments: User_Assignment[] = _ua.data.data;
+          const ucourses: User_Course[] = _uc.data.data;
+          const user: User = _u.data.data;
+
+          if (_a) setAssignmentCache(_a.data.data as Assignment[]);
+          if (_c) setCourseCache(_c.data.data as Course[]);
+
+          const assignments: Assignment[] = _a ? _a.data.data : assignmentCache;
+          const courses: Course[] = _c ? _c.data.data : courseCache;
 
           if (!user) return;
 
@@ -184,10 +179,10 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
               todo: 0,
             },
             assignments: uassignments.flatMap((a) => {
-              const assignment = _assignments.find(
+              const assignment = assignments.find(
                 (x) => x.assignment_id == a.assignment_id
               );
-              const course = _courses.find(
+              const course = courses.find(
                 (x) => x.course_id == assignment?.course_id
               );
               const ucourse = ucourses.find(
@@ -203,19 +198,22 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
                 return [];
               }
 
+              const assigned = new Date(ucourse.assigned_date);
+              const due = new Date(ucourse.due_date);
+
               return {
                 course: course.course_name,
                 assignment: assignment.assignment_name,
                 assigned: ucourse.assigned_date
-                  ? new Date(ucourse.assigned_date).toLocaleDateString()
+                  ? assigned.toLocaleDateString("en-US", { timeZone: "UTC" })
                   : "Unknown",
                 due: ucourse.due_date
-                  ? new Date(ucourse.due_date).toLocaleDateString()
+                  ? due.toLocaleDateString("en-US", { timeZone: "UTC" })
                   : "No Deadline",
                 status: a.completed
                   ? "done"
                   : ucourse.due_date
-                    ? ucourse.due_date > date
+                    ? due > date
                       ? "todo"
                       : "overdue"
                     : "todo",
@@ -223,27 +221,41 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             }),
           };
 
-          const formattedCourses: CourseSelectorData[] = _courses.map((c) => ({
-            name: c.course_name,
-            id: "c_" + c.course_id,
-            children: _assignments.flatMap((a) =>
-              a.course_id == c.course_id
-                ? {
-                    name: a.assignment_name,
-                    id: "a_" + a.assignment_id,
-                    webgoat: a.webgoat_info,
-                    courseId: "" + a.course_id,
-                  }
-                : []
-            ),
-          }));
+          const formattedCourses: CourseSelectorData[] = courses.map((c) => {
+            const due_date = ucourses.find(
+              (x) => x.course_id == c.course_id
+            )?.due_date;
 
-          const selectedCourses: string[] = uassignments.flatMap((a) => {
-            const _a = _assignments.find(
+            return {
+              name: c.course_name,
+              id: "c_" + c.course_id,
+              due: due_date ? new Date(due_date) : undefined,
+              children: assignments.flatMap((a) =>
+                a.course_id == c.course_id
+                  ? {
+                      name: a.assignment_name,
+                      id: "a_" + a.assignment_id,
+                      webgoat: a.webgoat_info,
+                      courseId: "" + a.course_id,
+                    }
+                  : []
+              ),
+            };
+          });
+
+          let selectedCourses: string[] = uassignments.flatMap((a) => {
+            const _a = assignments.find(
               (x) => x.assignment_id == a.assignment_id
             );
             return _a ? "a_" + _a.assignment_id : [];
           });
+
+          selectedCourses = selectedCourses.concat(
+            ucourses.flatMap((c) => {
+              const _c = courses.find((x) => x.course_id == c.course_id);
+              return _c ? "c_" + _c.course_id : [];
+            })
+          );
 
           setData(formattedUser);
           setCourseData(formattedCourses);
@@ -257,24 +269,65 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
       .catch(() => setPlaceholder("No Results."));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (emailInput.current && nameInput.current) {
       const email = emailInput.current.value;
       const name = nameInput.current.value;
       if (email != data.email || name != data.firstName + " " + data.lastName) {
-        updateUser(employeeId, email, name);
+        setData(EMPTY_EMPLOYEE);
+        await updateUser(employeeId, email, name);
+
+        dispatchEvent(new Event("request_employee_list_reload"));
       }
     }
   }
 
-  function handleCourseUpdate(courses: Record<string, boolean>) {
-    console.log(courses);
-    for (const entry in courses) {
-      // currently do not support removing
-      if (!courses[entry]) continue;
+  function handleCourseUpdate(
+    courses: Record<string, boolean>,
+    dueDates: Record<string, Date>
+  ) {
+    const updates: Promise<void>[] = [];
 
-      if (entry.startsWith("c_")) assignCourse(employeeId, entry.substring(2));
-      else assignAssignments(employeeId, entry.substring(2));
+    let hasChanges = false;
+    for (const entry in courses) {
+      const res = courses[entry];
+
+      if (res && !defaultCourses.includes(entry)) {
+        if (entry.startsWith("c_"))
+          updates.push(assignCourse(employeeId, entry.substring(2)));
+        else updates.push(assignAssignments(employeeId, entry.substring(2)));
+
+        hasChanges = true;
+      } else if (!res && defaultCourses.includes(entry)) {
+        if (entry.startsWith("c_"))
+          updates.push(deleteCourse(employeeId, entry.substring(2)));
+        else updates.push(deleteAssignment(employeeId, entry.substring(2)));
+
+        hasChanges = true;
+      }
+    }
+
+    for (const entry in dueDates) {
+      console.log(
+        dueDates[entry].toLocaleDateString("en-US", { timeZone: "UTC" })
+      );
+      updates.push(
+        updateCourseDueDate(employeeId, entry.substring(2), dueDates[entry])
+      );
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      setPlaceholder("Loading...");
+
+      setCourseData([]);
+      setDefaultCourses([]);
+      setData({
+        ...data,
+        assignments: [],
+      });
+
+      Promise.all(updates).then(() => load());
     }
   }
 
@@ -326,14 +379,14 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             <div className="flex items-end justify-between">
               <H2>Employee Courses</H2>
               <CourseSelectorPopup
-                title="Add Course"
+                title="Modify Courses"
                 data={courseData}
                 setData={setCourseData}
                 defaultCourses={defaultCourses}
                 handle={handleCourseUpdate}
               >
                 <Button variant="outline" className="text-darkLight">
-                  <P className="text-darkLight">Add Courses</P>
+                  <P className="text-darkLight">Modify Courses</P>
                 </Button>
               </CourseSelectorPopup>
             </div>

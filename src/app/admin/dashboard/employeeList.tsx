@@ -13,6 +13,22 @@ import { P } from "@/components/ui/custom/text";
 import axios from "axios";
 import { req } from "@/lib/utils";
 import { User } from "@/db/schema";
+import { removeAllListeners } from "process";
+
+interface analysisInterface {
+  user_id: string;
+  analysis: {
+    completed: number;
+    in_progress: number;
+    not_started: number;
+  };
+}
+
+export interface analysisRequestInterface {
+  course_filter: string;
+  assignment_filter: string;
+  status_filter: string;
+}
 
 const columns: ColumnDef<employeeOverview>[] = [
   {
@@ -37,7 +53,9 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     accessorKey: "tasks",
-    header: ({ column }) => <SortableColumn column={column} title="Status" />,
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Course Status" />
+    ),
     cell: ({ row }) => {
       return (
         <div className="relative -z-50 flex gap-[8px] text-[18px]">
@@ -94,44 +112,83 @@ export function roleToSpan(roles: string[]) {
 export default function EmployeeList({
   searchFilter,
   setSearchFilter,
+  filter,
 }: {
   searchFilter: string;
   setSearchFilter: Dispatch<SetStateAction<string>>;
+  filter?: analysisRequestInterface;
 }) {
   const [data, setData] = useState<employeeOverview[]>([]);
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
 
-  useEffect(() => setMount(MountStatus.isFirstMounted), []);
+  useEffect(() => {
+    setMount(MountStatus.isFirstMounted);
 
-  if (didMount == MountStatus.isFirstMounted && data.length == 0) {
+    // moving signals out of data tables is very annoying, so just use events instead
+    removeAllListeners("request_employee_list_reload");
+    addEventListener("request_employee_list_reload", () => load());
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [filter]);
+
+  function load() {
+    setData([]);
+    setPlaceholder("Loading...");
+
     axios
-      .get(req("api/users"))
-      .then((r) => {
-        const data: User[] = r.data.data;
-        const formatted: employeeOverview[] = [];
+      .all([
+        filter
+          ? axios.get(req("api/filters"), { params: filter })
+          : axios.get(req("api/users")),
+        axios.get(req("api/analysis/courses")),
+      ])
+      .then(
+        axios.spread((u, c) => {
+          const data: User[] = u.data.data;
+          const formatted: employeeOverview[] = [];
+          const analysis: analysisInterface[] = c.data.data;
 
-        data.forEach((user) => {
-          formatted.push({
-            firstName: user.name.split(" ")[0],
-            lastName: user.name.split(" ")[1],
-            email: user.email,
-            tasks: {
+          data.forEach((user) => {
+            const tasks = {
               overdue: 0,
               completed: 0,
               todo: 0,
-            },
-            id: user.id,
-          });
-        });
+            };
 
-        setData(formatted);
-        setPlaceholder("No Results.");
-      })
+            const anl = analysis.find((x) => x.user_id == user.id);
+            if (anl) {
+              tasks.overdue = 0; // TODO: replace with overdue once that enum is implemented
+              tasks.completed = anl.analysis.completed;
+              tasks.todo = anl.analysis.not_started;
+            }
+
+            formatted.push({
+              firstName: user.name.split(" ")[0],
+              lastName: user.name.split(" ")[1],
+              email: user.email,
+              tasks: {
+                overdue: 0,
+                completed: 0,
+                todo: 0,
+              },
+              id: user.id,
+            });
+          });
+
+          setData(formatted);
+          setPlaceholder("No Results.");
+        })
+      )
       .catch(() => {
         setPlaceholder("No Results.");
       });
+  }
 
+  if (didMount == MountStatus.isFirstMounted && data.length == 0) {
+    load();
     setMount(MountStatus.isMounted);
   }
 
