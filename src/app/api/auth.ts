@@ -20,6 +20,10 @@ export async function CHECK_ADMIN() {
  * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_id matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
+  // admin also can see this
+  if (!CHECK_ADMIN()) {
+    return undefined;
+  }
   const result = await fetch("/api/auth");
   if (result && result.status == HttpStatusCode.Ok) {
     const body = await result.json();

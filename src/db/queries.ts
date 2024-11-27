@@ -109,6 +109,8 @@ export async function courseNameExists(course_name: string) {
 }
 
 export async function aggregateUserCoursesStatusByUser() {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
   const data = (
     await db.execute(
       `
@@ -382,6 +384,8 @@ export async function deleteCourseForUser(user_id: string, course_id: number) {
 }
 
 export async function assignmentIdExists(id: number) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
   return (
     (await db.$count(
       db.select().from(assignments).where(eq(assignments.assignment_id, id))
@@ -582,13 +586,18 @@ export async function getUserByName(user_name: string) {
 
 /**
  * gets ANY user's complete (including sensitive) data given their user_name
+ * only user can see their own or admin
  */
 export async function getCompleteUserByName(user_name: string) {
   const user = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
-  const err = await CHECK_SESSION();
+  if (!user) {
+    return undefined;
+  }
+
+  const err = await CHECK_UNAUTHORIZED(user.email);
   if (err) return err;
 
   return user;
@@ -629,6 +638,8 @@ export async function updateCourseDueDate(course_id: number, date: Date) {
 }
 
 export async function getAssignment(assignmentId: number) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
   return (
     await db
       .select()
