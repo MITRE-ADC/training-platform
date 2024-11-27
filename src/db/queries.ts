@@ -138,7 +138,6 @@ export async function aggregateUserCoursesStatusByUser() {
     user_id: string;
     analysis: Analysis;
   }
-  console.log(data);
   const res: Entry[] = [];
   let lastId: string | null = null;
   data.forEach((element) => {
