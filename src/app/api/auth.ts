@@ -17,7 +17,7 @@ export async function CHECK_ADMIN() {
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 /**
- * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_id matches current session)
+ * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_email matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
   // admin also can see this
@@ -33,6 +33,36 @@ export async function CHECK_UNAUTHORIZED(user_email: string) {
   }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
+
+export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
+  // admin also can see this
+  if (!CHECK_ADMIN()) {
+    return undefined;
+  }
+  const result = await fetch("/api/auth");
+  if (result && result.status == HttpStatusCode.Ok) {
+    const body = await result.json();
+    if (body && body.user && body.user.id == user_id) {
+      return undefined;
+    }
+  }
+  return error(`unauthorized`, HttpStatusCode.Unauthorized);
+}
+
+// export async function CHECK_UNAUTHORIZED_BY_NAME(username: string) {
+//   // admin also can see this
+//   if (!CHECK_ADMIN()) {
+//     return undefined;
+//   }
+//   const result = await fetch("/api/auth");
+//   if (result && result.status == HttpStatusCode.Ok) {
+//     const body = await result.json();
+//     if (body && body.user && body.user.name == username) {
+//       return undefined;
+//     }
+//   }
+//   return error(`unauthorized`, HttpStatusCode.Unauthorized);
+// }
 
 /**
  * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user

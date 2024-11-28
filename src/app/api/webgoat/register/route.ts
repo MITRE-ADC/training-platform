@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { error } from "../../util";
 import { HttpStatusCode } from "axios";
 import { register_user } from "../util";
+import { CHECK_SESSION } from "../../auth";
 
 /**
  * Updates data in the DB for a user's progress
@@ -10,6 +11,8 @@ import { register_user } from "../util";
  */
 export async function POST(request: NextRequest) {
   try {
+    const err2 = await CHECK_SESSION();
+    if (err2) return err2;
     console.log("Registering user in webgoat");
     const username = request.nextUrl.searchParams?.get("name");
     const password = request.nextUrl.searchParams?.get("password");

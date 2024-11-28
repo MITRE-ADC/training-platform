@@ -315,7 +315,7 @@ export async function processUpdateUser(body: User) {
 
   if (!exists) return error("user does not exist", HttpStatusCode.NotFound);
 
-  const err = await CHECK_UNAUTHORIZED(body.id);
+  const err = await CHECK_UNAUTHORIZED(body.email);
   if (err) return err;
 
   await db.insert(users).values(body).onConflictDoUpdate({

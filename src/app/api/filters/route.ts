@@ -9,11 +9,18 @@ import {
 } from "@/db/schema";
 import { inArray, and, sql } from "drizzle-orm";
 import { db } from "@/db";
+import { CHECK_ADMIN } from "@/app/api/auth";
 
 // Main API endpoint for filtering on admin dash
 // example URL: localhost:3000/api/filters?query="John Doe"&course_filters="Course 4,Course3"&status_filters="In Progress"
 export async function GET(request: NextRequest) {
   // const search_strings = request.nextUrl.searchParams?.get("search_string")?.split(',') || []; // NOT SURE HOW TO IMPLEMENT
+  if (await CHECK_ADMIN()) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: HttpStatusCode.MethodNotAllowed }
+    );
+  }
   let course_filter =
     request.nextUrl.searchParams
       ?.get("course_filter")
