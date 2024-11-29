@@ -94,7 +94,7 @@ export function AdvancedDashboardFilters({
       <PopoverTrigger asChild>
         <Button variant="outline" className="text-darkLight">
           <P className="text-darkLight">Advanced Filters</P>
-          <i className="ri-expand-up-down-line r-sm ml-1"></i>
+          <i className="ri-expand-up-down-line ri-sm ml-1"></i>
         </Button>
       </PopoverTrigger>
       <PopoverContent

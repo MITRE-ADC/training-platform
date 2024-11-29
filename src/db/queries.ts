@@ -339,6 +339,7 @@ export async function getAllCourses() {
 
 export async function getCoursesByUser(user_id: string) {
   const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
+  console.log(err);
   if (err) return err;
 
   return await db
