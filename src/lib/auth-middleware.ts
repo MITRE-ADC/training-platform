@@ -10,11 +10,18 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 const JWT_SECRET = "change_to_something_else"; // Define your secret in env variables
+const admin_email = process.env.ADMIN_USER_EMAIL;
 
 export type SessionValidationResult =
   | { user: Omit<User, "pass"> }
   | { user: null };
 // ...
+
+export type SessionValidationAdminResult =
+  | { user: Omit<User, "pass">, isAdmin: boolean }
+  | { user: null , isAdmin: boolean};
+// ...
+
 
 export async function validateJwtToken(
   token: string
@@ -96,6 +103,27 @@ export async function getCurrentUser(
 
   return result;
 }
+
+export async function getCurrentUserAndAdmin(
+  cookieStore: ReadonlyRequestCookies | RequestCookies
+): Promise<SessionValidationAdminResult> {
+  // const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value ?? null;
+  // console.log("I AM YOUR TOKEN!" + token);
+  if (token == null) {
+    return { user: null,
+      isAdmin: false};
+  }
+  const result = await validateJwtToken(token);
+
+  if (result.user == null){
+    return { user: null,
+      isAdmin: false};
+  }
+
+  return {user: result.user, isAdmin: result.user.email == admin_email};
+}
+
 
 export async function getUserInfo(
   cookieStore: NextRequest["cookies"]

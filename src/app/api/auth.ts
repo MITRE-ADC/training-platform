@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/auth-middleware";
+import { getCurrentUserAndAdmin } from "@/lib/auth-middleware";
 import { HttpStatusCode } from "axios";
 import { cookies } from "next/headers";
 import { error } from "./util";
@@ -7,13 +8,11 @@ import { error } from "./util";
  * returns a response to send to user if they are not admin, undefined if admin
  */
 export async function CHECK_ADMIN() {
-  const result = await fetch("/api/auth");
-  if (result && result.status == HttpStatusCode.Ok) {
-    const body = await result.json();
-    if (body && body.isAdmin && body.isAdmin == true) {
+  const cookieStore = await cookies();
+  const user = await getCurrentUserAndAdmin(cookieStore);
+  if (user.isAdmin ) {
       return undefined;
     }
-  }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 /**
@@ -24,12 +23,10 @@ export async function CHECK_UNAUTHORIZED(user_email: string) {
   if (!CHECK_ADMIN()) {
     return undefined;
   }
-  const result = await fetch("/api/auth");
-  if (result && result.status == HttpStatusCode.Ok) {
-    const body = await result.json();
-    if (body && body.user && body.user.email == user_email) {
-      return undefined;
-    }
+  const cookieStore = await cookies();
+  const user = await getCurrentUserAndAdmin(cookieStore);
+  if (user.user != null && user.user.email == user_email) {
+    return undefined;
   }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
@@ -39,12 +36,10 @@ export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
   if (!CHECK_ADMIN()) {
     return undefined;
   }
-  const result = await fetch("/api/auth");
-  if (result && result.status == HttpStatusCode.Ok) {
-    const body = await result.json();
-    if (body && body.user && body.user.id == user_id) {
-      return undefined;
-    }
+  const cookieStore = await cookies();
+  const user = await getCurrentUserAndAdmin(cookieStore);
+  if (user.user != null && user.user.id == user_id) {
+    return undefined;
   }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
@@ -68,12 +63,10 @@ export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
  * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user
  */
 export async function CHECK_SESSION() {
-  const result = await fetch("/api/auth");
-  if (result && result.status == HttpStatusCode.Ok) {
-    const body = await result.json();
-    if (body && body.user) {
-      return undefined;
-    }
+  const cookieStore = await cookies();
+  const result = await getCurrentUserAndAdmin(cookieStore);
+  if (result.user != null) {
+    return undefined;
   }
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
