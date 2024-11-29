@@ -20,7 +20,7 @@ import {
   userAssignmentWebgoatIdExists,
   userNameExists,
 } from "@/db/queries";
-import { CHECK_UNAUTHORIZED } from "../../auth";
+import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
 // export const autopopulate_courses_from_webgoat = true;
 // export const assign_all_assignments_in_webgoat = true;
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const user_id = request.nextUrl.searchParams?.get("user_id");
     if (!user_id) return error("Please provide a user_id query parameter");
 
-    const err = await CHECK_UNAUTHORIZED(user_id!);
+    const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
     if (err) return err;
 
     const user = await getCompleteUser(user_id);
@@ -105,9 +105,10 @@ export async function POST(request: NextRequest) {
           );
           assignment_creations++;
         }
+        const resp = await getAssignmentByWebgoatId(webgoat_name);
+        if (resp instanceof NextResponse) return resp;
 
-        const assignment_id = (await getAssignmentByWebgoatId(webgoat_name))
-          .assignment_id;
+        const assignment_id = resp.assignment_id;
         if (
           assign_all_assignments_in_webgoat &&
           !(await userAssignmentWebgoatIdExists(user_id, webgoat_name))

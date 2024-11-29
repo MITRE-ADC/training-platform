@@ -107,6 +107,14 @@ function CourseSelectorAccordion({
     }
   }
 
+  // ensure internal state is consistent with form
+  course.children.map((child, ind) => {
+    const f = assignedForm.getValues(child.id);
+    if (f && f != childIsChecked[ind]) {
+      notify(f as boolean, ind);
+    }
+  });
+
   return (
     <AccordionItem value={course.name} key={ind}>
       <FormField
@@ -133,10 +141,12 @@ function CourseSelectorAccordion({
         )}
       />
       <AccordionContent className="flex flex-col gap-2">
-        {dueDate ?
+        {dueDate ? (
           <Popover modal open={dueDateOpen} onOpenChange={setDueDateOpen}>
-            <PopoverTrigger className="flex items-center ml-10 italic">
-              <Small>Due: {dueDate.toLocaleDateString('en-US', { timeZone: 'UTC' })}</Small>
+            <PopoverTrigger className="ml-10 flex items-center italic">
+              <Small>
+                Due: {dueDate.toLocaleDateString("en-US", { timeZone: "UTC" })}
+              </Small>
               <i className="ri-edit-2-line ml-1 cursor-pointer text-darkBlue"></i>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -154,7 +164,9 @@ function CourseSelectorAccordion({
               />
             </PopoverContent>
           </Popover>
-          : ''}
+        ) : (
+          ""
+        )}
         {course.children.map((child, ind) => (
           <CourseSelectorAssignment
             key={ind}
@@ -179,10 +191,13 @@ export default function CourseSelectorPopup({
 }: {
   title: string;
   children: JSX.Element;
-  data: CourseSelectorData[],
+  data: CourseSelectorData[];
   setData: Dispatch<SetStateAction<CourseSelectorData[]>>;
   defaultCourses: string[];
-  handle: (assigned: Record<string, boolean>, due: Record<string, Date>) => void;
+  handle: (
+    assigned: Record<string, boolean>,
+    due: Record<string, Date>
+  ) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -226,8 +241,11 @@ export default function CourseSelectorPopup({
                     setOpen(false);
                   })}
                 >
-                  <ScrollArea className="rounded-md border-lightBlue border-[1px] mb-2 h-[500px] w-full pt-1">
-                    <Accordion type="multiple" defaultValue={data.map((c) => c.name)}>
+                  <ScrollArea className="mb-2 h-[500px] w-full rounded-md border-[1px] border-lightBlue pt-1">
+                    <Accordion
+                      type="multiple"
+                      defaultValue={data.map((c) => c.name)}
+                    >
                       {data.length != 0 ? (
                         data.map((course, ind) => (
                           <CourseSelectorAccordion
@@ -245,9 +263,12 @@ export default function CourseSelectorPopup({
                       )}
                     </Accordion>
                   </ScrollArea>
-                  <div className="flex gap-2 w-full">
+                  <div className="flex w-full gap-2">
                     <Close asChild>
-                      <Button className="h-[40px] rounded-md bg-blue hover:bg-blue/80 w-1/2" variant="secondary">
+                      <Button
+                        className="h-[40px] w-1/2 rounded-md bg-blue hover:bg-blue/80"
+                        variant="secondary"
+                      >
                         <P className="font-[600] text-white">Cancel</P>
                       </Button>
                     </Close>

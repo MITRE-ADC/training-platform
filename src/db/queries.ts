@@ -14,7 +14,12 @@ import {
   statusEnumSchema,
   AddUserCourse,
 } from "./schema";
-import { CHECK_ADMIN, CHECK_SESSION, CHECK_UNAUTHORIZED } from "@/app/api/auth";
+import {
+  CHECK_ADMIN,
+  CHECK_SESSION,
+  CHECK_UNAUTHORIZED,
+  CHECK_UNAUTHORIZED_BY_UID,
+} from "@/app/api/auth";
 import { NextResponse } from "next/server";
 
 // Users
@@ -37,8 +42,15 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
+// since we need email not id this is a quick fix
 export async function getAssignmentsByUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const user = (await db.select().from(users).where(eq(users.id, user_id)))[0];
+
+  if (!user) {
+    return undefined;
+  }
+
+  const err = await CHECK_UNAUTHORIZED(user.email);
   if (err) return err;
 
   return await db
@@ -71,7 +83,7 @@ export async function getAssignmentsByUser(user_id: string) {
 // }
 
 export async function userIdExists(id: string) {
-  const err = await CHECK_UNAUTHORIZED(id);
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return (await db.$count(db.select().from(users).where(eq(users.id, id)))) > 0;
@@ -81,6 +93,11 @@ export async function userEmailExists(email: string) {
   const exists =
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
+  if (exists) {
+    const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
+    if (error instanceof NextResponse) return error;
+  }
+
   return exists;
 }
 
@@ -105,6 +122,8 @@ export async function courseIdExists(id: number) {
 }
 
 export async function courseNameExists(course_name: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
   // TODO: see below
   return (
     (await db.$count(
@@ -114,6 +133,8 @@ export async function courseNameExists(course_name: string) {
 }
 
 export async function aggregateUserCoursesStatusByUser() {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
   const data = (
     await db.execute(
       `
@@ -190,6 +211,8 @@ export async function aggregateUserCoursesStatusByUser() {
 }
 
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
+  // const err = await CHECK_SESSION();
+  // if (err) return err;
   // TODO: see below
   return (
     (await db.$count(
@@ -296,7 +319,7 @@ export async function getAllCourses() {
 }
 
 export async function getCoursesByUser(user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db
@@ -372,8 +395,12 @@ export async function deleteUserCourse(user_id: string, course_id: number) {
     );
 }
 
-export async function updateUserCourseDueDate(user_id: string, course_id: number, date: Date) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+export async function updateUserCourseDueDate(
+  user_id: string,
+  course_id: number,
+  date: Date
+) {
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db
@@ -389,7 +416,7 @@ export async function updateUserCourseDueDate(user_id: string, course_id: number
 }
 
 export async function deleteCourseForUser(user_id: string, course_id: number) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_ADMIN();
   if (err) return err;
 
   return await db
@@ -403,6 +430,8 @@ export async function deleteCourseForUser(user_id: string, course_id: number) {
 }
 
 export async function assignmentIdExists(id: number) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
   return (
     (await db.$count(
       db.select().from(assignments).where(eq(assignments.assignment_id, id))
@@ -448,8 +477,8 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function getAllUserAssignments() {
-  //const err = await CHECK_ADMIN();
-  //if (err) return err;
+  const err = await CHECK_SESSION();
+  if (err) return err;
 
   return await db.select().from(user_assignments);
 }
@@ -529,7 +558,7 @@ export async function getUserByEmail(user_email: string) {
  * gets ANY user's complete (including sensitive) data given their id requiring a user to be logged in
  */
 export async function getCompleteUser(user_id: string) {
-  const err = await CHECK_SESSION();
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return (await db.select().from(users).where(eq(users.id, user_id)))[0];
@@ -603,13 +632,18 @@ export async function getUserByName(user_name: string) {
 
 /**
  * gets ANY user's complete (including sensitive) data given their user_name
+ * only user can see their own or admin
  */
 export async function getCompleteUserByName(user_name: string) {
   const user = (
     await db.select().from(users).where(eq(users.name, user_name))
   )[0];
 
-  const err = await CHECK_SESSION();
+  if (!user) {
+    return undefined;
+  }
+
+  const err = await CHECK_UNAUTHORIZED(user.email);
   if (err) return err;
 
   return user;
@@ -659,6 +693,8 @@ export async function getAssignment(assignmentId: number) {
 }
 
 export async function getAssignmentByWebgoatId(webgoat_info: string) {
+  const err = await CHECK_SESSION();
+  if (err) return err;
   return (
     await db
       .select()

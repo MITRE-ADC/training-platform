@@ -136,7 +136,7 @@ export default function ChallengeHomepage() {
 
           return bLatestDate.getTime() - aLatestDate.getTime();
         }
-        case 'Default':
+        case "Default":
           if (originalOrder) {
             return originalOrder.get(a)! - originalOrder.get(b)!;
           } else {

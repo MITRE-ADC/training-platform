@@ -16,12 +16,12 @@ import { User } from "@/db/schema";
 import { removeAllListeners } from "process";
 
 interface analysisInterface {
-  user_id: string,
+  user_id: string;
   analysis: {
-    completed: number,
-    in_progress: number,
-    not_started: number
-  }
+    completed: number;
+    in_progress: number;
+    not_started: number;
+  };
 }
 
 export interface analysisRequestInterface {
@@ -53,7 +53,9 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     accessorKey: "tasks",
-    header: ({ column }) => <SortableColumn column={column} title="Course Status" />,
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Course Status" />
+    ),
     cell: ({ row }) => {
       return (
         <div className="relative -z-50 flex gap-[8px] text-[18px]">
@@ -82,8 +84,8 @@ const columns: ColumnDef<employeeOverview>[] = [
       );
     },
     sortingFn: (_a, _b, _) => {
-      const a = _a.getValue('tasks') as employeeTasks;
-      const b = _b.getValue('tasks') as employeeTasks;
+      const a = _a.getValue("tasks") as employeeTasks;
+      const b = _b.getValue("tasks") as employeeTasks;
 
       // sort by overdue, then todo, then completed
       if (a.overdue == b.overdue) {
@@ -91,7 +93,7 @@ const columns: ColumnDef<employeeOverview>[] = [
           return a.completed - b.completed;
         } else return a.todo - b.todo;
       } else return a.overdue - b.overdue;
-    }
+    },
   },
   {
     id: "expand",
@@ -107,7 +109,15 @@ export function roleToSpan(roles: string[]) {
   );
 }
 
-export default function EmployeeList({ searchFilter, setSearchFilter, filter }: {searchFilter: string, setSearchFilter: Dispatch<SetStateAction<string>>, filter?: analysisRequestInterface }) {
+export default function EmployeeList({
+  searchFilter,
+  setSearchFilter,
+  filter,
+}: {
+  searchFilter: string;
+  setSearchFilter: Dispatch<SetStateAction<string>>;
+  filter?: analysisRequestInterface;
+}) {
   const [data, setData] = useState<employeeOverview[]>([]);
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
@@ -116,56 +126,62 @@ export default function EmployeeList({ searchFilter, setSearchFilter, filter }: 
     setMount(MountStatus.isFirstMounted);
 
     // moving signals out of data tables is very annoying, so just use events instead
-    removeAllListeners('request_employee_list_reload');
-    addEventListener('request_employee_list_reload', () => load());
+    removeAllListeners("request_employee_list_reload");
+    addEventListener("request_employee_list_reload", () => load());
   }, []);
 
   useEffect(() => {
     load();
-  }, [filter])
+  }, [filter]);
 
   function load() {
     setData([]);
-    setPlaceholder('Loading...');
+    setPlaceholder("Loading...");
 
     axios
       .all([
         filter
-          ? axios.get(req('api/filters'), { params: filter })
+          ? axios.get(req("api/filters"), { params: filter })
           : axios.get(req("api/users")),
-        axios.get(req('api/analysis/courses')),
+        axios.get(req("api/analysis/courses")),
       ])
-      .then(axios.spread((u, c) => {
-        const data: User[] = u.data.data
-        const formatted: employeeOverview[] = [];
-        const analysis: analysisInterface[] = c.data.data;
+      .then(
+        axios.spread((u, c) => {
+          const data: User[] = u.data.data;
+          const formatted: employeeOverview[] = [];
+          const analysis: analysisInterface[] = c.data.data;
 
-        data.forEach((user) => {
-          const tasks = {
-            overdue: 0,
-            completed: 0,
-            todo: 0,
-          };
+          data.forEach((user) => {
+            const tasks = {
+              overdue: 0,
+              completed: 0,
+              todo: 0,
+            };
 
-          const anl = analysis.find((x) => x.user_id == user.id);
-          if (anl) {
-            tasks.overdue = 0; // TODO: replace with overdue once that enum is implemented
-            tasks.completed = anl.analysis.completed;
-            tasks.todo = anl.analysis.not_started;
-          }
+            const anl = analysis.find((x) => x.user_id == user.id);
+            if (anl) {
+              tasks.overdue = 0; // TODO: replace with overdue once that enum is implemented
+              tasks.completed = anl.analysis.completed;
+              tasks.todo = anl.analysis.not_started;
+            }
 
-          formatted.push({
-            firstName: user.name.split(" ")[0],
-            lastName: user.name.split(" ")[1],
-            email: user.email,
-            tasks: tasks,
-            id: user.id,
+            formatted.push({
+              firstName: user.name.split(" ")[0],
+              lastName: user.name.split(" ")[1],
+              email: user.email,
+              tasks: {
+                overdue: 0,
+                completed: 0,
+                todo: 0,
+              },
+              id: user.id,
+            });
           });
-        });
 
-        setData(formatted);
-        setPlaceholder("No Results.");
-      }))
+          setData(formatted);
+          setPlaceholder("No Results.");
+        })
+      )
       .catch(() => {
         setPlaceholder("No Results.");
       });
@@ -186,22 +202,23 @@ export default function EmployeeList({ searchFilter, setSearchFilter, filter }: 
         filter: searchFilter,
         setFilter: setSearchFilter,
         filterFn: (row, _, _f: string) => {
-          const f = _f.trim().toLowerCase().split(' ');
+          const f = _f.trim().toLowerCase().split(" ");
 
           if (f.length == 0) return true;
 
           // scuffed
-          const match = (row.getValue('firstName') as string +
-                         row.getValue('lastName') as string +
-                         row.getValue('email') as string)
-                        .toLowerCase();
+          const match = (
+            ((((row.getValue("firstName") as string) +
+              row.getValue("lastName")) as string) +
+              row.getValue("email")) as string
+          ).toLowerCase();
 
           for (let i = 0; i < f.length; i++) {
             if (!match.includes(f[i])) return false;
           }
 
           return true;
-        }
+        },
       }}
     />
   );

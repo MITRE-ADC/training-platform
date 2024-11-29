@@ -4,7 +4,7 @@ import { HttpStatusCode } from "axios";
 import { cookies } from "next/headers";
 
 //make env
-const admin_id = "placeholder";
+const admin_email = process.env.ADMIN_USER_EMAIL;
 
 export async function GET(req: NextRequest) {
   if (req.method === "GET") {
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json({
       user: user.user,
-      isAdmin: user.user.id == admin_id,
+      isAdmin: user.user.email == admin_email,
     });
   }
   return NextResponse.json(await getCurrentUser(req.cookies), {

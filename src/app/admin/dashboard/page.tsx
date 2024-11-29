@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import EmployeeList, { analysisRequestInterface } from "./employeeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,10 +9,12 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 
 export default function AdminDashBoard() {
-  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [searchFilter, setSearchFilter] = useState<string>("");
   const search = useRef<HTMLInputElement | null>(null);
 
-  const [advFilterReq, setAdvFilterReq] = useState<analysisRequestInterface | undefined>(undefined);
+  const [advFilterReq, setAdvFilterReq] = useState<
+    analysisRequestInterface | undefined
+  >(undefined);
 
   function handleSearch() {
     if (!search.current) return;
@@ -64,31 +66,46 @@ export default function AdminDashBoard() {
                         placeholder="Search Name or Email"
                         className="border-0 py-2 font-inter focus-visible:ring-0"
                         onBlur={handleSearch}
-                        onKeyDown={(k) => k.key == 'Enter' ? handleSearch() : null}
+                        onKeyDown={(k) =>
+                          k.key == "Enter" ? handleSearch() : null
+                        }
                       />
                     </div>
                     <div className="flex flex-col justify-end">
-                      <AdvancedDashboardFilters handle={(c, a, s) => {
-                        let filter: analysisRequestInterface | undefined = undefined;
+                      <AdvancedDashboardFilters
+                        handle={(c, a, s) => {
+                          let filter: analysisRequestInterface | undefined =
+                            undefined;
 
-                        if (!(c.length == 0 && a.length == 0 && s.length == 0)) {
-                          filter = {
-                            course_filter: '"' + c.join(',') + '"',
-                            assignment_filter: '"' + a.join(',') + '"',
-                            status_filter: '"' + s.join(',') + '"',
-                          };
-                        }
+                          if (
+                            !(c.length == 0 && a.length == 0 && s.length == 0)
+                          ) {
+                            filter = {
+                              course_filter: '"' + c.join(",") + '"',
+                              assignment_filter: '"' + a.join(",") + '"',
+                              status_filter: '"' + s.join(",") + '"',
+                            };
+                          }
 
-                        if (filter?.assignment_filter != advFilterReq?.assignment_filter ||
-                            filter?.course_filter != advFilterReq?.course_filter ||
-                            filter?.status_filter != advFilterReq?.status_filter) {
-                          setAdvFilterReq(filter);
-                        }
-                      }}/>
+                          if (
+                            filter?.assignment_filter !=
+                              advFilterReq?.assignment_filter ||
+                            filter?.course_filter !=
+                              advFilterReq?.course_filter ||
+                            filter?.status_filter != advFilterReq?.status_filter
+                          ) {
+                            setAdvFilterReq(filter);
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="shadow-md" id="Employee-List-Table">
-                    <EmployeeList searchFilter={searchFilter} setSearchFilter={setSearchFilter} filter={advFilterReq}/>
+                    <EmployeeList
+                      searchFilter={searchFilter}
+                      setSearchFilter={setSearchFilter}
+                      filter={advFilterReq}
+                    />
                   </div>
                 </div>
               </TabsContent>

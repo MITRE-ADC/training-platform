@@ -108,7 +108,8 @@ export async function processLinkCourse(course: AddUserCourse) {
 
   if (!exists) return error("User does not exist");
 
-  if (!(await courseIdExists(course.course_id))) return error("Course not found");
+  if (!(await courseIdExists(course.course_id)))
+    return error("Course not found");
 
   const _userCourseExists = await userCourseExists(
     course.course_id,
@@ -150,7 +151,9 @@ export async function processLinkCourseRequest(request: NextRequest) {
   }
 
   if ((!user_id || !course_id) && (!body || !body.user_id || !body.course_id)) {
-    return error('Request requires user_id and course_id in body or request parameters');
+    return error(
+      "Request requires user_id and course_id in body or request parameters"
+    );
   }
 
   const _user_id = body?.user_id ?? user_id!;
@@ -177,17 +180,16 @@ export async function processCreateUserRequest(request: NextRequest) {
     );
   }
 
-  const user_name =
-    body?.name || request.nextUrl.searchParams?.get("name");
-  const user_email =
-    body?.email || request.nextUrl.searchParams?.get("email");
+  const user_name = body?.name || request.nextUrl.searchParams?.get("name");
+  const user_email = body?.email || request.nextUrl.searchParams?.get("email");
   const webgoat_username =
-    body?.webgoatusername || request.nextUrl.searchParams?.get("webgoatusername");
+    body?.webgoatusername ||
+    request.nextUrl.searchParams?.get("webgoatusername");
   const webgoat_password =
-    body?.webgoatpassword || request.nextUrl.searchParams?.get("webgoatpassword");
+    body?.webgoatpassword ||
+    request.nextUrl.searchParams?.get("webgoatpassword");
   const password_hash = body?.pass || request.nextUrl.searchParams?.get("pass");
 
-  
   if (!user_name)
     return error(
       "Please provide query paramater user_name for the created account\n"
@@ -197,23 +199,22 @@ export async function processCreateUserRequest(request: NextRequest) {
     return error(
       "Please provide query parameter user_email for the created account\n"
     );
-    
+
   if (!webgoat_username)
     return error(
       "Please provide query paramater webgoat_username for the created account\n"
     );
-    
+
   if (!webgoat_password)
     return error(
       "Please provide query parameter webgoat_password for the created account\n"
     );
-    
+
   if (!password_hash)
     return error(
       "Please provide a hashed password as query paramter pass to associate with the created account\n"
     );
 
-  
   const exists = await userEmailExists(user_email);
   if (exists)
     return error(
@@ -231,8 +232,7 @@ export async function processCreateUserRequest(request: NextRequest) {
       email: user_email,
       pass: password_hash,
       webgoatusername: webgoat_username,
-      webgoatpassword: webgoat_password
-
+      webgoatpassword: webgoat_password,
     })
     .returning()
     .catch((reason) =>
@@ -315,7 +315,7 @@ export async function processUpdateUser(body: User) {
 
   if (!exists) return error("user does not exist", HttpStatusCode.NotFound);
 
-  const err = await CHECK_UNAUTHORIZED(body.id);
+  const err = await CHECK_UNAUTHORIZED(body.email);
   if (err) return err;
 
   await db.insert(users).values(body).onConflictDoUpdate({

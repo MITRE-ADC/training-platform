@@ -21,7 +21,15 @@ import axios from "axios";
 import { req } from "@/lib/utils";
 import { Assignment, Course } from "@/db/schema";
 
-export function AdvancedDashboardFilters({ handle }: { handle: (courses: string[], assignments: string[], statuses: string[]) => void }) {
+export function AdvancedDashboardFilters({
+  handle,
+}: {
+  handle: (
+    courses: string[],
+    assignments: string[],
+    statuses: string[]
+  ) => void;
+}) {
   const [courses, setCourses] = useState<Tag[]>([]);
   const [assignments, setAssignments] = useState<Tag[]>([]);
   const [status, setStatus] = useState<Tag[]>([]);
@@ -29,9 +37,9 @@ export function AdvancedDashboardFilters({ handle }: { handle: (courses: string[
   const [tableWidth, setTableWidth] = useState<string>("w-auto");
 
   const [courseTags, setCourseTags] = useState<Tag[]>([]);
-  const [assignmentTags, setAssignmentTags] = useState<Tag[]>([])
-  
-  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);;
+  const [assignmentTags, setAssignmentTags] = useState<Tag[]>([]);
+
+  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
 
   useEffect(() => {
     const table = document.getElementById("Employee-List-Table");
@@ -39,44 +47,50 @@ export function AdvancedDashboardFilters({ handle }: { handle: (courses: string[
       setTableWidth(table.scrollWidth + "px");
     }
 
-    setMount(MountStatus.isFirstMounted)
+    setMount(MountStatus.isFirstMounted);
   }, []);
 
   if (didMount == MountStatus.isFirstMounted) {
     if (courseTags.length == 0) {
-      axios.get(req('/api/courses')).then((r) => {
+      axios.get(req("/api/courses")).then((r) => {
         const _courses: Course[] = r.data.data;
 
-        setCourseTags(_courses.map((c) => ({
-          id: '' + c.course_id,
-          text: c.course_name,
-        })) as Tag[]);
+        setCourseTags(
+          _courses.map((c) => ({
+            id: "" + c.course_id,
+            text: c.course_name,
+          })) as Tag[]
+        );
       });
     }
 
     if (assignmentTags.length == 0) {
-      axios.get(req('/api/assignments')).then((r) => {
+      axios.get(req("/api/assignments")).then((r) => {
         const _assignments: Assignment[] = r.data.data;
 
-        setAssignmentTags(_assignments.map((a) => ({
-          id: '' + a.assignment_id,
-          text: a.assignment_name,
-        })) as Tag[]);
-      })
+        setAssignmentTags(
+          _assignments.map((a) => ({
+            id: "" + a.assignment_id,
+            text: a.assignment_name,
+          })) as Tag[]
+        );
+      });
     }
 
     setMount(MountStatus.isMounted);
   }
 
   return (
-    <Popover onOpenChange={(open) => {
-      if (!open) 
-        handle(
-          courses.map((x) => x.text),
-          assignments.map((x) => x.text),
-          status.map((x) => x.text)
-        );
-    }}>
+    <Popover
+      onOpenChange={(open) => {
+        if (!open)
+          handle(
+            courses.map((x) => x.text),
+            assignments.map((x) => x.text),
+            status.map((x) => x.text)
+          );
+      }}
+    >
       <PopoverTrigger asChild>
         <Button variant="outline" className="text-darkLight">
           <P className="text-darkLight">Advanced Filters</P>

@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 //import { db } from "@/db/index";
 //import { userEmailExists } from "@/db/queries"
 import { HttpStatusCode } from "axios";
-// import { useRouter } from 'next/router';
+// import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
@@ -48,6 +50,11 @@ export default function SignInPage() {
       return;
     } else {
       setErrorMessage("Login Successful");
+      if ((await response.json()).email == "admin@mitre.com") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/challenges");
+      }
       return;
     }
   };

@@ -2,6 +2,7 @@
   "extends": ["next/core-web-vitals", "next/typescript", "next", "prettier"],
   "rules": {
     "@typescript-eslint/no-empty-object-type": "off", // ShadCN aliases some react objects (see components/ui/input.tsx and components/ui/textarea.tsx)
-    "@typescript-eslint/no-unused-vars": "off"
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": ["off"]
   }
 }

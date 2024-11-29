@@ -57,7 +57,7 @@ export async function POST(
       let user = await getCompleteUser(user_id);
       if (user instanceof NextResponse) return user;
 
-      user = {...user, ...body};
+      user = { ...user, ...body };
       return processUpdateUser(user);
     }
   } catch (ex) {
