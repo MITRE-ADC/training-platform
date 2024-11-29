@@ -17,7 +17,6 @@ export async function GET(
     const res = await getCoursesByUser((await context.params).id);
     if (res instanceof NextResponse) return res;
 
-    console.log(request.url);
     return NextResponse.json({ data: res }, { status: HttpStatusCode.Ok });
   } catch (ex) {
     return NextResponse.json(

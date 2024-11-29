@@ -37,6 +37,16 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
+export async function getAssignmentsByUser(user_id: string) {
+  const err = await CHECK_UNAUTHORIZED(user_id);
+  if (err) return err;
+
+  return await db
+    .select()
+    .from(user_assignments)
+    .where(eq(user_assignments.user_id, user_id));
+}
+
 // // Update a user
 // export async function updateUser(user: User) {
 //   return await db
@@ -652,7 +662,7 @@ export async function updateCourseDueDate(course_id: number, date: Date) {
   const err = await CHECK_ADMIN();
   if (err) return err;
 
-  await db
+  return await db
     .update(user_courses)
     .set({ due_date: date })
     .where(eq(user_courses.course_id, course_id));
