@@ -7,6 +7,7 @@ import { H2, H3 } from "@/components/ui/custom/text";
 import { AdvancedDashboardFilters } from "./advFilters";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDashBoard() {
   const [searchFilter, setSearchFilter] = useState<string>("");
@@ -71,33 +72,38 @@ export default function AdminDashBoard() {
                         }
                       />
                     </div>
-                    <div className="flex flex-col justify-end">
-                      <AdvancedDashboardFilters
-                        handle={(c, a, s) => {
-                          let filter: analysisRequestInterface | undefined =
-                            undefined;
+                    <div className="flex items-center gap-4">
+                      <Button variant="outline" className="text-darkLight" onClick={() => dispatchEvent(new Event("request_employee_list_reload"))}>
+                        <i className="ri-loop-right-line ri-1x"></i>
+                      </Button>
+                      <div className="flex flex-col justify-end">
+                        <AdvancedDashboardFilters
+                          handle={(c, a, s) => {
+                            let filter: analysisRequestInterface | undefined =
+                              undefined;
 
-                          if (
-                            !(c.length == 0 && a.length == 0 && s.length == 0)
-                          ) {
-                            filter = {
-                              course_filter: '"' + c.join(",") + '"',
-                              assignment_filter: '"' + a.join(",") + '"',
-                              status_filter: '"' + s.join(",") + '"',
-                            };
-                          }
+                            if (
+                              !(c.length == 0 && a.length == 0 && s.length == 0)
+                            ) {
+                              filter = {
+                                course_filter: '"' + c.join(",") + '"',
+                                assignment_filter: '"' + a.join(",") + '"',
+                                status_filter: '"' + s.join(",") + '"',
+                              };
+                            }
 
-                          if (
-                            filter?.assignment_filter !=
-                              advFilterReq?.assignment_filter ||
-                            filter?.course_filter !=
-                              advFilterReq?.course_filter ||
-                            filter?.status_filter != advFilterReq?.status_filter
-                          ) {
-                            setAdvFilterReq(filter);
-                          }
-                        }}
-                      />
+                            if (
+                              filter?.assignment_filter !=
+                                advFilterReq?.assignment_filter ||
+                              filter?.course_filter !=
+                                advFilterReq?.course_filter ||
+                              filter?.status_filter != advFilterReq?.status_filter
+                            ) {
+                              setAdvFilterReq(filter);
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="shadow-md" id="Employee-List-Table">

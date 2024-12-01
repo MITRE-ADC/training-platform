@@ -10,9 +10,9 @@ import { error } from "./util";
 export async function CHECK_ADMIN() {
   const cookieStore = await cookies();
   const user = await getCurrentUserAndAdmin(cookieStore);
-  if (user.isAdmin ) {
-      return undefined;
-    }
+
+  if (user.isAdmin) return undefined;
+
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 /**
@@ -20,27 +20,31 @@ export async function CHECK_ADMIN() {
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
   // admin also can see this
-  if (!CHECK_ADMIN()) {
+  if (await CHECK_ADMIN() === undefined) {
     return undefined;
   }
+
   const cookieStore = await cookies();
   const user = await getCurrentUserAndAdmin(cookieStore);
   if (user.user != null && user.user.email == user_email) {
     return undefined;
   }
+
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 
 export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
   // admin also can see this
-  if (!CHECK_ADMIN()) {
+  if (await CHECK_ADMIN() === undefined) {
     return undefined;
   }
+
   const cookieStore = await cookies();
   const user = await getCurrentUserAndAdmin(cookieStore);
   if (user.user != null && user.user.id == user_id) {
     return undefined;
   }
+
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 

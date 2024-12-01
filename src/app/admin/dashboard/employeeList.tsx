@@ -18,6 +18,7 @@ import { removeAllListeners } from "process";
 interface analysisInterface {
   user_id: string;
   analysis: {
+    overdue: number;
     completed: number;
     in_progress: number;
     not_started: number;
@@ -160,20 +161,16 @@ export default function EmployeeList({
 
             const anl = analysis.find((x) => x.user_id == user.id);
             if (anl) {
-              tasks.overdue = 0; // TODO: replace with overdue once that enum is implemented
+              tasks.overdue = anl.analysis.overdue;
               tasks.completed = anl.analysis.completed;
-              tasks.todo = anl.analysis.not_started;
+              tasks.todo = anl.analysis.not_started + anl.analysis.in_progress;
             }
 
             formatted.push({
               firstName: user.name.split(" ")[0],
               lastName: user.name.split(" ")[1],
               email: user.email,
-              tasks: {
-                overdue: 0,
-                completed: 0,
-                todo: 0,
-              },
+              tasks: tasks,
               id: user.id,
             });
           });

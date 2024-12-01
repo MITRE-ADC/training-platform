@@ -272,7 +272,14 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
   async function handleSubmit() {
     if (emailInput.current && nameInput.current) {
       const email = emailInput.current.value;
-      const name = nameInput.current.value;
+      let name = nameInput.current.value;
+
+      // sanitize name - we only want first and last name (one space max)
+      const n = name.split(' ');
+      if (n.length > 1) {
+        name = n[0] + ' ' + n[1];
+      }
+
       if (email != data.email || name != data.firstName + " " + data.lastName) {
         setData(EMPTY_EMPLOYEE);
         await updateUser(employeeId, email, name);
@@ -308,9 +315,6 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
     }
 
     for (const entry in dueDates) {
-      console.log(
-        dueDates[entry].toLocaleDateString("en-US", { timeZone: "UTC" })
-      );
       updates.push(
         updateCourseDueDate(employeeId, entry.substring(2), dueDates[entry])
       );
