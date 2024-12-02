@@ -23,7 +23,13 @@ export async function POST(req: NextRequest) {
 
       await db
         .insert(users)
-        .values({ name: name, email: email, pass: password, webgoatusername: name, webgoatpassword: password });
+        .values({
+          name: name,
+          email: email,
+          pass: password,
+          webgoatusername: name,
+          webgoatpassword: password,
+        });
 
       // await addUser({name: name, email: email, pass: password});
       const exists = await userEmailExists(email);

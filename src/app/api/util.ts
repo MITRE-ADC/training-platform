@@ -25,7 +25,12 @@ import {
   addUserAssignment,
   assignmentIdExists,
 } from "@/db/queries";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "./auth";
+import {
+  CHECK_ADMIN,
+  CHECK_SESSION,
+  CHECK_UNAUTHORIZED,
+  CHECK_UNAUTHORIZED_BY_UID,
+} from "./auth";
 
 export function error(
   message: string,
@@ -66,7 +71,7 @@ export async function processLinkAssignment(
   _user_id: string,
   _assignment_id: number
 ) {
-  const err = await CHECK_ADMIN();
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   const exists = await userIdExists(_user_id);
@@ -268,7 +273,7 @@ export async function processCreateCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateCourse(course_name: string) {
-  const err = await CHECK_ADMIN();
+  const err = await CHECK_SESSION();
   if (err) return err;
   if (await courseNameExists(course_name)) return error("Course exists");
 
@@ -338,7 +343,7 @@ export async function processCreateAssignment(
   webgoat_info: string,
   course_id: number
 ) {
-  const err = await CHECK_ADMIN();
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   if (!(await courseIdExists(course_id)))

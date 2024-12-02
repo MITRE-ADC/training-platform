@@ -21,6 +21,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronsUpDown, Check } from "lucide-react";
 import React from "react";
+import axios, { HttpStatusCode } from "axios";
+import { req } from "@/lib/utils";
+import { getCurrentUserAndAdmin } from "@/lib/auth-middleware";
+import { cookies } from "next/headers";
 
 const frameworks = [
   { value: "Default", label: "Default" },
@@ -154,6 +158,34 @@ export default function ChallengeHomepage() {
     sortedCards.forEach((card) => container.appendChild(card));
   };
 
+  const handleReload = async () => {
+    const response = await fetch("/api/auth/whoami");
+    if (response.status != HttpStatusCode.Ok) {
+      return;
+    }
+    const body = await response.json();
+    if (!body) {
+      return;
+    }
+
+    const id = body.user.id;
+    console.log(id);
+    // const data = new URLSearchParams();
+    // data.append('user_id', `${id}`);
+    // const resp = await fetch(`/api/webgoat/assignments?user_id=${id}`, {
+    //   method: "POST"
+    // });
+    // console.log(resp);
+    const resp = await axios.post(
+      req(`/api/webgoat/assignments?user_id=${id}`)
+    );
+    console.log(resp);
+    if (resp.status != HttpStatusCode.Ok) {
+      return;
+    }
+    // console.log(await resp.json())
+  };
+
   return (
     <div>
       <div className="ml-[calc(43px+18px)] mt-[calc(26px+18px)]">
@@ -180,6 +212,12 @@ export default function ChallengeHomepage() {
                       onChange={handleSearch}
                       value={searchQuery}
                     />
+                    <Button
+                      className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
+                      onClick={handleReload}
+                    >
+                      Reload
+                    </Button>
                   </div>
                   <div className="mb-5 mt-4 flex flex-col items-center justify-start justify-center rounded-md border-[1px] border-highlight2 shadow-md">
                     <Popover open={open} onOpenChange={setOpen}>

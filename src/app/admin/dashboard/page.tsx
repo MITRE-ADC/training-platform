@@ -73,7 +73,15 @@ export default function AdminDashBoard() {
                       />
                     </div>
                     <div className="flex items-center gap-4">
-                      <Button variant="outline" className="text-darkLight" onClick={() => dispatchEvent(new Event("request_employee_list_reload"))}>
+                      <Button
+                        variant="outline"
+                        className="text-darkLight"
+                        onClick={() =>
+                          dispatchEvent(
+                            new Event("request_employee_list_reload")
+                          )
+                        }
+                      >
                         <i className="ri-loop-right-line ri-1x"></i>
                       </Button>
                       <div className="flex flex-col justify-end">
@@ -97,7 +105,8 @@ export default function AdminDashBoard() {
                                 advFilterReq?.assignment_filter ||
                               filter?.course_filter !=
                                 advFilterReq?.course_filter ||
-                              filter?.status_filter != advFilterReq?.status_filter
+                              filter?.status_filter !=
+                                advFilterReq?.status_filter
                             ) {
                               setAdvFilterReq(filter);
                             }
