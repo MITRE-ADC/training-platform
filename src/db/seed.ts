@@ -8,6 +8,8 @@ await db.insert(users).values([
     name: "Administrator",
     email: "admin@mitre.domain.com",
     pass: "changeme",
+    webgoatusername: "Administrator", // make sure you actually sign up in webgoat if you use this seeded data
+    webgoatpassword: "changeme",
   },
 ]);
 
