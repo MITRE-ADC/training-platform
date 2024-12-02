@@ -3,7 +3,11 @@ import { error, processCreateUserRequest, processUpdateUser } from "../../util";
 import { getCompleteUser, getUser, userIdExists } from "@/db/queries";
 import { User } from "@/db/schema";
 import { HttpStatusCode } from "axios";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
+import {
+  CHECK_ADMIN,
+  CHECK_UNAUTHORIZED,
+  CHECK_UNAUTHORIZED_BY_UID,
+} from "../../auth";
 
 // GET assignment info
 export async function GET(

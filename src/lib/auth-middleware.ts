@@ -18,10 +18,9 @@ export type SessionValidationResult =
 // ...
 
 export type SessionValidationAdminResult =
-  | { user: Omit<User, "pass">, isAdmin: boolean }
-  | { user: null , isAdmin: boolean};
+  | { user: Omit<User, "pass">; isAdmin: boolean }
+  | { user: null; isAdmin: boolean };
 // ...
-
 
 export async function validateJwtToken(
   token: string
@@ -111,19 +110,16 @@ export async function getCurrentUserAndAdmin(
   const token = cookieStore.get("session")?.value ?? null;
   // console.log("I AM YOUR TOKEN!" + token);
   if (token == null) {
-    return { user: null,
-      isAdmin: false};
+    return { user: null, isAdmin: false };
   }
   const result = await validateJwtToken(token);
 
-  if (result.user == null){
-    return { user: null,
-      isAdmin: false};
+  if (result.user == null) {
+    return { user: null, isAdmin: false };
   }
 
-  return {user: result.user, isAdmin: result.user.email == admin_email};
+  return { user: result.user, isAdmin: result.user.email == admin_email };
 }
-
 
 export async function getUserInfo(
   cookieStore: NextRequest["cookies"]

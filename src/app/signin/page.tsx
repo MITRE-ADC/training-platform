@@ -50,7 +50,7 @@ export default function SignInPage() {
       return;
     } else {
       setErrorMessage("Login Successful");
-      if ((await response.json()).email == "admin@mitre.com") {
+      if ((await response.json()).email == process.env.ADMIN_USER_EMAIL) {
         router.push("/admin/dashboard");
       } else {
         router.push("/challenges");

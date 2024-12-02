@@ -180,7 +180,7 @@ export async function aggregateUserCoursesStatusByUser() {
           completed: 0,
           in_progress: 0,
           not_started: 0,
-          overdue: 0
+          overdue: 0,
         },
       };
       switch (element["course_status_group"]) {
@@ -676,7 +676,7 @@ export async function deleteCourse(courseId: number) {
 }
 
 export async function addCourse(course: AddCourse) {
-  const err = await CHECK_ADMIN();
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return await db.insert(courses).values(course).returning();
@@ -723,7 +723,7 @@ export async function getAssignmentByWebgoatId(webgoat_info: string) {
 }
 
 export async function addAssignment(assignment: AddAssignment) {
-  const err = await CHECK_ADMIN();
+  const err = await CHECK_SESSION();
   if (err) return err;
 
   return await db.insert(assignments).values(assignment).returning();
