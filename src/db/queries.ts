@@ -259,7 +259,7 @@ export async function userAssignmentWebgoatIdExists(
   user_id: string,
   webgoat_info: string
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return (
@@ -285,7 +285,7 @@ export async function userAssignmentExists(
   assignment_id: number,
   user_id: string
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return (
@@ -307,7 +307,7 @@ export async function getUserAssignmentByWebgoatId(
   user_id: string,
   webgoat_info: string
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return (
@@ -355,7 +355,7 @@ export async function getAllUserCourses() {
 }
 
 export async function userCourseExists(course_id: number, user_id: string) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return (
@@ -386,7 +386,7 @@ export async function updateUserCourseStatus(
   course_id: number,
   status: typeof statusEnumSchema._type
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db
@@ -401,7 +401,7 @@ export async function updateUserCourseStatus(
 }
 
 export async function deleteUserCourse(user_id: string, course_id: number) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db
@@ -511,7 +511,7 @@ export async function assignmentNameExists(name: string) {
 }
 
 export async function addUserAssignment(userAssignment: AddUserAssignment) {
-  const err = await CHECK_UNAUTHORIZED(userAssignment.user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(userAssignment.user_id);
   if (err) return err;
 
   return await db.insert(user_assignments).values(userAssignment).returning();
@@ -522,7 +522,7 @@ export async function updateUserAssignment(
   assignment_id: number,
   completed: boolean
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db
@@ -540,7 +540,7 @@ export async function deleteUserAssignment(
   user_id: string,
   assignment_id: number
 ) {
-  const err = await CHECK_UNAUTHORIZED(user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
 
   return await db

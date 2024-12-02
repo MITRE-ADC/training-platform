@@ -25,7 +25,7 @@ import {
   addUserAssignment,
   assignmentIdExists,
 } from "@/db/queries";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "./auth";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "./auth";
 
 export function error(
   message: string,
@@ -100,7 +100,7 @@ export async function processLinkAssignment(
 export async function processLinkCourse(course: AddUserCourse) {
   if (!course.user_id) return error("Must provide user id");
 
-  const err = await CHECK_UNAUTHORIZED(course.user_id);
+  const err = await CHECK_UNAUTHORIZED_BY_UID(course.user_id);
   if (err) return err;
 
   const exists = await userIdExists(course.user_id);

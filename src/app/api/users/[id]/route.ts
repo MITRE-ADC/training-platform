@@ -3,7 +3,7 @@ import { error, processCreateUserRequest, processUpdateUser } from "../../util";
 import { getCompleteUser, getUser, userIdExists } from "@/db/queries";
 import { User } from "@/db/schema";
 import { HttpStatusCode } from "axios";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "../../auth";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
 // GET assignment info
 export async function GET(
@@ -43,7 +43,7 @@ export async function POST(
 ) {
   try {
     const user_id = (await context.params).id;
-    const err = await CHECK_UNAUTHORIZED(user_id);
+    const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
     if (err) return err;
 
     const body: User = await request.json();

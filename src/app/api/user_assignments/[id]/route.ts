@@ -1,7 +1,7 @@
 import { deleteAssignmentForUser, getAssignmentsByUser } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { CHECK_UNAUTHORIZED } from "../../auth";
+import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
 // GET assignment info
 export async function GET(
@@ -32,7 +32,7 @@ export async function DELETE(
 ) {
   try {
     const user_id = (await context.params).id;
-    const err = await CHECK_UNAUTHORIZED(user_id);
+    const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
     if (err) return err;
 
     const { assignment_id } = await request.json();
