@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
-    const { cookie, response } = await login_user(user.name, user.pass);
+    const { cookie, response } = await login_user(user.webgoatusername, user.webgoatpassword);
     if (response) return response;
 
     const response2 = await fetch(URL_webgoat_lessonmenu, {

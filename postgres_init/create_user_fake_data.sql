@@ -110,22 +110,22 @@ INSERT INTO Courses(course_name)
 -- Assignments Creation
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('216 task 1', 1, 'puzzle box');
+    VALUES ('216 task 1', 2, 'puzzle box');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('216 project 2', 1, 'nelsons shellito');
+    VALUES ('216 project 2', 2, 'nelsons shellito');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 1', 2, 'lexer parser interpreter');
+    VALUES ('330 project 1', 3, 'lexer parser interpreter');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 2', 2, 'optimizer');
+    VALUES ('330 project 2', 3, 'optimizer');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 3', 2, 'microcaml');
+    VALUES ('330 project 3', 3, 'microcaml');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('330 project 4', 2, 'rust project');
+    VALUES ('330 project 4', 3, 'rust project');
 
 INSERT INTO Assignments (assignment_name, course_id, webgoat_info)
-    VALUES ('351 exam', 3, 'graphs and trees');
+    VALUES ('351 exam', 4, 'graphs and trees');
