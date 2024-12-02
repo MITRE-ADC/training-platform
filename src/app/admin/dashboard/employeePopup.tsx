@@ -275,9 +275,9 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
       let name = nameInput.current.value;
 
       // sanitize name - we only want first and last name (one space max)
-      const n = name.split(' ');
+      const n = name.split(" ");
       if (n.length > 1) {
-        name = n[0] + ' ' + n[1];
+        name = n[0] + " " + n[1];
       }
 
       if (email != data.email || name != data.firstName + " " + data.lastName) {

@@ -13,14 +13,14 @@ export async function CHECK_ADMIN() {
 
   if (user.isAdmin) return undefined;
 
-  return error(`unauthorized`, HttpStatusCode.Unauthorized);
+  return error(`unauthorized as admin`, HttpStatusCode.Unauthorized);
 }
 /**
  * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_email matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
   // admin also can see this
-  if (await CHECK_ADMIN() === undefined) {
+  if ((await CHECK_ADMIN()) === undefined) {
     return undefined;
   }
 
@@ -35,7 +35,7 @@ export async function CHECK_UNAUTHORIZED(user_email: string) {
 
 export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
   // admin also can see this
-  if (await CHECK_ADMIN() === undefined) {
+  if ((await CHECK_ADMIN()) === undefined) {
     return undefined;
   }
 

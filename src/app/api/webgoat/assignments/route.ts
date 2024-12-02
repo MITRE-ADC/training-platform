@@ -32,12 +32,11 @@ import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log("rithvik is cool");
     const user_id = request.nextUrl.searchParams?.get("user_id");
     if (!user_id) return error("Please provide a user_id query parameter");
-
     const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
     if (err) return err;
-
     const user = await getCompleteUser(user_id);
     if (user instanceof NextResponse) return user;
 
@@ -47,9 +46,9 @@ export async function POST(request: NextRequest) {
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
+
     const { cookie, response } = await login_user(user.webgoatusername, user.webgoatpassword);
     if (response) return response;
-
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",
       redirect: "follow",
@@ -58,7 +57,6 @@ export async function POST(request: NextRequest) {
         Cookie: cookie,
       },
     });
-
     let changes = 0;
     let assignment_linkages = 0;
     let assignment_creations = 0;
@@ -84,7 +82,6 @@ export async function POST(request: NextRequest) {
       const course_id = autopopulate_courses_from_webgoat
         ? (await getCourseByName(courses[course].name)).course_id
         : 1;
-
       for (const assignment in courses[course].children) {
         // UDPATE ASSIGNMENT RECORD
         const webgoat_name: string = courses[course].children[assignment].name;
@@ -107,7 +104,6 @@ export async function POST(request: NextRequest) {
         }
         const resp = await getAssignmentByWebgoatId(webgoat_name);
         if (resp instanceof NextResponse) return resp;
-
         const assignment_id = resp.assignment_id;
         if (
           assign_all_assignments_in_webgoat &&
