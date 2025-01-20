@@ -21,7 +21,13 @@ import { Button } from "@/components/ui/button";
 import { cn, req } from "@/lib/utils";
 import { ChevronsUpDown, Check } from "lucide-react";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Assignment, Course, User_Assignment, User_Course, User } from "@/db/schema";
+import {
+  Assignment,
+  Course,
+  User_Assignment,
+  User_Course,
+  User,
+} from "@/db/schema";
 import { CourseListData } from "./courseDefinitions";
 import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
@@ -43,7 +49,7 @@ export default function ChallengeHomepage() {
   const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
   const [courseCache, setCourseCache] = useState<Course[]>([]);
   const [user, setUser] = useState<User>();
-  const [placeholder, setPlaceholder] = useState<string>('Loading...');
+  const [placeholder, setPlaceholder] = useState<string>("Loading...");
 
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   useEffect(() => setMount(MountStatus.isFirstMounted), []);
@@ -155,64 +161,94 @@ export default function ChallengeHomepage() {
 
   async function load() {
     setData([]);
-    setPlaceholder('Loading...');
+    setPlaceholder("Loading...");
 
     axios
-    .get(req('api/auth'))
-    .then((r) => axios.all([
-      r.data.user,
-      axios.get(req(`api/user_assignments/${r.data.user.id}`)),
-      axios.get(req(`api/user_courses/${r.data.user.id}`)),
-      assignmentCache.length == 0 ? axios.get(req("api/assignments")) : null,
-      courseCache.length == 0 ? axios.get(req("api/courses")) : null,
-    ])).then(([_user, _uAssignment, _uCourse, _assignments, _courses]) => {
-      if (!_uAssignment || !_uCourse || !_user) return;
-      if (_assignments) setAssignmentCache(_assignments.data.data as Assignment[]);
-      if (_courses) setCourseCache(_courses.data.data as Course[]);
+      .get(req("api/auth"))
+      .then((r) =>
+        axios.all([
+          r.data.user,
+          axios.get(req(`api/user_assignments/${r.data.user.id}`)),
+          axios.get(req(`api/user_courses/${r.data.user.id}`)),
+          assignmentCache.length == 0
+            ? axios.get(req("api/assignments"))
+            : null,
+          courseCache.length == 0 ? axios.get(req("api/courses")) : null,
+        ])
+      )
+      .then(([_user, _uAssignment, _uCourse, _assignments, _courses]) => {
+        if (!_uAssignment || !_uCourse || !_user) return;
+        if (_assignments)
+          setAssignmentCache(_assignments.data.data as Assignment[]);
+        if (_courses) setCourseCache(_courses.data.data as Course[]);
 
-      // set state doesn't update until next frame
-      const assignments = _assignments ? _assignments.data.data as Assignment[] : assignmentCache;
-      const courses = _courses ? _courses.data.data as Course[] : courseCache;
-      const uAssignments = _uAssignment.data.data as User_Assignment[];
-      const uCourses = _uCourse.data.data as User_Course[];
-      const user = _user as User;
+        // set state doesn't update until next frame
+        const assignments = _assignments
+          ? (_assignments.data.data as Assignment[])
+          : assignmentCache;
+        const courses = _courses
+          ? (_courses.data.data as Course[])
+          : courseCache;
+        const uAssignments = _uAssignment.data.data as User_Assignment[];
+        const uCourses = _uCourse.data.data as User_Course[];
+        const user = _user as User;
 
-      const d: CourseListData [] = [];
-      const today = new Date();
+        const d: CourseListData[] = [];
+        const today = new Date();
 
-      uCourses.forEach((c) => {
-        const course = courses.find(x => x.course_id == c.course_id)!;
-        const validAssignments = assignments.filter(a => a.course_id == c.course_id);
+        uCourses.forEach((c) => {
+          const course = courses.find((x) => x.course_id == c.course_id)!;
+          const validAssignments = assignments.filter(
+            (a) => a.course_id == c.course_id
+          );
 
-        const due = c.due_date ? new Date(c.due_date) : undefined;
+          const due = c.due_date ? new Date(c.due_date) : undefined;
 
-        d.push({
-          name: course.course_name,
-          id: course.course_id,
-          dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
-          assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
-          assignments: uAssignments
-            // all user assignments that are in valid assignments
-            .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
-            .map((assignment) => {
-                const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
+          d.push({
+            name: course.course_name,
+            id: course.course_id,
+            dueDate: due
+              ? due.toLocaleDateString("en-US", { timeZone: "UTC" })
+              : "No Due Date",
+            assignDate: new Date(c.assigned_date).toLocaleDateString("en-US", {
+              timeZone: "UTC",
+            }),
+            assignments: uAssignments
+              // all user assignments that are in valid assignments
+              .filter(
+                (a) =>
+                  validAssignments.find(
+                    (va) => va.assignment_id == a.assignment_id
+                  ) != undefined
+              )
+              .map((assignment) => {
+                const a = validAssignments.find(
+                  (a) => a.assignment_id == assignment.assignment_id
+                )!;
                 return {
                   name: a.assignment_name,
                   id: a.assignment_id,
                   webgoat: a.webgoat_info,
-                  status: assignment.completed ? 'done' : due ? due > today ? 'todo' : 'overdue' : 'todo'
+                  status: assignment.completed
+                    ? "done"
+                    : due
+                      ? due > today
+                        ? "todo"
+                        : "overdue"
+                      : "todo",
                 };
-            })
+              }),
+          });
         });
-      });
 
-      setUser(user);
-      setData(d);
-      setPlaceholder('No Results.');
-    }).catch((e) => {
-      console.error(e);
-    });
-  };
+        setUser(user);
+        setData(d);
+        setPlaceholder("No Results.");
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
 
   if (didMount === MountStatus.isFirstMounted) {
     load();
@@ -237,7 +273,7 @@ export default function ChallengeHomepage() {
               <div className="flex h-full w-full flex-col px-16 pt-4">
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
-                  <P className="text-lg">{user ? user.name : ''}</P>
+                  <P className="text-lg">{user ? user.name : ""}</P>
                 </div>
                 <div className="flex justify-between">
                   <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
@@ -249,8 +285,12 @@ export default function ChallengeHomepage() {
                       value={searchQuery}
                     />
                   </div>
-                  <div className="flex mb-5 mt-4 gap-2">
-                    <Button variant="outline" className="text-darkLight border-highlight2" onClick={load}>
+                  <div className="mb-5 mt-4 flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="border-highlight2 text-darkLight"
+                      onClick={load}
+                    >
                       <i className="ri-loop-right-line ri-1x"></i>
                     </Button>
                     <div className="flex flex-col items-center justify-center rounded-md border-[1px] border-highlight2 shadow-md">
@@ -307,10 +347,13 @@ export default function ChallengeHomepage() {
                   </div>
                 </div>
                 <div className="h-full">
-                  {data.length == 0 ?
-                    <span className="flex justify-center w-full">{placeholder}</span> :
-                    <CourseList data={data}/>
-                  }
+                  {data.length == 0 ? (
+                    <span className="flex w-full justify-center">
+                      {placeholder}
+                    </span>
+                  ) : (
+                    <CourseList data={data} />
+                  )}
                 </div>
               </div>
             </div>

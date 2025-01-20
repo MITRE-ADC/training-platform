@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import "remixicon/fonts/remixicon.css";
 import { Input } from "@/components/ui/input";
 import { CourseListData } from "./courseDefinitions";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -46,7 +52,9 @@ function SubmitModal() {
     }
 
     if (/[^a-z0-9\-]/.test(username)) {
-      setErrorMessage("Username must only contain lowercase letters, numbers, and hyphens.");
+      setErrorMessage(
+        "Username must only contain lowercase letters, numbers, and hyphens."
+      );
       setFieldErrors({ ...errors, username: true });
       return;
     }
@@ -60,10 +68,12 @@ function SubmitModal() {
         <DialogDescription>WebGoat login</DialogDescription>
       </VisuallyHidden>
       <DialogTitle>WebGoat Login</DialogTitle>
-      <div className="text-sm text-muted-foreground pb-2">Input your WebGoat credentials here:</div>
+      <div className="pb-2 text-sm text-muted-foreground">
+        Input your WebGoat credentials here:
+      </div>
       <div className="flex gap-4">
         <Input
-          className={`mb-4 py-6 text-lg ${fieldErrors.username ? "border-red border-2" : ""}`}
+          className={`mb-4 py-6 text-lg ${fieldErrors.username ? "border-2 border-red" : ""}`}
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -72,7 +82,7 @@ function SubmitModal() {
       </div>
       <div className="flex gap-4">
         <Input
-          className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-red border-2" : ""}`}
+          className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-2 border-red" : ""}`}
           type="password"
           placeholder="Password"
           value={password}
@@ -80,20 +90,23 @@ function SubmitModal() {
           required
         />
       </div>
-      {errorMessage && (
-        <div className="text-red mb-4">{errorMessage}</div>
-      )}
+      {errorMessage && <div className="mb-4 text-red">{errorMessage}</div>}
       <div className="flex space-x-2">
-        <Button className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600" onClick={handleSignIn}>
+        <Button
+          className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600"
+          onClick={handleSignIn}
+        >
           Submit
         </Button>
         <DialogClose asChild>
-          <Button className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-300">Close</Button>
+          <Button className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-300">
+            Close
+          </Button>
         </DialogClose>
       </div>
     </div>
   );
-};
+}
 
 export function CourseList({ data }: { data: CourseListData[] }) {
   return (
@@ -129,8 +142,10 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                       key={assignmentIndex}
                       className="flex items-center justify-between border-t border-gray-200 py-4"
                     >
-                      <div className="flex gap-3 justify-center items-center">
-                        <div className="font-semibold text-center">{assignment.name}</div>
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="text-center font-semibold">
+                          {assignment.name}
+                        </div>
                         <div className="flex items-center space-x-2">
                           <span
                             className={`rounded-full px-2 py-1 text-sm font-semibold ${
@@ -158,7 +173,7 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <SubmitModal/>
+                              <SubmitModal />
                             </DialogHeader>
                           </DialogContent>
                         </Dialog>

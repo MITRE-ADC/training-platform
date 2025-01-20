@@ -90,7 +90,7 @@ const config: Config = {
       },
       fontFamily: {
         inter: ["var(--font-inter)"],
-      }
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

@@ -51,7 +51,7 @@ export async function getAssignmentsByUser(user_id: string) {
   }
 
   const err = await CHECK_UNAUTHORIZED(user.email);
-  if (err) return err; 
+  if (err) return err;
 
   return await db
     .select()
