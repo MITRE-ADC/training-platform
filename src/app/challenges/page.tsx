@@ -197,7 +197,7 @@ export default function ChallengeHomepage() {
         ></Image>
       </div>
       <div className="h-8"></div>
-      <div className="flex h-[825px] w-screen items-center justify-center">
+      <div className="flex h-[825px] w-screen items-center justify-center overflow-x-hidden">
         <div className="flex h-full w-[95vw] justify-center">
           <div className="flex-grow">
             <div className="h-full">

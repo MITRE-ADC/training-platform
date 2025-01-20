@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { _DATA, Course, courseAssignment } from "./courseDefinitions";
 import "remixicon/fonts/remixicon.css";
 import { req } from "@/lib/utils";
 import axios from "axios";
 import {
+  EMPTY_EMPLOYEE,
   MountStatus,
+  employee,
   employeeOverview,
 } from "../admin/dashboard/employeeDefinitions";
 import { getAllUserAssignments, getCoursesByUser } from "@/db/queries";
 import { Input } from "@/components/ui/input";
+import { Assignment, Course, User, User_Assignment, User_Course } from "@/db/schema";
 
 const SubmitModal = ({
   isOpen,
@@ -19,6 +21,7 @@ const SubmitModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  // TODO: consider switching to zod for form validation
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
@@ -39,67 +42,26 @@ const SubmitModal = ({
     setFieldErrors(errors);
 
     if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields");
+      setErrorMessage("Please fill out all required fields.");
       return;
     }
     if (password.length < 6 || password.length > 10) {
-      setErrorMessage("Password must be between 6 and 10 characters");
+      setErrorMessage("Password must be between 6 and 10 characters.");
       setFieldErrors({ ...errors, password: true });
       return;
     }
     if (username.length < 6 || username.length > 45) {
-      setErrorMessage("Username must be between 6 and 45 characters");
+      setErrorMessage("Username must be between 6 and 45 characters.");
       setFieldErrors({ ...errors, username: true });
       return;
     }
-    const allowed = [
-      "a",
-      "b",
-      "c",
-      "d",
-      "e",
-      "f",
-      "g",
-      "h",
-      "i",
-      "j",
-      "k",
-      "l",
-      "m",
-      "n",
-      "o",
-      "p",
-      "q",
-      "r",
-      "s",
-      "t",
-      "u",
-      "v",
-      "w",
-      "x",
-      "y",
-      "z",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "0",
-      "-",
-    ];
-    for (const i of username) {
-      if (!allowed.includes(i)) {
-        setErrorMessage(
-          "Username must only contain lowercase letters, numbers, and hypens"
-        );
-        setFieldErrors({ ...errors, username: true });
-        return;
-      }
+
+    if (/[^a-z0-9\-]/.test(username)) {
+      setErrorMessage("Username must only contain lowercase letters, numbers, and hyphens.");
+      setFieldErrors({ ...errors, username: true });
+      return;
     }
+
     setErrorMessage("");
   };
 
@@ -157,32 +119,84 @@ const SubmitModal = ({
   );
 };
 
+interface CourseListData {
+  name: string,
+  assignDate: string,
+  dueDate: string,
+  id: number,
+  assignments: {
+    name: string,
+    webgoat: string,
+    id: number,
+    status: 'done' | 'todo' | 'overdue',
+  }[]
+}
+
 export function CourseList() {
+  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
+  useEffect(() => setMount(MountStatus.isFirstMounted), []);
+
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  // IN PROGRESS API CALLS
-  // Trying to fetch data to replace the hard coded data which is currently being used for this page
-  const [data, setData] = useState<employeeOverview[]>([]);
-  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
-  const [placeholder, setPlaceholder] = useState<string>("Loading...");
-  useEffect(() => setMount(MountStatus.isFirstMounted), []);
 
-  if (didMount === MountStatus.isFirstMounted && data.length === 0) {
+  const [data, setData] = useState<CourseListData[]>([]);
+  const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
+  const [courseCache, setCourseCache] = useState<Course[]>([]);
+
+  if (didMount === MountStatus.isFirstMounted) {
     axios
-      .get(req("api/auth"))
-      .then((r) => {
-        const id = r.data.user.id;
-        const formatted: Course[] = [];
-        return axios.get(req(`api/user_assignments?userId=${id}`));
-      })
-      .then((assignmentsResponse) => {
-        const assignments = assignmentsResponse.data;
-        console.log(assignments);
-        setData(assignments);
-      })
-      .catch(() => {
-        setPlaceholder("No Results.");
+      .get(req('api/auth'))
+      .then((r) => axios.all([
+        r.data.user,
+        axios.get(req(`api/user_assignments/${r.data.user.id}`)),
+        axios.get(req(`api/user_courses/${r.data.user.id}`)),
+        assignmentCache.length == 0 ? axios.get(req("api/assignments")) : null,
+        courseCache.length == 0 ? axios.get(req("api/courses")) : null,
+      ])).then(([_user, _uAssignment, _uCourse, _assignments, _courses]) => {
+        if (!_uAssignment || !_uCourse || !_user) return;
+        if (_assignments) setAssignmentCache(_assignments.data.data as Assignment[]);
+        if (_courses) setCourseCache(_courses.data.data as Course[]);
+
+        // set state doesn't update until next frame
+        const assignments = _assignments ? _assignments.data.data as Assignment[] : assignmentCache;
+        const courses = _courses ? _courses.data.data as Course[] : courseCache;
+        const uAssignments = _uAssignment.data.data as User_Assignment[];
+        const uCourses = _uCourse.data.data as User_Course[];
+        const user = _user as User;
+
+        const d: CourseListData [] = [];
+        const today = new Date();
+
+        uCourses.forEach((c) => {
+          const course = courses.find(x => x.course_id == c.course_id)!;
+          const validAssignments = assignments.filter(a => a.course_id == c.course_id);
+
+          const due = c.due_date ? new Date(c.due_date) : undefined;
+
+          d.push({
+            name: course.course_name,
+            id: course.course_id,
+            dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
+            assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
+            assignments: uAssignments
+              // all user assignments that are in valid assignments
+              .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
+              .map((assignment) => {
+                  const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
+                  return {
+                    name: a.assignment_name,
+                    id: a.assignment_id,
+                    webgoat: a.webgoat_info,
+                    status: assignment.completed ? 'done' : due ? due > today ? 'todo' : 'overdue' : 'todo'
+                  };
+              })
+          });
+        });
+
+        setData(d);
+      }).catch((e) => {
+        console.error(e);
       });
 
     setMount(MountStatus.isMounted);
@@ -190,31 +204,31 @@ export function CourseList() {
 
   return (
     <div id="card-container" className="space-y-4">
-      {_DATA.map((courseData: Course, courseIndex: number) => (
+      {data.map((courseData: CourseListData, courseIndex: number) => (
         <Card
           key={courseIndex}
           id={
-            courseData.course +
+            courseData.name +
             courseData.assignments.map((element) => element.name).join()
           }
           className="w-full p-0 shadow-md"
         >
           <CardHeader className="mb-4 pb-0">
             <CardTitle className="mb-4 pb-0 text-2xl font-bold">
-              {courseData.course}
+              {courseData.name}
             </CardTitle>
             <div className="mt-2 flex flex-col space-y-1 text-gray-500">
               <div className="flex items-center space-x-1">
                 <i className="ri-calendar-2-line"></i>
-                <span>Assigned: {courseData.assigned} | </span>
+                <span>Assigned: {courseData.assignDate} | </span>
                 <i className="ri-calendar-schedule-line"></i>
-                <span>Due: {courseData.due || "No due date"}</span>
+                <span>Due: {courseData.dueDate}</span>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             {courseData.assignments.map(
-              (assignment: courseAssignment, assignmentIndex: number) => (
+              (assignment, assignmentIndex: number) => (
                 <div
                   key={assignmentIndex}
                   className="flex items-center justify-between border-t border-gray-200 py-4"
