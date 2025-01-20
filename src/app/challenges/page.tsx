@@ -25,6 +25,7 @@ import { Assignment, Course, User_Assignment, User_Course, User } from "@/db/sch
 import { CourseListData } from "./courseDefinitions";
 import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 const frameworks = [
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
@@ -47,13 +48,10 @@ export default function ChallengeHomepage() {
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   useEffect(() => setMount(MountStatus.isFirstMounted), []);
 
-  const [originalOrder, setOriginalOrder] = useState<Map<Element, number>>();
-
   useEffect(() => {
     const container = document.getElementById("card-container");
     if (container) {
       const cards = Array.from(container.children);
-      setOriginalOrder(new Map(cards.map((card, index) => [card, index])));
     }
   }, []);
 
@@ -150,6 +148,7 @@ export default function ChallengeHomepage() {
         }
       }
     });
+
     container.innerHTML = "";
     sortedCards.forEach((card) => container.appendChild(card));
   };
@@ -231,11 +230,11 @@ export default function ChallengeHomepage() {
         ></Image>
       </div>
       <div className="h-8"></div>
-      <div className="flex h-[825px] w-screen items-center justify-center overflow-x-hidden">
+      <div className="flex items-center justify-center">
         <div className="flex h-full w-[95vw] justify-center">
           <div className="flex-grow">
             <div className="h-full">
-              <div className="flex h-full w-full flex-col px-16 pb-14 pt-4">
+              <div className="flex h-full w-full flex-col px-16 pt-4">
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
                   <P className="text-lg">{user ? user.name : ''}</P>
@@ -249,63 +248,62 @@ export default function ChallengeHomepage() {
                       onChange={handleSearch}
                       value={searchQuery}
                     />
-                    <Button
-                      className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
-                      onClick={load}
-                    >
-                      Reload
-                    </Button>
                   </div>
-                  <div className="mb-5 mt-4 flex flex-col items-center justify-center rounded-md border-[1px] border-highlight2 shadow-md">
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          role="combobox"
-                          aria-expanded={open}
-                          className="h-9 w-[200px] justify-between rounded-full bg-white py-2 text-base text-black hover:bg-white"
-                        >
-                          {value
-                            ? frameworks.find(
-                                (framework: { value: string }) =>
-                                  framework.value === value
-                              )?.label
-                            : "Sort By:"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] rounded-full p-0 shadow-md">
-                        <Command>
-                          <CommandInput placeholder="Sort By..." />
-                          <CommandList>
-                            <CommandEmpty>No framework found.</CommandEmpty>
-                            <CommandGroup>
-                              {frameworks.map(
-                                (framework: {
-                                  value: string;
-                                  label: string;
-                                }) => (
-                                  <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={handleSort}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        value === framework.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {framework.label}
-                                  </CommandItem>
-                                )
-                              )}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                  <div className="flex mb-5 mt-4 gap-2">
+                    <Button variant="outline" className="text-darkLight border-highlight2" onClick={load}>
+                      <i className="ri-loop-right-line ri-1x"></i>
+                    </Button>
+                    <div className="flex flex-col items-center justify-center rounded-md border-[1px] border-highlight2 shadow-md">
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            role="combobox"
+                            aria-expanded={open}
+                            className="h-9 w-[200px] justify-between rounded-full bg-white py-2 text-base text-darkLight hover:bg-white"
+                          >
+                            {value
+                              ? frameworks.find(
+                                  (framework: { value: string }) =>
+                                    framework.value === value
+                                )?.label
+                              : "Sort By:"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] rounded-full p-0 shadow-md">
+                          <Command>
+                            <CommandInput placeholder="Sort By..." />
+                            <CommandList>
+                              <CommandEmpty>No framework found.</CommandEmpty>
+                              <CommandGroup>
+                                {frameworks.map(
+                                  (framework: {
+                                    value: string;
+                                    label: string;
+                                  }) => (
+                                    <CommandItem
+                                      key={framework.value}
+                                      value={framework.value}
+                                      onSelect={handleSort}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          value === framework.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {framework.label}
+                                    </CommandItem>
+                                  )
+                                )}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 </div>
                 <div className="h-full">
