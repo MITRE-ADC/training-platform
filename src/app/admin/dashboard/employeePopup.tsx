@@ -201,6 +201,8 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
               const assigned = new Date(ucourse.assigned_date);
               const due = new Date(ucourse.due_date);
 
+              if (course.course_name == 'NONE COURSE') course.course_name = 'Uncategorized';
+
               return {
                 course: course.course_name,
                 assignment: assignment.assignment_name,

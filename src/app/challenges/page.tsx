@@ -186,6 +186,8 @@ export default function ChallengeHomepage() {
 
         const due = c.due_date ? new Date(c.due_date) : undefined;
 
+        if (course.course_name == 'NONE COURSE') course.course_name = 'Uncategorized';
+
         d.push({
           name: course.course_name,
           id: course.course_id,
