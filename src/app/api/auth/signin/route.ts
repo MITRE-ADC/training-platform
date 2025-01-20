@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
         await cookies();
         const response = NextResponse.json(
-          { email: email },
+          { email: email, isAdmin: email == process.env.ADMIN_USER_EMAIL },
           { status: HttpStatusCode.Ok }
         );
 

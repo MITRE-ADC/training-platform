@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import "@/app/globals.css";
 import "remixicon/fonts/remixicon.css";
-import { getCurrentUser } from "@/lib/auth-middleware";
+import { getCurrentUserAndAdmin } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -22,10 +22,10 @@ export default async function DashboardLayout({
     headers.append("cookie", `${name}=${value}`);
   });
 
-  const user = await getCurrentUser(new RequestCookies(headers));
+  const user = await getCurrentUserAndAdmin(new RequestCookies(headers));
 
   if (!user || !user.user || user.user.email != admin_email) {
-    if (user && user.user) {
+    if (user.isAdmin) {
       redirect("/challenges");
     }
     redirect("/signin");

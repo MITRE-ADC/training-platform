@@ -50,7 +50,9 @@ export default function SignInPage() {
       return;
     } else {
       setErrorMessage("Login Successful");
-      if ((await response.json()).email == process.env.ADMIN_USER_EMAIL) {
+      const json = await response.json();
+      console.log(json)
+      if (json.isAdmin) {
         router.push("/admin/dashboard");
       } else {
         router.push("/challenges");
