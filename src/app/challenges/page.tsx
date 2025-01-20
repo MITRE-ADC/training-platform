@@ -159,6 +159,19 @@ export default function ChallengeHomepage() {
     sortedCards.forEach((card) => container.appendChild(card));
   };
 
+  async function updateWebgoat(){
+    axios.get(req("api/auth")).then(async r => {
+        const res = await axios.post(`api/webgoat/assignments`, { user_id: r.data.user.id });
+        }).catch(e => {
+          if(e.response.data.contains("Invalid username/password"))
+            console.log("DO SOMETHING HERE");
+            //TODO: trigger webgoat credentials modal
+          else
+            console.error(e);
+        });
+    await load();
+  }
+
   async function load() {
     setData([]);
     setPlaceholder("Loading...");
@@ -280,7 +293,7 @@ export default function ChallengeHomepage() {
                     <Button
                       variant="outline"
                       className="border-highlight2 text-darkLight"
-                      onClick={load}
+                      onClick={updateWebgoat}
                     >
                       <i className="ri-loop-right-line ri-1x"></i>
                     </Button>
