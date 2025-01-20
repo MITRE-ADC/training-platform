@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import "remixicon/fonts/remixicon.css";
-import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { Input } from "@/components/ui/input";
 import { CourseListData } from "./courseDefinitions";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
-const SubmitModal = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
+function SubmitModal() {
   // TODO: consider switching to zod for form validation
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -57,65 +53,48 @@ const SubmitModal = ({
     setErrorMessage("");
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/20">
-      <Card className="w-[480px]">
-        <CardHeader className="pb-2">
-          <CardTitle>WebGoat Login</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Input your WebGoat credentials here:
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Input
-              className={`mb-4 py-6 text-lg ${fieldErrors.username ? "border-customRed border-2" : ""}`}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex gap-4">
-            <Input
-              className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-customRed border-2" : ""}`}
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {errorMessage && (
-            <p className="text-customRed mb-4">{errorMessage}</p>
-          )}
-          <div className="flex space-x-2">
-            <Button
-              className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600"
-              onClick={handleSignIn}
-            >
-              Submit
-            </Button>
-            <Button
-              onClick={onClose}
-              className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-300"
-            >
-              Close
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    <div>
+      <VisuallyHidden>
+        <DialogDescription>WebGoat login</DialogDescription>
+      </VisuallyHidden>
+      <DialogTitle>WebGoat Login</DialogTitle>
+      <div className="text-sm text-muted-foreground pb-2">Input your WebGoat credentials here:</div>
+      <div className="flex gap-4">
+        <Input
+          className={`mb-4 py-6 text-lg ${fieldErrors.username ? "border-red border-2" : ""}`}
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </div>
+      <div className="flex gap-4">
+        <Input
+          className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-red border-2" : ""}`}
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      {errorMessage && (
+        <div className="text-red mb-4">{errorMessage}</div>
+      )}
+      <div className="flex space-x-2">
+        <Button className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600" onClick={handleSignIn}>
+          Submit
+        </Button>
+        <DialogClose asChild>
+          <Button className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-300">Close</Button>
+        </DialogClose>
+      </div>
     </div>
   );
 };
 
 export function CourseList({ data }: { data: CourseListData[] }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
-
   return (
     <div id="card-container" className="space-y-4">
       {data.map((courseData: CourseListData, courseIndex: number) => (
@@ -140,7 +119,7 @@ export function CourseList({ data }: { data: CourseListData[] }) {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pb-2">
             {courseData.assignments.map(
               (assignment, assignmentIndex: number) => (
                 <div
@@ -148,7 +127,7 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                   className="flex items-center justify-between border-t border-gray-200 py-4"
                 >
                   <div>
-                    <p className="font-semibold">{assignment.name}</p>
+                    <div className="font-semibold">{assignment.name}</div>
                     <div className="mt-1 flex items-center space-x-2">
                       <span
                         className={`rounded-full px-2 py-1 text-sm font-semibold ${
@@ -168,12 +147,18 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                     </div>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
-                    <Button
-                      className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
-                      onClick={openModal}
-                    >
-                      Link to Lesson
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300">
+                          Link to Lesson
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <SubmitModal/>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               )
@@ -181,8 +166,6 @@ export function CourseList({ data }: { data: CourseListData[] }) {
           </CardContent>
         </Card>
       ))}
-
-      <SubmitModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }
