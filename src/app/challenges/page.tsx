@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { CourseList } from "./courseList";
 import { Input } from "@/components/ui/input";
-import { H1 } from "@/components/ui/custom/text";
+import { H1, H2, H3, P } from "@/components/ui/custom/text";
 import {
   Command,
   CommandEmpty,
@@ -27,7 +27,6 @@ import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 
 const frameworks = [
-  { value: "Default", label: "Default" },
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
   { value: "Z-A (Courses)", label: "Z-A (Courses)" },
   { value: "Due First", label: "Due First" },
@@ -36,12 +35,13 @@ const frameworks = [
 
 export default function ChallengeHomepage() {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(frameworks[0].value);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [data, setData] = useState<CourseListData[]>([]);
   const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
   const [courseCache, setCourseCache] = useState<Course[]>([]);
+  const [user, setUser] = useState<User>();
   const [placeholder, setPlaceholder] = useState<string>('Loading...');
 
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
@@ -74,7 +74,7 @@ export default function ChallengeHomepage() {
   };
 
   const handleSort = (currentValue: string) => {
-    setValue(currentValue === value ? "Default" : currentValue);
+    setValue(currentValue);
     setOpen(false);
 
     const container = document.getElementById("card-container");
@@ -89,6 +89,7 @@ export default function ChallengeHomepage() {
         (b as HTMLElement).querySelector(".text-2xl")?.textContent || "";
 
       switch (currentValue) {
+        default:
         case "A-Z (Courses)":
           return aTitle.localeCompare(bTitle);
         case "Z-A (Courses)":
@@ -147,18 +148,6 @@ export default function ChallengeHomepage() {
 
           return bLatestDate.getTime() - aLatestDate.getTime();
         }
-        case "Default":
-          if (originalOrder) {
-            return originalOrder.get(a)! - originalOrder.get(b)!;
-          } else {
-            return 0;
-          }
-        default:
-          if (originalOrder) {
-            return originalOrder.get(a)! - originalOrder.get(b)!;
-          } else {
-            return 0;
-          }
       }
     });
     container.innerHTML = "";
@@ -218,6 +207,7 @@ export default function ChallengeHomepage() {
         });
       });
 
+      setUser(user);
       setData(d);
       setPlaceholder('No Results.');
     }).catch((e) => {
@@ -246,7 +236,10 @@ export default function ChallengeHomepage() {
           <div className="flex-grow">
             <div className="h-full">
               <div className="flex h-full w-full flex-col px-16 pb-14 pt-4">
-                <H1>Dashboard</H1>
+                <div className="flex justify-between">
+                  <H1>Dashboard</H1>
+                  <P className="text-lg">{user ? user.name : ''}</P>
+                </div>
                 <div className="flex justify-between">
                   <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                     <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
