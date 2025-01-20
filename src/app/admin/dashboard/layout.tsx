@@ -15,7 +15,7 @@ const admin_email = "admin@mitre.com";
 export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const readonlyCookies = cookies();
+  const readonlyCookies = await cookies();
   const headers = new Headers();
 
   readonlyCookies.getAll().forEach(({ name, value }) => {

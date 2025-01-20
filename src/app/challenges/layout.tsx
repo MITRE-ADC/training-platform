@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function ChallengeLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const readonlyCookies = cookies();
+  const readonlyCookies = await cookies();
   const headers = new Headers();
 
   readonlyCookies.getAll().forEach(({ name, value }) => {
@@ -23,9 +23,7 @@ export default async function ChallengeLayout({
   const user = await getCurrentUser(new RequestCookies(headers));
 
   if (!user || !user.user) {
-    if (user && user.user) {
-      redirect("/signin");
-    }
+    redirect("/signin");
   }
   return (
     <html lang="en">

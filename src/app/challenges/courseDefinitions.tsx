@@ -8,16 +8,16 @@ export type courseAssignment = {
 };
 
 export interface CourseListData {
-  name: string,
-  assignDate: string,
-  dueDate: string,
-  id: number,
+  name: string;
+  assignDate: string;
+  dueDate: string;
+  id: number;
   assignments: {
-    name: string,
-    webgoat: string,
-    id: number,
-    status: 'done' | 'todo' | 'overdue',
-  }[]
+    name: string;
+    webgoat: string;
+    id: number;
+    status: "done" | "todo" | "overdue";
+  }[];
 }
 
 export type Course = {

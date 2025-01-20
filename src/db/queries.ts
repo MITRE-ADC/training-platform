@@ -51,7 +51,7 @@ export async function getAssignmentsByUser(user_id: string) {
   }
 
   const err = await CHECK_UNAUTHORIZED(user.email);
-  // if (err) return err; TODO:
+  if (err) return err;
 
   return await db
     .select()
@@ -496,7 +496,7 @@ export async function getAssignmentsByCourse(courseId: number) {
 }
 
 export async function getAllUserAssignments() {
-  const err = await CHECK_SESSION();
+  const err = await CHECK_ADMIN();
   if (err) return err;
 
   return await db.select().from(user_assignments);
