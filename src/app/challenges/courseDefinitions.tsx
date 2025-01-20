@@ -7,6 +7,19 @@ export type courseAssignment = {
   status: "overdue" | "todo" | "done";
 };
 
+export interface CourseListData {
+  name: string,
+  assignDate: string,
+  dueDate: string,
+  id: number,
+  assignments: {
+    name: string,
+    webgoat: string,
+    id: number,
+    status: 'done' | 'todo' | 'overdue',
+  }[]
+}
+
 export type Course = {
   course: string;
   assigned: string;

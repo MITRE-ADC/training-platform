@@ -2,17 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import "remixicon/fonts/remixicon.css";
-import { req } from "@/lib/utils";
-import axios from "axios";
-import {
-  EMPTY_EMPLOYEE,
-  MountStatus,
-  employee,
-  employeeOverview,
-} from "../admin/dashboard/employeeDefinitions";
-import { getAllUserAssignments, getCoursesByUser } from "@/db/queries";
+import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { Input } from "@/components/ui/input";
-import { Assignment, Course, User, User_Assignment, User_Course } from "@/db/schema";
+import { CourseListData } from "./courseDefinitions";
 
 const SubmitModal = ({
   isOpen,
@@ -119,88 +111,10 @@ const SubmitModal = ({
   );
 };
 
-interface CourseListData {
-  name: string,
-  assignDate: string,
-  dueDate: string,
-  id: number,
-  assignments: {
-    name: string,
-    webgoat: string,
-    id: number,
-    status: 'done' | 'todo' | 'overdue',
-  }[]
-}
-
-export function CourseList() {
-  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
-  useEffect(() => setMount(MountStatus.isFirstMounted), []);
-
+export function CourseList({ data }: { data: CourseListData[] }) {
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-
-  const [data, setData] = useState<CourseListData[]>([]);
-  const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
-  const [courseCache, setCourseCache] = useState<Course[]>([]);
-
-  if (didMount === MountStatus.isFirstMounted) {
-    axios
-      .get(req('api/auth'))
-      .then((r) => axios.all([
-        r.data.user,
-        axios.get(req(`api/user_assignments/${r.data.user.id}`)),
-        axios.get(req(`api/user_courses/${r.data.user.id}`)),
-        assignmentCache.length == 0 ? axios.get(req("api/assignments")) : null,
-        courseCache.length == 0 ? axios.get(req("api/courses")) : null,
-      ])).then(([_user, _uAssignment, _uCourse, _assignments, _courses]) => {
-        if (!_uAssignment || !_uCourse || !_user) return;
-        if (_assignments) setAssignmentCache(_assignments.data.data as Assignment[]);
-        if (_courses) setCourseCache(_courses.data.data as Course[]);
-
-        // set state doesn't update until next frame
-        const assignments = _assignments ? _assignments.data.data as Assignment[] : assignmentCache;
-        const courses = _courses ? _courses.data.data as Course[] : courseCache;
-        const uAssignments = _uAssignment.data.data as User_Assignment[];
-        const uCourses = _uCourse.data.data as User_Course[];
-        const user = _user as User;
-
-        const d: CourseListData [] = [];
-        const today = new Date();
-
-        uCourses.forEach((c) => {
-          const course = courses.find(x => x.course_id == c.course_id)!;
-          const validAssignments = assignments.filter(a => a.course_id == c.course_id);
-
-          const due = c.due_date ? new Date(c.due_date) : undefined;
-
-          d.push({
-            name: course.course_name,
-            id: course.course_id,
-            dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
-            assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
-            assignments: uAssignments
-              // all user assignments that are in valid assignments
-              .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
-              .map((assignment) => {
-                  const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
-                  return {
-                    name: a.assignment_name,
-                    id: a.assignment_id,
-                    webgoat: a.webgoat_info,
-                    status: assignment.completed ? 'done' : due ? due > today ? 'todo' : 'overdue' : 'todo'
-                  };
-              })
-          });
-        });
-
-        setData(d);
-      }).catch((e) => {
-        console.error(e);
-      });
-
-    setMount(MountStatus.isMounted);
-  }
 
   return (
     <div id="card-container" className="space-y-4">

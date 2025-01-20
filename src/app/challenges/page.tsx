@@ -18,13 +18,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, req } from "@/lib/utils";
 import { ChevronsUpDown, Check } from "lucide-react";
-import React from "react";
-import axios, { HttpStatusCode } from "axios";
-import { req } from "@/lib/utils";
-import { getCurrentUserAndAdmin } from "@/lib/auth-middleware";
-import { cookies } from "next/headers";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Assignment, Course, User_Assignment, User_Course, User } from "@/db/schema";
+import { CourseListData } from "./courseDefinitions";
+import axios from "axios";
+import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 
 const frameworks = [
   { value: "Default", label: "Default" },
@@ -35,14 +35,21 @@ const frameworks = [
 ];
 
 export default function ChallengeHomepage() {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const [originalOrder, setOriginalOrder] =
-    React.useState<Map<Element, number>>();
+  const [data, setData] = useState<CourseListData[]>([]);
+  const [assignmentCache, setAssignmentCache] = useState<Assignment[]>([]);
+  const [courseCache, setCourseCache] = useState<Course[]>([]);
+  const [placeholder, setPlaceholder] = useState<string>('Loading...');
 
-  React.useEffect(() => {
+  const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
+  useEffect(() => setMount(MountStatus.isFirstMounted), []);
+
+  const [originalOrder, setOriginalOrder] = useState<Map<Element, number>>();
+
+  useEffect(() => {
     const container = document.getElementById("card-container");
     if (container) {
       const cards = Array.from(container.children);
@@ -50,7 +57,7 @@ export default function ChallengeHomepage() {
     }
   }, []);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchQuery(searchValue);
     const container = document.getElementById("card-container");
@@ -158,33 +165,70 @@ export default function ChallengeHomepage() {
     sortedCards.forEach((card) => container.appendChild(card));
   };
 
-  const handleReload = async () => {
-    const response = await fetch("/api/auth/whoami");
-    if (response.status != HttpStatusCode.Ok) {
-      return;
-    }
-    const body = await response.json();
-    if (!body) {
-      return;
-    }
+  async function load() {
+    setData([]);
+    setPlaceholder('Loading...');
 
-    const id = body.user.id;
-    console.log(id);
-    // const data = new URLSearchParams();
-    // data.append('user_id', `${id}`);
-    // const resp = await fetch(`/api/webgoat/assignments?user_id=${id}`, {
-    //   method: "POST"
-    // });
-    // console.log(resp);
-    const resp = await axios.post(
-      req(`/api/webgoat/assignments?user_id=${id}`)
-    );
-    console.log(resp);
-    if (resp.status != HttpStatusCode.Ok) {
-      return;
-    }
-    // console.log(await resp.json())
+    axios
+    .get(req('api/auth'))
+    .then((r) => axios.all([
+      r.data.user,
+      axios.get(req(`api/user_assignments/${r.data.user.id}`)),
+      axios.get(req(`api/user_courses/${r.data.user.id}`)),
+      assignmentCache.length == 0 ? axios.get(req("api/assignments")) : null,
+      courseCache.length == 0 ? axios.get(req("api/courses")) : null,
+    ])).then(([_user, _uAssignment, _uCourse, _assignments, _courses]) => {
+      if (!_uAssignment || !_uCourse || !_user) return;
+      if (_assignments) setAssignmentCache(_assignments.data.data as Assignment[]);
+      if (_courses) setCourseCache(_courses.data.data as Course[]);
+
+      // set state doesn't update until next frame
+      const assignments = _assignments ? _assignments.data.data as Assignment[] : assignmentCache;
+      const courses = _courses ? _courses.data.data as Course[] : courseCache;
+      const uAssignments = _uAssignment.data.data as User_Assignment[];
+      const uCourses = _uCourse.data.data as User_Course[];
+      const user = _user as User;
+
+      const d: CourseListData [] = [];
+      const today = new Date();
+
+      uCourses.forEach((c) => {
+        const course = courses.find(x => x.course_id == c.course_id)!;
+        const validAssignments = assignments.filter(a => a.course_id == c.course_id);
+
+        const due = c.due_date ? new Date(c.due_date) : undefined;
+
+        d.push({
+          name: course.course_name,
+          id: course.course_id,
+          dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
+          assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
+          assignments: uAssignments
+            // all user assignments that are in valid assignments
+            .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
+            .map((assignment) => {
+                const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
+                return {
+                  name: a.assignment_name,
+                  id: a.assignment_id,
+                  webgoat: a.webgoat_info,
+                  status: assignment.completed ? 'done' : due ? due > today ? 'todo' : 'overdue' : 'todo'
+                };
+            })
+        });
+      });
+
+      setData(d);
+      setPlaceholder('No Results.');
+    }).catch((e) => {
+      console.error(e);
+    });
   };
+
+  if (didMount === MountStatus.isFirstMounted) {
+    load();
+    setMount(MountStatus.isMounted);
+  }
 
   return (
     <div>
@@ -214,12 +258,12 @@ export default function ChallengeHomepage() {
                     />
                     <Button
                       className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
-                      onClick={handleReload}
+                      onClick={load}
                     >
                       Reload
                     </Button>
                   </div>
-                  <div className="mb-5 mt-4 flex flex-col items-center justify-start justify-center rounded-md border-[1px] border-highlight2 shadow-md">
+                  <div className="mb-5 mt-4 flex flex-col items-center justify-center rounded-md border-[1px] border-highlight2 shadow-md">
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
@@ -272,7 +316,10 @@ export default function ChallengeHomepage() {
                   </div>
                 </div>
                 <div className="h-full">
-                  <CourseList />
+                  {data.length == 0 ?
+                    <span className="flex justify-center w-full">{placeholder}</span> :
+                    <CourseList data={data}/>
+                  }
                 </div>
               </div>
             </div>
