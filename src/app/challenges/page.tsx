@@ -204,27 +204,18 @@ export default function ChallengeHomepage() {
 
           const due = c.due_date ? new Date(c.due_date) : undefined;
 
-          d.push({
-            name: course.course_name,
-            id: course.course_id,
-            dueDate: due
-              ? due.toLocaleDateString("en-US", { timeZone: "UTC" })
-              : "No Due Date",
-            assignDate: new Date(c.assigned_date).toLocaleDateString("en-US", {
-              timeZone: "UTC",
-            }),
-            assignments: uAssignments
-              // all user assignments that are in valid assignments
-              .filter(
-                (a) =>
-                  validAssignments.find(
-                    (va) => va.assignment_id == a.assignment_id
-                  ) != undefined
-              )
-              .map((assignment) => {
-                const a = validAssignments.find(
-                  (a) => a.assignment_id == assignment.assignment_id
-                )!;
+        if (course.course_name == 'NONE COURSE') course.course_name = 'Uncategorized';
+
+        d.push({
+          name: course.course_name,
+          id: course.course_id,
+          dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
+          assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
+          assignments: uAssignments
+            // all user assignments that are in valid assignments
+            .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
+            .map((assignment) => {
+                const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
                 return {
                   name: a.assignment_name,
                   id: a.assignment_id,
