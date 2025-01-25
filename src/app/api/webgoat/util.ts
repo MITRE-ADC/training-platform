@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { error } from "../util";
 
 export const URL_webgoat_login = "http://webgoat:8080/WebGoat/login";
-export const URL_webgoat_register =
-  "http://webgoat:8080/WebGoat/register.mvc";
+export const URL_webgoat_register = "http://webgoat:8080/WebGoat/register.mvc";
 export const URL_webgoat_logout = "http://webgoat:8080/WebGoat/logout";
 export const URL_webgoat_lessonmenu =
   "http://webgoat:8080/WebGoat/service/lessonmenu.mvc";

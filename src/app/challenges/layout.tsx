@@ -23,7 +23,7 @@ export default async function ChallengeLayout({
   const user = await getCurrentUser(new RequestCookies(headers));
 
   if (!user || !user.user) {
-      redirect("/signin");
+    redirect("/signin");
   }
   return (
     <html lang="en">
