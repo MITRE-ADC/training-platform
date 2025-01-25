@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { error } from "../util";
 
-export const URL_webgoat_login = "http://localhost:8090/WebGoat/login";
-export const URL_webgoat_register =
-  "http://localhost:8090/WebGoat/register.mvc";
-export const URL_webgoat_logout = "http://localhost:8090/WebGoat/logout";
+export const URL_webgoat_login = "http://webgoat:8080/WebGoat/login";
+export const URL_webgoat_register = "http://webgoat:8080/WebGoat/register.mvc";
+export const URL_webgoat_logout = "http://webgoat:8080/WebGoat/logout";
 export const URL_webgoat_lessonmenu =
-  "http://localhost:8090/WebGoat/service/lessonmenu.mvc";
+  "http://webgoat:8080/WebGoat/service/lessonmenu.mvc";
 
 // DANGER: password in plaintext over hopefully https but otherwise http
 export async function login_user(

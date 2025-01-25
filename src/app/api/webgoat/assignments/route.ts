@@ -32,7 +32,6 @@ import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("rithvik is cool");
     const user_id = request.nextUrl.searchParams?.get("user_id");
     if (!user_id) return error("Please provide a user_id query parameter");
     const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
@@ -46,8 +45,10 @@ export async function POST(request: NextRequest) {
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
-
-    const { cookie, response } = await login_user(user.webgoatusername, user.webgoatpassword);
+    const { cookie, response } = await login_user(
+      user.webgoatusername,
+      user.webgoatpassword
+    );
     if (response) return response;
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",

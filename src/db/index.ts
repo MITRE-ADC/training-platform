@@ -4,7 +4,7 @@ import { Client } from "pg";
 import * as schema from "./schema";
 
 export const client = new Client({
-  host: "localhost",
+  host: "postgres_db",
   port: 5432,
   user: "mitre_admin",
   password: "changeme",

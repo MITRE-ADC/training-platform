@@ -3,4 +3,5 @@ package-lock.json
 .next
 .env.local
 postgres_data/
+webgoat_data/
 .env

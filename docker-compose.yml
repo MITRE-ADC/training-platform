@@ -9,18 +9,13 @@ services:
       POSTGRES_DB: mitre_db
       POSTGRES_USER: mitre_admin
       POSTGRES_PASSWORD: changeme
+      ADMIN_USER_EMAIL: $MITRE_TRAINING_PLATFORM_ADMIN_EMAIL
+      ADMIN_PASSWORD: $ADMIN_PASSWORD
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
       - ./postgres_init:/docker-entrypoint-initdb.d
-  # web-app:
-  #   # we will change this after we have the gitlab ci stuff so that it uses that image name
-  #   build: .
-  #   container_name: web-app
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8080:8080"
   webgoat:
-    image: webgoat/webgoat:latest
+    image: webgoat/webgoat:v2023.8
     container_name: webgoat
     restart: unless-stopped
     ports:
@@ -29,4 +24,21 @@ services:
     environment:
       TZ: America/Boise
     tty: true
+    volumes:
+      - wg_data:/home/webgoat
     command: /bin/bash -c webgoat/webgoat
+  web-app:
+    build: .
+    container_name: web-app
+    restart: unless-stopped
+    environment:
+      ADMIN_USER_EMAIL: $MITRE_TRAINING_PLATFORM_ADMIN_EMAIL
+    ports:
+      - "3000:3000"
+volumes:
+  wg_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./webgoat_data
