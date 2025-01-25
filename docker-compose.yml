@@ -20,7 +20,7 @@ services:
   #   ports:
   #     - "8080:8080"
   webgoat:
-    image: webgoat/webgoat:latest
+    image: webgoat/webgoat:v2023.8
     container_name: webgoat
     restart: unless-stopped
     ports:
@@ -29,4 +29,13 @@ services:
     environment:
       TZ: America/Boise
     tty: true
+    volumes:
+      - wg_data:/home/webgoat
     command: /bin/bash -c webgoat/webgoat
+volumes:
+  wg_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./webgoat_data
