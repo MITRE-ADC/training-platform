@@ -32,7 +32,6 @@ import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("rithvik is cool");
     const user_id = request.nextUrl.searchParams?.get("user_id");
     if (!user_id) return error("Please provide a user_id query parameter");
     const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
