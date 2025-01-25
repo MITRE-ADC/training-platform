@@ -24,6 +24,8 @@ export default async function ChallengeLayout({
 
   if (!user || !user.user) {
     redirect("/signin");
+  } else if (user.user.email == process.env.ADMIN_USER_EMAIL) {
+    redirect("/admin/dashboard");
   }
   return (
     <html lang="en">

@@ -9,15 +9,11 @@ services:
       POSTGRES_DB: mitre_db
       POSTGRES_USER: mitre_admin
       POSTGRES_PASSWORD: changeme
+      ADMIN_USER_EMAIL: $MITRE_TRAINING_PLATFORM_ADMIN_EMAIL
+      ADMIN_PASSWORD: $ADMIN_PASSWORD
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
       - ./postgres_init:/docker-entrypoint-initdb.d
-  web-app:
-    build: .
-    container_name: web-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
   webgoat:
     image: webgoat/webgoat:v2023.8
     container_name: webgoat
@@ -31,6 +27,14 @@ services:
     volumes:
       - wg_data:/home/webgoat
     command: /bin/bash -c webgoat/webgoat
+  web-app:
+    build: .
+    container_name: web-app
+    restart: unless-stopped
+    environment:
+      ADMIN_USER_EMAIL: $MITRE_TRAINING_PLATFORM_ADMIN_EMAIL
+    ports:
+      - "3000:3000"
 volumes:
   wg_data:
     driver: local

@@ -55,5 +55,9 @@ CREATE TABLE Accounts (
 );
 
 INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
+
+\set admin_email `echo "$ADMIN_USER_EMAIL"`
+\set admin_pass `echo "$ADMIN_PASSWORD"`
+
 INSERT INTO Users(name, email, pass, webgoatusername, webgoatpassword) 
     VALUES ('Admin', 'admin@mitre.com', 'changeme', 'adminn', 'changeme');
