@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CourseList } from "./courseList";
+import { CourseList, SubmitModal } from "./courseList";
 import { Input } from "@/components/ui/input";
 import { H1, H2, H3, P } from "@/components/ui/custom/text";
 import {
@@ -32,6 +32,7 @@ import { CourseListData } from "./courseDefinitions";
 import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 const frameworks = [
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
@@ -50,6 +51,8 @@ export default function ChallengeHomepage() {
   const [courseCache, setCourseCache] = useState<Course[]>([]);
   const [user, setUser] = useState<User>();
   const [placeholder, setPlaceholder] = useState<string>("Loading...");
+
+  const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
 
   const [didMount, setMount] = useState<MountStatus>(MountStatus.isNotMounted);
   useEffect(() => setMount(MountStatus.isFirstMounted), []);
@@ -159,16 +162,21 @@ export default function ChallengeHomepage() {
     sortedCards.forEach((card) => container.appendChild(card));
   };
 
-  async function updateWebgoat(){
-    axios.get(req("api/auth")).then(async r => {
-        const res = await axios.post(`api/webgoat/assignments`, { user_id: r.data.user.id });
-        }).catch(e => {
-          if(e.response.data.contains("Invalid username/password"))
-            console.log("DO SOMETHING HERE");
-            //TODO: trigger webgoat credentials modal
-          else
-            console.error(e);
-        });
+  async function updateWebgoat() {
+    axios
+      .get(req("api/auth"))
+      .then(async (r) => {
+        const res = await axios.post(`api/webgoat/assignments`, {
+          user_id: r.data.user.id,
+        }).catch((e) => {
+          console.log(e)
+          console.log(e.response.data.error);
+          if (e.response.data.error.includes("Invalid username/password"))
+            setCredentialsDialogOpen(true);
+          //TODO: trigger webgoat credentials modal
+          else console.error(e);
+        }).then(console.log);
+      });
     await load();
   }
 
@@ -217,18 +225,30 @@ export default function ChallengeHomepage() {
 
           const due = c.due_date ? new Date(c.due_date) : undefined;
 
-        if (course.course_name == 'NONE COURSE') course.course_name = 'Uncategorized';
+          if (course.course_name == "NONE COURSE")
+            course.course_name = "Uncategorized";
 
-        d.push({
-          name: course.course_name,
-          id: course.course_id,
-          dueDate: due ? due.toLocaleDateString('en-US', { timeZone: 'UTC' }) : 'No Due Date',
-          assignDate: new Date(c.assigned_date).toLocaleDateString('en-US', { timeZone: 'UTC' }),
-          assignments: uAssignments
-            // all user assignments that are in valid assignments
-            .filter(a => validAssignments.find(va => va.assignment_id == a.assignment_id) != undefined)
-            .map((assignment) => {
-                const a = validAssignments.find(a => a.assignment_id == assignment.assignment_id)!;
+          d.push({
+            name: course.course_name,
+            id: course.course_id,
+            dueDate: due
+              ? due.toLocaleDateString("en-US", { timeZone: "UTC" })
+              : "No Due Date",
+            assignDate: new Date(c.assigned_date).toLocaleDateString("en-US", {
+              timeZone: "UTC",
+            }),
+            assignments: uAssignments
+              // all user assignments that are in valid assignments
+              .filter(
+                (a) =>
+                  validAssignments.find(
+                    (va) => va.assignment_id == a.assignment_id
+                  ) != undefined
+              )
+              .map((assignment) => {
+                const a = validAssignments.find(
+                  (a) => a.assignment_id == assignment.assignment_id
+                )!;
                 return {
                   name: a.assignment_name,
                   id: a.assignment_id,
@@ -351,6 +371,13 @@ export default function ChallengeHomepage() {
                   </div>
                 </div>
                 <div className="h-full">
+                        <Dialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen}>
+                          <DialogContent>
+                            <DialogHeader>
+                              <SubmitModal />
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
                   {data.length == 0 ? (
                     <span className="flex w-full justify-center">
                       {placeholder}

@@ -13,6 +13,7 @@ import {
   AddUserAssignment,
   statusEnumSchema,
   AddUserCourse,
+  User,
 } from "./schema";
 import {
   CHECK_ADMIN,
@@ -60,12 +61,12 @@ export async function getAssignmentsByUser(user_id: string) {
 }
 
 // // Update a user
-// export async function updateUser(user: User) {
-//   return await db
-//     .update(users)
-//     .set(user)
-//     .where(eq(users.id, user.user_id));
-// }
+export async function updateUser(user: Omit<User, "pass">) {
+  return await db
+    .update(users)
+    .set(user)
+    .where(eq(users.id, user.id));
+}
 
 // export async function userEmailExists(email: string) {
 //   return await db.select().from(users).where(eq(users.email, email)).limit(1);

@@ -14,8 +14,11 @@ import {
 import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import axios from "axios";
+import { req } from "@/lib/utils";
+import { updateWebgoatUserCredentials, updateWebgoatUserCredentialsAndData } from "./courseServer";
 
-function SubmitModal() {
+export function SubmitModal() {
   // TODO: consider switching to zod for form validation
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -59,6 +62,20 @@ function SubmitModal() {
       return;
     }
 
+    await axios
+      .get(req("api/auth"))
+      .then(async (r) => {
+        const updateRes = await updateWebgoatUserCredentialsAndData(username, password);
+        if(updateRes) // indicates error
+          {
+            console.error(updateRes);
+            setErrorMessage(updateRes);
+            return;
+          }
+          else
+          setErrorMessage("success!");
+      });
+
     setErrorMessage("");
   };
 
@@ -68,8 +85,11 @@ function SubmitModal() {
         <DialogDescription>WebGoat login</DialogDescription>
       </VisuallyHidden>
       <DialogTitle>WebGoat Login</DialogTitle>
+      <div className="pb-2 text-sm text-red">
+        Something went wrong; we couldn&apos;t access your WebGoat account.
+      </div>
       <div className="pb-2 text-sm text-muted-foreground">
-        Input your WebGoat credentials here:
+        If you haven&apos;t made a WebGoat account, do so; then, input your WebGoat credentials here:
       </div>
       <div className="flex gap-4">
         <Input
@@ -109,6 +129,8 @@ function SubmitModal() {
 }
 
 export function CourseList({ data }: { data: CourseListData[] }) {
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+
   return (
     <div>
       <ScrollArea className="h-[calc(100vh-300px)] drop-shadow-md">
@@ -165,18 +187,9 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                         </div>
                       </div>
                       <div className="flex flex-col items-end space-y-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300">
-                              Link to Lesson
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <SubmitModal />
-                            </DialogHeader>
-                          </DialogContent>
-                        </Dialog>
+                        <Button className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300">
+                          Link to Lesson
+                        </Button>
                       </div>
                     </div>
                   )
@@ -191,3 +204,5 @@ export function CourseList({ data }: { data: CourseListData[] }) {
 }
 
 export default CourseList;
+
+

@@ -1,5 +1,9 @@
 import { HttpStatusCode } from "axios";
-import { CHECK_ADMIN, CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
+import {
+  CHECK_ADMIN,
+  CHECK_UNAUTHORIZED,
+  CHECK_UNAUTHORIZED_BY_UID,
+} from "../../auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getCompleteUser, getUser, userIdExists } from "@/db/queries";
 import { error, processCreateUserRequest, processUpdateUser } from "../../util";
