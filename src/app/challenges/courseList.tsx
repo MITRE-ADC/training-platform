@@ -16,7 +16,10 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import { req } from "@/lib/utils";
-import { updateWebgoatUserCredentials, updateWebgoatUserCredentialsAndData } from "./courseServer";
+import {
+  updateWebgoatUserCredentials,
+  updateWebgoatUserCredentialsAndData,
+} from "./courseServer";
 
 export function SubmitModal() {
   // TODO: consider switching to zod for form validation
@@ -62,19 +65,18 @@ export function SubmitModal() {
       return;
     }
 
-    await axios
-      .get(req("api/auth"))
-      .then(async (r) => {
-        const updateRes = await updateWebgoatUserCredentialsAndData(username, password);
-        if(updateRes) // indicates error
-          {
-            console.error(updateRes);
-            setErrorMessage(updateRes);
-            return;
-          }
-          else
-          setErrorMessage("success!");
-      });
+    await axios.get(req("api/auth")).then(async (r) => {
+      const updateRes = await updateWebgoatUserCredentialsAndData(
+        username,
+        password
+      );
+      if (updateRes) {
+        // indicates error
+        console.error(updateRes);
+        setErrorMessage(updateRes);
+        return;
+      } else setErrorMessage("success!");
+    });
 
     setErrorMessage("");
   };
@@ -89,7 +91,8 @@ export function SubmitModal() {
         Something went wrong; we couldn&apos;t access your WebGoat account.
       </div>
       <div className="pb-2 text-sm text-muted-foreground">
-        If you haven&apos;t made a WebGoat account, do so; then, input your WebGoat credentials here:
+        If you haven&apos;t made a WebGoat account, do so; then, input your
+        WebGoat credentials here:
       </div>
       <div className="flex gap-4">
         <Input
@@ -204,5 +207,3 @@ export function CourseList({ data }: { data: CourseListData[] }) {
 }
 
 export default CourseList;
-
-

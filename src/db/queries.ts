@@ -62,10 +62,7 @@ export async function getAssignmentsByUser(user_id: string) {
 
 // // Update a user
 export async function updateUser(user: Omit<User, "pass">) {
-  return await db
-    .update(users)
-    .set(user)
-    .where(eq(users.id, user.id));
+  return await db.update(users).set(user).where(eq(users.id, user.id));
 }
 
 // export async function userEmailExists(email: string) {
@@ -94,7 +91,8 @@ export async function userEmailExists(email: string) {
   console.log("\n got to exists \n");
   // const exists = await db.select().from(users);
   // console.log(exists);
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
   console.log("\n passed exists definition\n");
   if (exists) {

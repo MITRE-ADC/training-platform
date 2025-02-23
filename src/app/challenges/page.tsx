@@ -163,20 +163,21 @@ export default function ChallengeHomepage() {
   };
 
   async function updateWebgoat() {
-    axios
-      .get(req("api/auth"))
-      .then(async (r) => {
-        const res = await axios.post(`api/webgoat/assignments`, {
+    axios.get(req("api/auth")).then(async (r) => {
+      const res = await axios
+        .post(`api/webgoat/assignments`, {
           user_id: r.data.user.id,
-        }).catch((e) => {
-          console.log(e)
+        })
+        .catch((e) => {
+          console.log(e);
           console.log(e.response.data.error);
           if (e.response.data.error.includes("Invalid username/password"))
             setCredentialsDialogOpen(true);
           //TODO: trigger webgoat credentials modal
           else console.error(e);
-        }).then(console.log);
-      });
+        })
+        .then(console.log);
+    });
     await load();
   }
 
@@ -371,13 +372,16 @@ export default function ChallengeHomepage() {
                   </div>
                 </div>
                 <div className="h-full">
-                        <Dialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen}>
-                          <DialogContent>
-                            <DialogHeader>
-                              <SubmitModal />
-                            </DialogHeader>
-                          </DialogContent>
-                        </Dialog>
+                  <Dialog
+                    open={credentialsDialogOpen}
+                    onOpenChange={setCredentialsDialogOpen}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        <SubmitModal />
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
                   {data.length == 0 ? (
                     <span className="flex w-full justify-center">
                       {placeholder}

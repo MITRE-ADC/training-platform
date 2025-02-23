@@ -14,9 +14,9 @@ export async function POST(req: Request) {
   if (req.method === "POST") {
     const { email, password } = await req.json();
     try {
-      console.log("\n entering userEmailExists\n")
+      console.log("\n entering userEmailExists\n");
       const exists = await userEmailExists(email);
-      console.log("\npassed userEmailExists\n")
+      console.log("\npassed userEmailExists\n");
       if (!exists) {
         return NextResponse.json(
           { error: "This Email Has Not Been Registered" },
