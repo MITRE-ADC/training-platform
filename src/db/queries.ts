@@ -91,9 +91,12 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  const exists =
-    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+  console.log("\n got to exists \n");
+  // const exists = await db.select().from(users);
+  // console.log(exists);
+  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
+  console.log("\n passed exists definition\n");
   if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
     if (error instanceof NextResponse) return error;
@@ -564,6 +567,7 @@ export async function getCourseByName(course_name: string) {
  * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
  */
 export async function getUserByEmail(user_email: string) {
+  // console.log("\ngetUserByEmail\n");
   const { id, pass, ...userFields } = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
