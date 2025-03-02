@@ -11,8 +11,17 @@ export const client = new Client({
   database: "mitre_db",
 });
 
-export const connectDB = async () => await client.connect();
+// export const connectDB = async () => await client.connect();
+// export const db = drizzle(client, { schema });
+
+async function connectDB() {
+  try {
+    await client.connect();
+    console.log("Connected to the database successfully");
+  } catch (error) {
+    console.log("FAILED TO CONNECT TO DATABASE", error);
+  }
+}
 
 export const db = drizzle(client, { schema });
-
 connectDB();
