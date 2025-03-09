@@ -7,10 +7,15 @@ import { getUserByEmail, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { randomBytes } from "crypto";
 
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
+    console.log(name);
+    console.log(email);
+    console.log(password);
 
     try {
       const x = await userEmailExists(email);
@@ -21,12 +26,31 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      function generateRandom(length: number) {
+        return randomBytes(length).toString("base64url").slice(0, length);
+      }
+    
+
+      // Generating a random alphanumeric username between 10-13 characters 
+      let webgoatusername = generateRandom(Math.floor(Math.random() * (4)) + 10);
+      let existingUser = await db.select().from(users).where(eq(users.webgoatusername, webgoatusername)).limit(1);
+
+      // Collision checking for username 
+      while (existingUser.length > 0) {
+        webgoatusername = generateRandom(Math.floor(Math.random() * (4)) + 10);
+        existingUser = await db.select().from(users).where(eq(users.webgoatusername, webgoatusername)).limit(1);
+      }
+
+      // Generating a random alphanumeric username between 6-10 characters 
+      let webgoatpassword = generateRandom(Math.floor(Math.random() * (5)) + 6);
+
+      // Inserting the new user and generated wg username and password
       await db.insert(users).values({
         name: name,
         email: email,
         pass: password,
-        webgoatusername: name.replaceAll(" ", "").toLowerCase(),
-        webgoatpassword: password,
+        webgoatusername: webgoatusername,
+        webgoatpassword: webgoatpassword,
       });
 
       // await addUser({name: name, email: email, pass: password});
@@ -44,6 +68,7 @@ export async function POST(req: NextRequest) {
       );
     } catch (error) {
       console.log(error);
+      console.log("IT FAILED DUMBASS");
       return NextResponse.json(
         { error: "User Creation Failed" },
         { status: HttpStatusCode.BadRequest }
