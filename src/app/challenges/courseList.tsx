@@ -21,7 +21,7 @@ import {
   updateWebgoatUserCredentialsAndData,
 } from "./courseServer";
 
-export function SubmitModal() { 
+export function SubmitModal() {
   // TODO: consider switching to zod for form validation
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -136,7 +136,7 @@ export function CourseList({ data }: { data: CourseListData[] }) {
 
   const linkToLession = () => {
     console.log("\nCLICK WORKSSSSSS\n");
-  }
+  };
 
   return (
     <div>
@@ -194,9 +194,11 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                         </div>
                       </div>
                       <div className="flex flex-col items-end space-y-2">
-                        <Button onClick={linkToLession} className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300">
+                        <Button
+                          onClick={linkToLession}
+                          className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
+                        >
                           Link to Lesson
-                  
                         </Button>
                       </div>
                     </div>

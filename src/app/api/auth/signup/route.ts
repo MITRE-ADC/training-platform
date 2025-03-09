@@ -1,4 +1,3 @@
-// import {bcyptjs} from "bcryptjs";
 import { db } from "@/db/index";
 import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,6 +8,7 @@ import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
+import { hash } from "bcrypt-ts";
 
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
@@ -27,22 +27,33 @@ export async function POST(req: NextRequest) {
       }
 
       function generateRandom(length: number) {
-        return randomBytes(length).toString("base64url").slice(0, length);
+        return randomBytes(length)
+          .toString("base64url")
+          .toLowerCase()
+          .replace("_", "-")
+          .slice(0, length);
       }
-    
 
-      // Generating a random alphanumeric username between 10-13 characters 
-      let webgoatusername = generateRandom(Math.floor(Math.random() * (4)) + 10);
-      let existingUser = await db.select().from(users).where(eq(users.webgoatusername, webgoatusername)).limit(1);
+      // Generating a random alphanumeric username between 10-13 characters
+      let webgoatusername = generateRandom(Math.floor(Math.random() * 4) + 10);
+      let existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.webgoatusername, webgoatusername))
+        .limit(1);
 
-      // Collision checking for username 
+      // Collision checking for username
       while (existingUser.length > 0) {
-        webgoatusername = generateRandom(Math.floor(Math.random() * (4)) + 10);
-        existingUser = await db.select().from(users).where(eq(users.webgoatusername, webgoatusername)).limit(1);
+        webgoatusername = generateRandom(Math.floor(Math.random() * 4) + 10);
+        existingUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.webgoatusername, webgoatusername))
+          .limit(1);
       }
 
-      // Generating a random alphanumeric username between 6-10 characters 
-      let webgoatpassword = generateRandom(Math.floor(Math.random() * (5)) + 6);
+      // Generating a random alphanumeric username between 6-10 characters
+      const webgoatpassword = generateRandom(Math.floor(Math.random() * 5) + 6);
 
       // Inserting the new user and generated wg username and password
       await db.insert(users).values({
