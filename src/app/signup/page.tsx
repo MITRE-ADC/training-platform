@@ -25,6 +25,7 @@ export default function SignUpPage() {
   });
 
   const handleSignUp = async () => {
+    // console.log("entered handleSignUp")
     const errors = {
       firstName: false,
       lastName: false,
@@ -40,18 +41,19 @@ export default function SignUpPage() {
     if (!confirmPassword) errors.confirmPassword = true;
 
     setFieldErrors(errors);
+    // console.log("passed setFieldErrors")
 
     if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields");
+      // setErrorMessage("Please fill out all required fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
+      // setErrorMessage("Passwords do not match");
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
     } else {
-      console.log("starting sending");
+      // console.log("starting sending");
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify({
@@ -62,20 +64,34 @@ export default function SignUpPage() {
       });
 
       if (response.status != HttpStatusCode.Ok) {
+        // console.log("shit's fucked up")
         setErrorMessage("Something Went Wrong");
         return;
       } else {
+        // console.log("shit's not fucked up maybe?")
         setErrorMessage("SignUp Successful");
-        const data = new URLSearchParams();
-        data.append("name", firstName + " " + lastName);
-        data.append("password", password);
+        // const data = new URLSearchParams();
+        // data.append("name", firstName + " " + lastName);
+        // data.append("password", password);
+        // console.log(data);
+        // const paramsString = "email="+email;
+        // const data = new URLSearchParams(paramsString);
+        // console.log("data:")
+        // console.log(data);
+
+        // const res = await fetch("/api/webgoat/register", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/x-www-form-urlencoded",
+        //   },
+        //   body: data,
+        // });
         const res = await fetch("/api/webgoat/register", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: data,
-        });
+          body: JSON.stringify({
+            email: email
+          })
+        })
         router.push("/signin");
         return;
       }

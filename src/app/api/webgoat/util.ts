@@ -42,13 +42,13 @@ export async function login_user(
   return { cookie: response.headers.getSetCookie()[0], response: null };
 }
 
-export async function register_user(username: string, password: string) {
+export async function register_user(webgoat_username: string, webgoat_password: string) {
   console.log(`registering user...`);
 
   const response = await fetch(URL_webgoat_register, {
     method: "POST",
     redirect: "follow",
-    body: `username=${username}&password=${password}&matchingPassword=${password}&agree=agree`,
+    body: `username=${webgoat_username}&password=${webgoat_password}&matchingPassword=${webgoat_password}&agree=agree`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },

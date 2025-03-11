@@ -88,18 +88,15 @@ export async function userIdExists(id: string) {
 }
 
 export async function userEmailExists(email: string) {
-  console.log("\n got to exists \n");
-  // const exists = await db.select().from(users);
-  // console.log(exists);
   const exists =
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
-  console.log("\n passed exists definition\n");
+  // console.log("exists: ");
+  // console.log(exists);
   if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
     if (error instanceof NextResponse) return error;
   }
-
   return exists;
 }
 
@@ -570,10 +567,20 @@ export async function getUserByEmail(user_email: string) {
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
+  // console.log("const { id, pass, ...userFields } = ");
+  // console.log({ id, pass, ...userFields });
+
   const err = await CHECK_SESSION();
   if (err) return err;
-
+  // console.log({ ...userFields });
   return { ...userFields };
+}
+
+export async function getUserIDByEmailUnsecure(user_email: string) {
+  const { id, ...userFields } = (await db.select().from(users).where(eq(users.email, user_email)))[0];
+  // console.log(id);
+
+  return { id, ...userFields };
 }
 
 /**
@@ -651,6 +658,24 @@ export async function getUserByName(user_name: string) {
 
   return { ...userFields };
 }
+
+// export async function getUserIDByEmail(user_email: string) {
+//   // const { id, pass, ...userFields } = (
+//   const { user_id } = (
+//     await db.select({user_id: users.id}).from(users).where(eq(users.email, user_email))
+//   )[0];
+
+//   const err = await CHECK_SESSION();
+//   if (err) {
+//     console.log("getUserIDByEmailError")
+//     return err;
+//   }
+
+//   // return { ...userFields };
+//   console.log("user_id:");
+//   console.log(user_id);
+//   return user_id;
+// }
 
 /**
  * gets ANY user's complete (including sensitive) data given their user_name
