@@ -42,7 +42,10 @@ export async function login_user(
   return { cookie: response.headers.getSetCookie()[0], response: null };
 }
 
-export async function register_user(webgoat_username: string, webgoat_password: string) {
+export async function register_user(
+  webgoat_username: string,
+  webgoat_password: string
+) {
   console.log(`registering user...`);
 
   const response = await fetch(URL_webgoat_register, {

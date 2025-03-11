@@ -13,7 +13,7 @@ import type { User } from "@/db/schema";
  */
 export async function POST(request: NextRequest) {
   if (request.method == "POST") {
-      try {
+    try {
       const err2 = await CHECK_SESSION();
       if (err2) return err2;
       console.log("Registering user in webgoat");
@@ -29,20 +29,20 @@ export async function POST(request: NextRequest) {
       // if (!webgoat_username || !webgoat_password)
       //   return error("Please specify a name and password");
       if (!email) {
-        return error("Please specify an email.")
+        return error("Please specify an email.");
       }
       const user = (await getUserByEmail(email)) as User;
 
       const webgoat_username = user.webgoatusername;
       const webgoat_password = user.webgoatpassword;
 
-      console.log("\nwebgoat_username, webgoat_password: \n")
+      console.log("\nwebgoat_username, webgoat_password: \n");
       console.log(webgoat_username);
       console.log(webgoat_password);
 
-      console.log("entering register_user")
+      console.log("entering register_user");
       const err = await register_user(webgoat_username, webgoat_password);
-      console.log("exiting register_user")
+      console.log("exiting register_user");
       if (err) return err;
 
       return NextResponse.json(

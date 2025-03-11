@@ -2,7 +2,11 @@ import { db } from "@/db/index";
 import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { getUserByEmail, getUserIDByEmailUnsecure, userEmailExists } from "@/db/queries";
+import {
+  getUserByEmail,
+  getUserIDByEmailUnsecure,
+  userEmailExists,
+} from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";

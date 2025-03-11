@@ -89,9 +89,9 @@ export default function SignUpPage() {
         const res = await fetch("/api/webgoat/register", {
           method: "POST",
           body: JSON.stringify({
-            email: email
-          })
-        })
+            email: email,
+          }),
+        });
         router.push("/signin");
         return;
       }
