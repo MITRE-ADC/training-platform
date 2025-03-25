@@ -2,7 +2,11 @@ import { db } from "@/db/index";
 import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { getUserByEmail, userEmailExists } from "@/db/queries";
+import {
+  getUserByEmail,
+  getUserIDByEmailUnsecure,
+  userEmailExists,
+} from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
@@ -13,9 +17,11 @@ import { hash } from "bcrypt-ts";
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
-    console.log(name);
-    console.log(email);
-    console.log(password);
+
+    // console.log("Beginning of api/auth/signup");
+    // console.log(name);
+    // console.log(email);
+    // console.log(password);
 
     try {
       const x = await userEmailExists(email);
@@ -41,6 +47,7 @@ export async function POST(req: NextRequest) {
         .from(users)
         .where(eq(users.webgoatusername, webgoatusername))
         .limit(1);
+      // console.log("generated random");
 
       // Collision checking for username
       while (existingUser.length > 0) {
@@ -65,23 +72,37 @@ export async function POST(req: NextRequest) {
         webgoatusername: webgoatusername,
         webgoatpassword: webgoatpassword,
       });
+      // console.log("inserted user entry into database");
 
       // await addUser({name: name, email: email, pass: password});
-      const exists = await userEmailExists(email);
-      if (exists) {
-        const user = (await getUserByEmail(email)) as User;
-        const maxAge = 24 * 3600 * 7;
-        setJwtCookie(user.id, maxAge);
-      }
+      // const exists = await userEmailExists(email);
+      // if (exists) {
+      //   const user = (await getUserByEmail(email)) as User;
+      //   console.log("passed getuserbyemail");
+      //   console.log(user);
+      //   const maxAge = 24 * 3600 * 7;
+      //   setJwtCookie(user.id, maxAge);
+      // }
+
+      // const exists = await userEmailExists(email);
+      // if (exists) {
+      const user = (await getUserIDByEmailUnsecure(email)) as User;
+      // console.log("passed getuserbyemail");
+      // console.log(user);
+      // console.log("userId: ")
+      // console.log(user.id);
+      const maxAge = 24 * 3600 * 7;
+      setJwtCookie(user.id, maxAge);
+      // }
 
       await cookies();
+      // console.log("we are gucci");
       return NextResponse.json(
         { name: name, email: email },
         { status: HttpStatusCode.Ok }
       );
     } catch (error) {
       console.log(error);
-      console.log("IT FAILED DUMBASS");
       return NextResponse.json(
         { error: "User Creation Failed" },
         { status: HttpStatusCode.BadRequest }

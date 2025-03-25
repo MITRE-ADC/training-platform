@@ -67,7 +67,10 @@ export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
  * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user
  */
 export async function CHECK_SESSION() {
+  // console.log("entered checksession")
+  // console.log("entered cookies");
   const cookieStore = await cookies();
+  // console.log("exited cookies");
   const result = await getCurrentUserAndAdmin(cookieStore);
   if (result.user != null) {
     return undefined;

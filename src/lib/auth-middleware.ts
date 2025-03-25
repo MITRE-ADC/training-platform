@@ -112,9 +112,12 @@ export async function getCurrentUserAndAdmin(
   if (token == null) {
     return { user: null, isAdmin: false };
   }
+  // console.log("entering validateJwtToken");
   const result = await validateJwtToken(token);
+  // console.log("exiting validateJwtToken");
 
   if (result.user == null) {
+    console.log("user is null");
     return { user: null, isAdmin: false };
   }
 
