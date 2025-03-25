@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       user.webgoatusername,
       user.webgoatpassword
     );
-    console.log(cookie)
+    console.log(cookie);
     if (response) return response;
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",

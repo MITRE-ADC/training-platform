@@ -273,7 +273,7 @@ export async function processCreateCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateCourse(course_name: string) {
-  console.log("entering process Create Course")
+  console.log("entering process Create Course");
   const err = await CHECK_SESSION();
   if (err) return err;
   if (await courseNameExists(course_name)) return error("Course exists");
