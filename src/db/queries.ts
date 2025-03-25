@@ -22,6 +22,8 @@ import {
   CHECK_UNAUTHORIZED_BY_UID,
 } from "@/app/api/auth";
 import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
+
 
 // Users
 
@@ -619,7 +621,7 @@ export async function checkUserPassword(
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  return user.pass == user_password;
+  return await bcrypt.compare(user_password, user.pass);
 }
 
 /**

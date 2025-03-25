@@ -9,6 +9,10 @@ import {
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
+import bcrypt from "bcrypt";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+
 
 export async function POST(req: Request) {
   if (req.method === "POST") {
@@ -23,12 +27,12 @@ export async function POST(req: Request) {
           { status: HttpStatusCode.BadRequest }
         );
       }
-
+      
       if (await checkUserPassword(email, password)) {
         const maxAge = 24 * 3600 * 7;
         const user = await getCompleteUserByEmailNoAuth(email); // FLAG: necessary?
         setJwtCookie(user.id, maxAge);
-
+        
         await cookies();
         const response = NextResponse.json(
           { email: email, isAdmin: email == process.env.ADMIN_USER_EMAIL },
