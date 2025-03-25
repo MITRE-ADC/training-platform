@@ -55,6 +55,8 @@ export async function POST(req: NextRequest) {
       // Generating a random alphanumeric username between 6-10 characters
       const webgoatpassword = generateRandom(Math.floor(Math.random() * 5) + 6);
 
+      // To-do: must salt and hash user and password
+
       // Inserting the new user and generated wg username and password
       await db.insert(users).values({
         name: name,
