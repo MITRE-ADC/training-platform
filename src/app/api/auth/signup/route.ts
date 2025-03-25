@@ -12,7 +12,7 @@ import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
-import { hash } from "bcrypt-ts";
+import bcrypt from "bcrypt";
 
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
@@ -62,13 +62,14 @@ export async function POST(req: NextRequest) {
       // Generating a random alphanumeric username between 6-10 characters
       const webgoatpassword = generateRandom(Math.floor(Math.random() * 5) + 6);
 
-      // To-do: must salt and hash user and password
+      // To-do: must hash password
+      const hashedpassword = await bcrypt.hash(password, 10);
 
       // Inserting the new user and generated wg username and password
       await db.insert(users).values({
         name: name,
         email: email,
-        pass: password,
+        pass: hashedpassword,
         webgoatusername: webgoatusername,
         webgoatpassword: webgoatpassword,
       });
