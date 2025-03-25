@@ -41,9 +41,12 @@ export async function POST(request: NextRequest) {
     const user = await getCompleteUser(user_id);
     if (user instanceof NextResponse) return user;
 
-    const autopopulate_courses_from_webgoat = request.nextUrl.searchParams?.get(
-      "autopopulate_courses"
-    );
+    // const autopopulate_courses_from_webgoat = request.nextUrl.searchParams?.get(
+    //   "autopopulate_courses"
+    // );
+    const autopopulate_courses_from_webgoat = true;
+    // console.log("autopopulate_courses_from_webgoat: ", autopopulate_courses_from_webgoat);
+    // autopopulate_courses_from_webgoat = true;
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
@@ -51,6 +54,7 @@ export async function POST(request: NextRequest) {
       user.webgoatusername,
       user.webgoatpassword
     );
+    console.log(cookie)
     if (response) return response;
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",
@@ -66,12 +70,14 @@ export async function POST(request: NextRequest) {
     let course_creations = 0;
 
     const courses = await response2.json();
+    console.log(courses);
     for (const course in courses) {
       // UPDATE COURSE RECORD
       if (
         autopopulate_courses_from_webgoat &&
         !(await courseNameExists(courses[course].name))
       ) {
+        console.log("entered processCreateCourse");
         const res = await processCreateCourse(courses[course].name);
         if (res.status != HttpStatusCode.Created) {
           console.error(res);

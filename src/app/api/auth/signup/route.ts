@@ -12,7 +12,6 @@ import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
-import { hash } from "bcrypt-ts";
 
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
