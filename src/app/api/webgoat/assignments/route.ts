@@ -93,14 +93,19 @@ export async function POST(request: NextRequest) {
         : 1;
       for (const assignment in courses[course].children) {
         // UDPATE ASSIGNMENT RECORD
+        console.log(courses[course].children[assignment].name);
+        console.log(courses[course].children[assignment]);
         const webgoat_name: string = courses[course].children[assignment].name;
         const complete: boolean = courses[course].children[assignment].complete;
+        const webgoat_link: string = courses[course].children[assignment].link;
+        // console.log("webgoat_link: ", webgoat_link, webgoat_link.substring(8));
 
         if (!(await assignmentWebgoatIdExists(webgoat_name))) {
           const res = await processCreateAssignment(
             webgoat_name,
-            webgoat_name,
-            course_id
+            webgoat_name, // I have no clue why webgoat_name is being used for webgoat_url, but I cannot manage to change it
+            course_id,
+            webgoat_link
           ); // assignment is created with webgoat_name as name as well as id by default
           if (res.status != HttpStatusCode.Created) {
             console.error(res);
