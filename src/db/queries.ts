@@ -577,7 +577,7 @@ export async function getUserByEmail(user_email: string) {
   return { ...userFields };
 }
 
-export async function getUserIDByEmailUnsecure(user_email: string) {
+export async function getUserIDByEmailNoAuth(user_email: string) {
   const { id, ...userFields } = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];

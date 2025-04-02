@@ -30,7 +30,8 @@ CREATE TABLE Assignments (
     assignment_id SERIAL PRIMARY KEY,
     assignment_name VARCHAR(255),
     course_id int REFERENCES Courses(course_id),
-    webgoat_info VARCHAR(255)
+    webgoat_info VARCHAR(255),
+    webgoat_url VARCHAR(255)
 );
 
 CREATE TABLE User_Assignments (

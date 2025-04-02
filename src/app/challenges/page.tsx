@@ -246,21 +246,23 @@ export default function ChallengeHomepage() {
                     (va) => va.assignment_id == a.assignment_id
                   ) != undefined
               )
-              .map((assignment) => {
+              .map((user_assignment) => {
                 const a = validAssignments.find(
-                  (a) => a.assignment_id == assignment.assignment_id
+                  (a) => a.assignment_id == user_assignment.assignment_id
                 )!;
+                const link = (assignments.find((assignment) => assignment.assignment_id == user_assignment.assignment_id))?.webgoat_url;
                 return {
                   name: a.assignment_name,
                   id: a.assignment_id,
                   webgoat: a.webgoat_info,
-                  status: assignment.completed
+                  status: user_assignment.completed
                     ? "done"
                     : due
                       ? due > today
                         ? "todo"
                         : "overdue"
                       : "todo",
+                  webgoat_link: link ? link : "" // dealing with if there is no link to the webgoat lesson; should be purely academic because webgoat_url is NOT NULL
                 };
               }),
           });
@@ -310,6 +312,7 @@ export default function ChallengeHomepage() {
                       value={searchQuery}
                     />
                   </div>
+                  {/* This is the reload button that updates webgoat */}
                   <div className="mb-5 mt-4 flex gap-2">
                     <Button
                       variant="outline"
@@ -387,7 +390,7 @@ export default function ChallengeHomepage() {
                       {placeholder}
                     </span>
                   ) : (
-                    <CourseList data={data} />
+                    <CourseList data={data} user={user as User} />
                   )}
                 </div>
               </div>

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import {
   getUserByEmail,
-  getUserIDByEmailUnsecure,
+  getUserIDByEmailNoAuth,
   userEmailExists,
 } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
 
       // const exists = await userEmailExists(email);
       // if (exists) {
-      const user = (await getUserIDByEmailUnsecure(email)) as User;
+      const user = (await getUserIDByEmailNoAuth(email)) as User;
       // console.log("passed getuserbyemail");
       // console.log(user);
       // console.log("userId: ")

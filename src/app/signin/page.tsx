@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { HttpStatusCode } from "axios";
 // import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+// import { getUserIDByEmailNoAuth } from "@/db/queries";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -52,7 +53,29 @@ export default function SignInPage() {
       setErrorMessage("Login Successful");
       const json = await response.json();
       console.log(json);
-      if (json.isAdmin) {
+      if (json.isAdmin) {//this is where its checking for admin, this is where we need to call the autopopulation api
+        // const admin_id = getUserIDByEmailNoAuth(process.env.REACT_APP_ADMIN_USER_EMAIL);
+        // call api: POST api/webgoat/assignments
+
+        // example api call to the webgoat update; problem is that it requires a user_id
+        // axios.get(req("api/auth")).then(async (r) => {
+        //   const res = await axios
+        //     .post(`api/webgoat/assignments`, {
+        //       user_id: r.data.user.id,
+        //     })
+        //     .catch((e) => {
+        //       console.log(e);
+        //       console.log(e.response.data.error);
+        //       if (e.response.data.error.includes("Invalid username/password"))
+        //         setCredentialsDialogOpen(true);
+        //       //TODO: trigger webgoat credentials modal
+        //       else console.error(e);
+        //     })
+        //     .then(console.log);
+        // }
+
+        //THIS WILL BE DONE IN API/AUTH/SIGIN
+
         router.push("/admin/dashboard");
       } else {
         router.push("/challenges");

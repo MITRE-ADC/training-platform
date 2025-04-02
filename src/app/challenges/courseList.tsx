@@ -20,6 +20,7 @@ import {
   updateWebgoatUserCredentials,
   updateWebgoatUserCredentialsAndData,
 } from "./courseServer";
+import { User } from "@/db/schema";
 
 export function SubmitModal() {
   // TODO: consider switching to zod for form validation
@@ -131,11 +132,17 @@ export function SubmitModal() {
   );
 }
 
-export function CourseList({ data }: { data: CourseListData[] }) {
+export function CourseList({ data, user }: { data: CourseListData[], user: User }) {
   const [credentialsOpen, setCredentialsOpen] = useState(false);
 
-  const linkToLession = () => {
-    console.log("\nCLICK WORKSSSSSS\n");
+  function linkToLesson(assignment_index: number) {
+    const username = user.webgoatusername;
+
+    // data holds all the assignments for the course assigned, which is why this filtering is needed
+    const assignment_link = data[0]["assignments"][assignment_index]["webgoat_link"]
+    const url = `http://localhost:8090/WebGoat/start.mvc?username=${username}${assignment_link}`
+    window.open(url);
+
   };
 
   return (
@@ -195,7 +202,8 @@ export function CourseList({ data }: { data: CourseListData[] }) {
                       </div>
                       <div className="flex flex-col items-end space-y-2">
                         <Button
-                          onClick={linkToLession}
+                          // onClick={linkToLesson(assignmentIndex)}
+                          onClick={() => linkToLesson(assignmentIndex)}
                           className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
                         >
                           Link to Lesson

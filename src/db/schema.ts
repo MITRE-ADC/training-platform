@@ -56,6 +56,7 @@ export const assignments = pgTable("assignments", {
     .notNull()
     .references(() => courses.course_id),
   webgoat_info: varchar({ length: 255 }).notNull(),
+  webgoat_url: varchar({ length: 255 }).notNull()
 });
 
 export const selectAssignmentsSchema = createSelectSchema(assignments);

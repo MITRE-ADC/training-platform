@@ -17,6 +17,7 @@ export interface CourseListData {
     webgoat: string;
     id: number;
     status: "done" | "todo" | "overdue";
+    webgoat_link: string;
   }[];
 }
 

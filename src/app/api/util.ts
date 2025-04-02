@@ -273,26 +273,30 @@ export async function processCreateCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateCourse(course_name: string) {
-  console.log("entering process Create Course");
+  console.log("entering process Create Course for course ",course_name);
   const err = await CHECK_SESSION();
   if (err) return err;
   if (await courseNameExists(course_name)) return error("Course exists");
-
+  console.log("passed courseNameExists for course", course_name);
   const result = await addCourse({
     course_name: course_name,
   });
+  console.log("passed addCourse")
   if (result instanceof NextResponse) return result;
-  else
+  else {
+    console.log("returning without error");
     return NextResponse.json(
       { data: result[0] },
       { status: HttpStatusCode.Created }
     );
+  }
 }
 
 export async function processCreateAssignmentRequest(request: NextRequest) {
   const course_id = request.nextUrl.searchParams?.get("course_id");
   const webgoat_info = request.nextUrl.searchParams?.get("webgoat_info");
   const assignment_name = request.nextUrl.searchParams?.get("assignment_name");
+  const webgoat_url = request.nextUrl.searchParams?.get("webgoat_url")
 
   let body: AddAssignment | undefined = undefined;
   try {
@@ -312,7 +316,8 @@ export async function processCreateAssignmentRequest(request: NextRequest) {
   return processCreateAssignment(
     body?.assignment_name ?? assignment_name!,
     body?.webgoat_info ?? webgoat_info!,
-    body?.course_id ?? parseInt(course_id!)
+    body?.course_id ?? parseInt(course_id!),
+    body?.webgoat_url ?? webgoat_url!
   );
 }
 
@@ -342,7 +347,8 @@ export async function processUpdateUser(body: User) {
 export async function processCreateAssignment(
   assignment_name: string,
   webgoat_info: string,
-  course_id: number
+  course_id: number,
+  webgoat_url: string,
 ) {
   const err = await CHECK_SESSION();
   if (err) return err;
@@ -360,6 +366,7 @@ export async function processCreateAssignment(
     course_id: course_id,
     assignment_name: assignment_name,
     webgoat_info: webgoat_info,
+    webgoat_url: webgoat_url
   });
   if (result instanceof NextResponse) return result;
   else
