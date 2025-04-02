@@ -53,7 +53,8 @@ export default function SignInPage() {
       setErrorMessage("Login Successful");
       const json = await response.json();
       console.log(json);
-      if (json.isAdmin) {//this is where its checking for admin, this is where we need to call the autopopulation api
+      if (json.isAdmin) {
+        //this is where its checking for admin, this is where we need to call the autopopulation api
         // const admin_id = getUserIDByEmailNoAuth(process.env.REACT_APP_ADMIN_USER_EMAIL);
         // call api: POST api/webgoat/assignments
 

@@ -132,18 +132,24 @@ export function SubmitModal() {
   );
 }
 
-export function CourseList({ data, user }: { data: CourseListData[], user: User }) {
+export function CourseList({
+  data,
+  user,
+}: {
+  data: CourseListData[];
+  user: User;
+}) {
   const [credentialsOpen, setCredentialsOpen] = useState(false);
 
   function linkToLesson(assignment_index: number) {
     const username = user.webgoatusername;
 
     // data holds all the assignments for the course assigned, which is why this filtering is needed
-    const assignment_link = data[0]["assignments"][assignment_index]["webgoat_link"]
-    const url = `http://localhost:8090/WebGoat/start.mvc?username=${username}${assignment_link}`
+    const assignment_link =
+      data[0]["assignments"][assignment_index]["webgoat_link"];
+    const url = `http://localhost:8090/WebGoat/start.mvc?username=${username}${assignment_link}`;
     window.open(url);
-
-  };
+  }
 
   return (
     <div>

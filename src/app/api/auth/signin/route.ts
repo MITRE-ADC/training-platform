@@ -33,11 +33,11 @@ export async function POST(req: Request) {
         const user = await getCompleteUserByEmailNoAuth(email); // FLAG: necessary?
         setJwtCookie(user.id, maxAge);
 
-        const isAdmin = (email == process.env.ADMIN_USER_EMAIL);
+        const isAdmin = email == process.env.ADMIN_USER_EMAIL;
         await cookies();
         const response = NextResponse.json(
           // { email: email, isAdmin: email == process.env.ADMIN_USER_EMAIL },
-          {email: email, isAdmin: isAdmin},
+          { email: email, isAdmin: isAdmin },
           { status: HttpStatusCode.Ok }
         );
 

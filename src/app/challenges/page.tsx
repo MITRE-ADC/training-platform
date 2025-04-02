@@ -250,7 +250,10 @@ export default function ChallengeHomepage() {
                 const a = validAssignments.find(
                   (a) => a.assignment_id == user_assignment.assignment_id
                 )!;
-                const link = (assignments.find((assignment) => assignment.assignment_id == user_assignment.assignment_id))?.webgoat_url;
+                const link = assignments.find(
+                  (assignment) =>
+                    assignment.assignment_id == user_assignment.assignment_id
+                )?.webgoat_url;
                 return {
                   name: a.assignment_name,
                   id: a.assignment_id,
@@ -262,7 +265,7 @@ export default function ChallengeHomepage() {
                         ? "todo"
                         : "overdue"
                       : "todo",
-                  webgoat_link: link ? link : "" // dealing with if there is no link to the webgoat lesson; should be purely academic because webgoat_url is NOT NULL
+                  webgoat_link: link ? link : "", // dealing with if there is no link to the webgoat lesson; should be purely academic because webgoat_url is NOT NULL
                 };
               }),
           });
