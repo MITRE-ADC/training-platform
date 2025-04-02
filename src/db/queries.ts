@@ -621,8 +621,8 @@ export async function checkUserPassword(
   )[0];
 
   /* REMOVE THIS WHEN HANDING OFF*/
-  if (user_email === "admin@mitre.com"){
-    return user.pass === user_password 
+  if (user_email === "admin@mitre.com") {
+    return user.pass === user_password;
   } else {
     return await bcrypt.compare(user_password, user.pass);
   }

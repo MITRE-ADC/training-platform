@@ -33,6 +33,12 @@ import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const frameworks = [
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
@@ -298,7 +304,19 @@ export default function ChallengeHomepage() {
               <div className="flex h-full w-full flex-col px-16 pt-4">
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
-                  <P className="text-lg">{user ? user.name : ""}</P>
+                  {/* <P className="text-lg">{user ? user.name : ""}</P> */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="bg-blue-500 rounded-md px-4 py-2 text-white">
+                        Open User Menu
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={handleDropdownAction}>
+                        Trigger UserDropdown
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 <div className="flex justify-between">
                   <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
