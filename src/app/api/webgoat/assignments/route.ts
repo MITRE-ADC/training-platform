@@ -64,6 +64,17 @@ export async function POST(request: NextRequest) {
         Cookie: cookie,
       },
     });
+
+    //gets webgoat's labels dictionary
+    const response3 = await fetch("http://localhost:8090/WebGoat/service/labels.mvc", {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/application-json",
+        Cookie: cookie,
+      },
+    });
+    const labels = await response3.json();
     let changes = 0;
     let assignment_linkages = 0;
     let assignment_creations = 0;
@@ -94,8 +105,11 @@ export async function POST(request: NextRequest) {
       for (const assignment in courses[course].children) {
         // UDPATE ASSIGNMENT RECORD
         console.log(courses[course].children[assignment].name);
+        const assignment_name = labels[courses[course].children[assignment].name];
+        console.log(assignment_name);
         console.log(courses[course].children[assignment]);
-        const webgoat_name: string = courses[course].children[assignment].name;
+        // const webgoat_name: string = courses[course].children[assignment].name;
+        const webgoat_name:string = assignment_name;
         const complete: boolean = courses[course].children[assignment].complete;
         const webgoat_link: string = courses[course].children[assignment].link;
         // console.log("webgoat_link: ", webgoat_link, webgoat_link.substring(8));
