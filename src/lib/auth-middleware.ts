@@ -89,6 +89,11 @@ export async function deleteJwtCookie(): Promise<void> {
   });
 }
 
+/* export function deleteJwtCookie() {
+  const cookieStore = cookies();
+  cookieStore.set("auth_token", "", { maxAge: 0, path: "/" }); // Clears the cookie
+}  */
+
 export async function getCurrentUser(
   cookieStore: ReadonlyRequestCookies | RequestCookies
 ): Promise<SessionValidationResult> {

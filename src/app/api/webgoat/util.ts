@@ -75,6 +75,6 @@ export async function logout_user() {
     method: "POST",
     redirect: "follow",
   });
-
+  console.log("finished signing out");
   return response;
 }

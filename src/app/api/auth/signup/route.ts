@@ -18,10 +18,10 @@ export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
 
-    // console.log("Beginning of api/auth/signup");
-    // console.log(name);
-    // console.log(email);
-    // console.log(password);
+    console.log("Beginning of api/auth/signup");
+    console.log(name);
+    console.log(email);
+    console.log(password);
 
     try {
       const x = await userEmailExists(email);

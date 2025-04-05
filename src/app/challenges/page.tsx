@@ -33,12 +33,7 @@ import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 const frameworks = [
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
@@ -46,6 +41,21 @@ const frameworks = [
   { value: "Due First", label: "Due First" },
   { value: "Due Last", label: "Due Last" },
 ];
+
+export function UserDropdown({ user }: { user?: { name: string } }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="text-lg cursor-pointer">
+        {user ? user.name : "Guest"}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem>Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export default function ChallengeHomepage() {
   const [open, setOpen] = useState(false);
@@ -187,6 +197,19 @@ export default function ChallengeHomepage() {
     await load();
   }
 
+  const onLogout = async () => {
+    try {
+      const response = await axios.post("api/auth/signout");
+  
+      if (response.status === 200) {
+        console.log("Successfully signed out");
+        window.location.href = "/signin"; // Change as needed
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   async function load() {
     setData([]);
     setPlaceholder("Loading...");
@@ -286,6 +309,8 @@ export default function ChallengeHomepage() {
       });
   }
 
+  
+
   if (didMount === MountStatus.isFirstMounted) {
     load();
     setMount(MountStatus.isMounted);
@@ -309,16 +334,14 @@ export default function ChallengeHomepage() {
               <div className="flex h-full w-full flex-col px-16 pt-4">
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
-                  {/* <P className="text-lg">{user ? user.name : ""}</P> */}
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="bg-blue-500 rounded-md px-4 py-2 text-white">
-                        Open User Menu
-                      </button>
+                    <DropdownMenuTrigger className="text-lg cursor-pointer">
+                      {user ? user.name : ""}
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem onClick={handleDropdownAction}>
-                        Trigger UserDropdown
+                    <DropdownMenuContent className="bg-white text-black shadow-md"> {/* Ensure solid background */}
+                      <DropdownMenuItem>WebGoat Credentials</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={onLogout} className="text-red-500 cursor-pointer">
+                        Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -422,3 +445,4 @@ export default function ChallengeHomepage() {
     </div>
   );
 }
+

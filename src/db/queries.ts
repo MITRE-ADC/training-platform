@@ -92,7 +92,7 @@ export async function userEmailExists(email: string) {
   const exists =
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
-  // console.log("exists: ");
+  console.log("exists: ");
   // console.log(exists);
   if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
