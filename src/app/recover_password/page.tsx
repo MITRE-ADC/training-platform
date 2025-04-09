@@ -22,7 +22,7 @@ export default function RecoverPasswordPage() {
     setFieldErrors(errors);
 
     if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields");
+      setErrorMessage("Please enter your email.");
       return;
     }
 
