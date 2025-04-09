@@ -8,13 +8,11 @@ export async function POST() {
     deleteJwtCookie(); // Function to remove JWT cookie
     logout_user();
 
-
     console.log("Signed out");
     return NextResponse.json(
       { message: "Successfully signed out" },
       { status: HttpStatusCode.Ok }
     );
-
   } catch (error) {
     console.error("Error during signout:", error);
     return NextResponse.json(

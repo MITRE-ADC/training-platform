@@ -33,7 +33,12 @@ import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
 
 const frameworks = [
   { value: "A-Z (Courses)", label: "A-Z (Courses)" },
@@ -45,7 +50,7 @@ const frameworks = [
 export function UserDropdown({ user }: { user?: { name: string } }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="text-lg cursor-pointer">
+      <DropdownMenuTrigger className="cursor-pointer text-lg">
         {user ? user.name : "Guest"}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -200,7 +205,7 @@ export default function ChallengeHomepage() {
   const onLogout = async () => {
     try {
       const response = await axios.post("api/auth/signout");
-  
+
       if (response.status === 200) {
         console.log("Successfully signed out");
         window.location.href = "/signin"; // Change as needed
@@ -309,8 +314,6 @@ export default function ChallengeHomepage() {
       });
   }
 
-  
-
   if (didMount === MountStatus.isFirstMounted) {
     load();
     setMount(MountStatus.isMounted);
@@ -335,12 +338,17 @@ export default function ChallengeHomepage() {
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="text-lg cursor-pointer">
+                    <DropdownMenuTrigger className="cursor-pointer text-lg">
                       {user ? user.name : ""}
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white text-black shadow-md"> {/* Ensure solid background */}
+                    <DropdownMenuContent className="bg-white text-black shadow-md">
+                      {" "}
+                      {/* Ensure solid background */}
                       <DropdownMenuItem>WebGoat Credentials</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={onLogout} className="text-red-500 cursor-pointer">
+                      <DropdownMenuItem
+                        onSelect={onLogout}
+                        className="text-red-500 cursor-pointer"
+                      >
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -445,4 +453,3 @@ export default function ChallengeHomepage() {
     </div>
   );
 }
-
