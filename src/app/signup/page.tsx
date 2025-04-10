@@ -42,14 +42,15 @@ export default function SignUpPage() {
 
     setFieldErrors(errors);
 
-
     if (Object.values(errors).includes(true)) {
       setErrorMessage("Please fill out all required fields");
       return;
     }
 
     //Checking the email
-    const emailRegex = new RegExp('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+    const emailRegex = new RegExp(
+      "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$"
+    );
     const emailValid = emailRegex.test(email);
     console.log("email: ", email);
     console.log("emailValid: ", emailValid);
@@ -59,15 +60,17 @@ export default function SignUpPage() {
     }
 
     // Checking the password
-    const passwordRegex = new RegExp('^(?=.*[A-Z])(?=.*[\W_]).{8,}$');
+    const passwordRegex = new RegExp("^(?=.*[A-Z])(?=.*[W_]).{8,}$");
     const passwordValid = passwordRegex.test(password);
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords Do Not Match");
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
-    } else if (!(passwordValid)) {
-      setErrorMessage("Password Must Contain: At Least 8 Characters, 1 Uppercase, 1 Special Character.")
+    } else if (!passwordValid) {
+      setErrorMessage(
+        "Password Must Contain: At Least 8 Characters, 1 Uppercase, 1 Special Character."
+      );
     } else {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
