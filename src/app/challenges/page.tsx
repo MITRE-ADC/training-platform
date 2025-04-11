@@ -369,7 +369,7 @@ export default function ChallengeHomepage() {
                     <Button
                       variant="outline"
                       className="border-highlight2 text-darkLight"
-                      onClick={updateWebgoat} // REFRESH BUTTON FOR WEBGOAT
+                      onClick={updateWebgoat}
                     >
                       <i className="ri-loop-right-line ri-1x"></i>
                     </Button>
