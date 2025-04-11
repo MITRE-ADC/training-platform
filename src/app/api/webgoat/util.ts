@@ -39,7 +39,7 @@ export async function login_user(
   if ((await validityResponse.text()).includes("Invalid username and password"))
     return { cookie: "", response: error("Invalid username/password") };
 
-  return { cookie: response.headers.getSetCookie()[0], response: null };
+  return { cookie: response.headers.get("set-cookie") ?? "", response: null };
 }
 
 export async function register_user(
@@ -69,11 +69,14 @@ export async function register_user(
   return undefined;
 }
 
-export async function logout_user() {
+export async function logout_user(cookie: string) {
   console.log(`logging out...`);
   const response = await fetch(URL_webgoat_logout, {
     method: "POST",
     redirect: "follow",
+    headers: {
+      Cookie: cookie, // WebGoat will recognize the session through the cookie
+    },
   });
   console.log("finished signing out");
   return response;

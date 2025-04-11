@@ -54,8 +54,10 @@ export async function POST(request: NextRequest) {
       user.webgoatusername,
       user.webgoatpassword
     );
+
     console.log(cookie);
     if (response) return response;
+
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",
       redirect: "follow",
@@ -174,7 +176,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const res = await logout_user();
+    const res = await logout_user(cookie);
     if (res.status != HttpStatusCode.Ok)
       return error(
         `Error while logging user out: ${res.statusText}`,

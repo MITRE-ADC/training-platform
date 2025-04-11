@@ -89,10 +89,31 @@ export async function deleteJwtCookie(): Promise<void> {
   });
 }
 
-/* export function deleteJwtCookie() {
-  const cookieStore = cookies();
-  cookieStore.set("auth_token", "", { maxAge: 0, path: "/" }); // Clears the cookie
-}  */
+export async function setWebGoatCookie(
+  jsessionid: string,
+  maxAge: number
+): Promise<void> {
+  const cookieStore = await cookies();
+
+  cookieStore.set("webgoat-session", jsessionid, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge,
+    path: "/",
+  });
+}
+
+export async function deleteWebGoatCookie(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set("webgoat-session", "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0,
+    path: "/",
+  });
+}
 
 export async function getCurrentUser(
   cookieStore: ReadonlyRequestCookies | RequestCookies
