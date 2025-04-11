@@ -50,7 +50,7 @@ const frameworks = [
 export function UserDropdown({ user }: { user?: { name: string } }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="text-lg cursor-pointer">
+      <DropdownMenuTrigger className="cursor-pointer text-lg">
         {user ? user.name : "Guest"}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
