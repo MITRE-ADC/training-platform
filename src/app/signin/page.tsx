@@ -35,11 +35,9 @@ export default function SignInPage() {
     setFieldErrors(errors);
 
     if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields");
+      setErrorMessage("Please fill out all required fields.");
       return;
     }
-
-    // signIn("credentials", {email: email, password: password})
 
     const response = await fetch("/api/auth/signin", {
       method: "POST",
@@ -47,10 +45,10 @@ export default function SignInPage() {
     });
 
     if (response.status != HttpStatusCode.Ok) {
-      setErrorMessage("Something Went Wrong");
+      setErrorMessage("Invalid Username or Password");
       return;
     } else {
-      setErrorMessage("Login Successful");
+      setErrorMessage("Login Successful! Loading...");
       const json = await response.json();
       console.log(json);
       if (json.isAdmin) {

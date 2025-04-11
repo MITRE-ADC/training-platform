@@ -138,23 +138,28 @@ export async function aggregateUserCoursesStatusByUser() {
   const data = (
     await db.execute(
       `
-      SELECT 
-        user_id,
+      SELECT
+        uc.user_id,
+        uc.course_id,
         CASE
-          WHEN due_date < CURRENT_DATE THEN 'Overdue'
-          ELSE course_status::TEXT
-        END AS course_status_group,
-        CAST(COUNT(*) AS int) as count
-      FROM user_courses
-      GROUP BY
-        user_id,
-        CASE
-          WHEN due_date < CURRENT_DATE THEN 'Overdue'
-          ELSE course_status::TEXT
-        END
-
-      ORDER BY user_id ASC;
-      `
+          WHEN BOOL_AND(ua.completed) THEN 'completed'
+          WHEN NOT BOOL_OR(ua.completed) THEN
+            CASE
+              WHEN uc.due_date < NOW() THEN 'overdue'
+              ELSE 'not_started'
+            END
+          WHEN BOOL_OR(NOT ua.completed) THEN
+            CASE
+              WHEN uc.due_date < NOW() THEN 'overdue'
+              ELSE 'in_progress'
+            END
+          ELSE 'in_progress'
+        END AS course_status
+      FROM user_assignments ua
+      JOIN assignments a ON ua.assignment_id = a.assignment_id
+      JOIN user_courses uc ON ua.user_id = uc.user_id AND a.course_id = uc.course_id
+      GROUP BY uc.user_id, uc.course_id, uc.due_date
+  `
     )
   ).rows;
 
@@ -183,21 +188,21 @@ export async function aggregateUserCoursesStatusByUser() {
           overdue: 0,
         },
       };
-      switch (element["course_status_group"]) {
-        case "Completed": {
-          newEntry["analysis"]["completed"] = Number(element["count"]);
+      switch (element["course_status"]) {
+        case "completed": {
+          newEntry["analysis"]["completed"]++;
           break;
         }
-        case "In Progress": {
-          newEntry["analysis"]["in_progress"] = Number(element["count"]);
+        case "in_progress": {
+          newEntry["analysis"]["in_progress"]++;
           break;
         }
-        case "Not Started": {
-          newEntry["analysis"]["not_started"] = Number(element["count"]);
+        case "not_started": {
+          newEntry["analysis"]["not_started"]++;
           break;
         }
-        case "Overdue": {
-          newEntry["analysis"]["overdue"] = Number(element["count"]);
+        case "overdue": {
+          newEntry["analysis"]["overdue"]++;
           break;
         }
       }
@@ -205,21 +210,21 @@ export async function aggregateUserCoursesStatusByUser() {
     } else {
       const entry = res[res.length - 1];
 
-      switch (element["course_status_group"]) {
-        case "Completed": {
-          entry["analysis"]["completed"] = Number(element["count"]);
+      switch (element["course_status"]) {
+        case "completed": {
+          entry["analysis"]["completed"]++;
           break;
         }
-        case "In Progress": {
-          entry["analysis"]["in_progress"] = Number(element["count"]);
+        case "in_progress": {
+          entry["analysis"]["in_progress"]++;
           break;
         }
-        case "Not Started": {
-          entry["analysis"]["not_started"] = Number(element["count"]);
+        case "not_started": {
+          entry["analysis"]["not_started"]++;
           break;
         }
-        case "Overdue": {
-          entry["analysis"]["overdue"] = Number(element["count"]);
+        case "overdue": {
+          entry["analysis"]["overdue"]++;
           break;
         }
       }

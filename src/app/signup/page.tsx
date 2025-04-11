@@ -41,19 +41,37 @@ export default function SignUpPage() {
     if (!confirmPassword) errors.confirmPassword = true;
 
     setFieldErrors(errors);
-    // console.log("passed setFieldErrors")
 
     if (Object.values(errors).includes(true)) {
-      // setErrorMessage("Please fill out all required fields");
+      setErrorMessage("Please fill out all required fields");
       return;
     }
 
+    //Checking the email
+    const emailRegex = new RegExp(
+      "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$"
+    );
+    const emailValid = emailRegex.test(email);
+    console.log("email: ", email);
+    console.log("emailValid: ", emailValid);
+    if (!emailValid) {
+      setErrorMessage("Invalid Email.");
+      return;
+    }
+
+    // Checking the password
+    const passwordRegex = new RegExp("^(?=.*[A-Z])(?=.*[W_]).{8,}$");
+    const passwordValid = passwordRegex.test(password);
+
     if (password !== confirmPassword) {
-      // setErrorMessage("Passwords do not match");
+      setErrorMessage("Passwords Do Not Match");
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
+    } else if (!passwordValid) {
+      setErrorMessage(
+        "Password Must Contain: At Least 8 Characters, 1 Uppercase, 1 Special Character."
+      );
     } else {
-      // console.log("starting sending");
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: JSON.stringify({
@@ -65,11 +83,11 @@ export default function SignUpPage() {
 
       if (response.status != HttpStatusCode.Ok) {
         // console.log("shit's fucked up")
-        setErrorMessage("Something Went Wrong");
+        setErrorMessage("Signup Unsuccessful. Check Fields and Try Again.");
         return;
       } else {
         // console.log("shit's not fucked up maybe?")
-        setErrorMessage("SignUp Successful");
+        setErrorMessage("Signup Successful");
         // const data = new URLSearchParams();
         // data.append("name", firstName + " " + lastName);
         // data.append("password", password);

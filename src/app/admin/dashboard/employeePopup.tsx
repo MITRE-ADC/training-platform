@@ -384,7 +384,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
             </Table>
             <div className="h-2"></div>
             <div className="flex items-end justify-between">
-              <H2>Employee Courses</H2>
+              <H2>Employee Assignments</H2>
               <CourseSelectorPopup
                 title="Modify Courses"
                 data={courseData}

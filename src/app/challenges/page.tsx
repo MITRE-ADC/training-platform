@@ -47,6 +47,21 @@ const frameworks = [
   { value: "Due Last", label: "Due Last" },
 ];
 
+export function UserDropdown({ user }: { user?: { name: string } }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="text-lg cursor-pointer">
+        {user ? user.name : "Guest"}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem>Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export default function ChallengeHomepage() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(frameworks[0].value);
