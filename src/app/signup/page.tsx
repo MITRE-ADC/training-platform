@@ -60,7 +60,7 @@ export default function SignUpPage() {
     }
 
     // Checking the password
-    const passwordRegex = new RegExp("^(?=.*[A-Z])(?=.*[W_]).{8,}$");
+    const passwordRegex = new RegExp("^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
     const passwordValid = passwordRegex.test(password);
 
     if (password !== confirmPassword) {

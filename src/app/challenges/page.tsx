@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CourseList, SubmitModal } from "./courseList";
+import { CourseList, WebGoatCredentialPopup } from "./courseList";
 import { Input } from "@/components/ui/input";
 import { H1, H2, H3, P } from "@/components/ui/custom/text";
 import {
@@ -338,18 +338,28 @@ export default function ChallengeHomepage() {
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
                   <DropdownMenu>
+            
                     <DropdownMenuTrigger className="cursor-pointer text-lg">
+                      <div className="flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                       {user ? user.name : ""}
+                      </div>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white text-black shadow-md">
+                    <DropdownMenuContent className="bg-white text-black shadow-md z-50 mr-20">
                       {" "}
                       {/* Ensure solid background */}
-                      <DropdownMenuItem>WebGoat Credentials</DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onSelect={() => setCredentialsDialogOpen(true)}>
+                        <div className = "flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
+                        WebGoat Credentials
+                        </div>
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onSelect={onLogout}
                         className="text-red-500 cursor-pointer"
                       >
+                        <div className = "flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                         Logout
+                        </div>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -433,7 +443,7 @@ export default function ChallengeHomepage() {
                   >
                     <DialogContent>
                       <DialogHeader>
-                        <SubmitModal />
+                        <WebGoatCredentialPopup user={user as User}/>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>
@@ -450,6 +460,7 @@ export default function ChallengeHomepage() {
           </div>
         </div>
       </div>
+      D
     </div>
   );
 }

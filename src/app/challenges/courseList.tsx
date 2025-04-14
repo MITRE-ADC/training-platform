@@ -22,113 +22,52 @@ import {
 } from "./courseServer";
 import { User } from "@/db/schema";
 
-export function SubmitModal() {
-  // TODO: consider switching to zod for form validation
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({
-    username: false,
-    password: false,
-  });
-  const [errorMessage, setErrorMessage] = useState("");
+export function WebGoatCredentialPopup ({
+  user,
+} : {
+  user: User;
+}) {
 
-  const handleSignIn = async () => {
-    const errors = {
-      username: false,
-      password: false,
-    };
-
-    if (!username) errors.username = true;
-    if (!password) errors.password = true;
-
-    setFieldErrors(errors);
-
-    if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields.");
-      return;
-    }
-    if (password.length < 6 || password.length > 10) {
-      setErrorMessage("Password must be between 6 and 10 characters.");
-      setFieldErrors({ ...errors, password: true });
-      return;
-    }
-    if (username.length < 6 || username.length > 45) {
-      setErrorMessage("Username must be between 6 and 45 characters.");
-      setFieldErrors({ ...errors, username: true });
-      return;
-    }
-
-    if (/[^a-z0-9\-]/.test(username)) {
-      setErrorMessage(
-        "Username must only contain lowercase letters, numbers, and hyphens."
-      );
-      setFieldErrors({ ...errors, username: true });
-      return;
-    }
-
-    await axios.get(req("api/auth")).then(async (r) => {
-      const updateRes = await updateWebgoatUserCredentialsAndData(
-        username,
-        password
-      );
-      if (updateRes) {
-        // indicates error
-        console.error(updateRes);
-        setErrorMessage(updateRes);
-        return;
-      } else setErrorMessage("success!");
-    });
-
-    setErrorMessage("");
-  };
+  function openWG(){
+    const url = `http://localhost:8090/WebGoat/login`;
+    window.open(url);
+  }
 
   return (
     <div>
       <VisuallyHidden>
-        <DialogDescription>WebGoat login</DialogDescription>
+        <DialogDescription>WebGoat Credentials</DialogDescription>
       </VisuallyHidden>
-      <DialogTitle>WebGoat Login</DialogTitle>
-      <div className="pb-2 text-sm text-red">
-        Something went wrong; we couldn&apos;t access your WebGoat account.
-      </div>
+      <DialogTitle>WebGoat Credentials</DialogTitle>
       <div className="pb-2 text-sm text-muted-foreground">
-        If you haven&apos;t made a WebGoat account, do so; then, input your
-        WebGoat credentials here:
       </div>
-      <div className="flex gap-4">
-        <Input
-          className={`mb-4 py-6 text-lg ${fieldErrors.username ? "border-2 border-red" : ""}`}
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </div>
-      <div className="flex gap-4">
-        <Input
-          className={`mb-4 py-6 text-lg ${fieldErrors.password ? "border-2 border-red" : ""}`}
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      {errorMessage && <div className="mb-4 text-red">{errorMessage}</div>}
-      <div className="flex space-x-2">
-        <Button
-          className="w-1/2 rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600"
-          onClick={handleSignIn}
-        >
-          Submit
+      <div className="pb-2 flex space-x-2">
+        <Button onClick={() => openWG()}>
+          To access WebGoat, click here
         </Button>
-        <DialogClose asChild>
-          <Button className="w-1/2 rounded-md bg-slate-400 px-16 py-5 text-sm text-white hover:bg-slate-300">
-            Close
-          </Button>
-        </DialogClose>
+      </div>
+      <div className="mb-4">
+      <label className="text-sm font-medium text-foreground">Username</label>
+      <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
+        <code>{user.webgoatusername}</code>
       </div>
     </div>
+
+    <div className="mb-4">
+      <label className="text-sm font-medium text-foreground">Password</label>
+      <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
+        <code>{user.webgoatpassword}</code>
+      </div>
+    </div>
+
+    <div className="flex space-x-2">
+      <DialogClose asChild>
+        <Button className="w-full rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600">
+          Close
+        </Button>
+      </DialogClose>
+    </div>
+  </div>
   );
 }
 
@@ -208,7 +147,6 @@ export function CourseList({
                       </div>
                       <div className="flex flex-col items-end space-y-2">
                         <Button
-                          // onClick={linkToLesson(assignmentIndex)}
                           onClick={() => linkToLesson(assignmentIndex)}
                           className="w-32 rounded-md bg-blue px-16 py-5 text-sm text-white hover:bg-slate-300"
                         >
