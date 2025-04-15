@@ -460,7 +460,6 @@ export default function ChallengeHomepage() {
           </div>
         </div>
       </div>
-      D
     </div>
   );
 }

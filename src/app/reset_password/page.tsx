@@ -4,26 +4,33 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { HttpStatusCode } from "axios";
 
 export default function SignUpPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const [fieldErrors, setFieldErrors] = useState({
+    email: false,
     code: false,
     password: false,
     confirmPassword: false,
   });
 
-  const handleReset = () => {
+  const handleReset = async () => {
     const errors = {
+      email: false,
       code: false,
       password: false,
       confirmPassword: false,
     };
 
+    if (!email) errors.email = true;
     if (!code) errors.code = true;
     if (!password) errors.password = true;
     if (!confirmPassword) errors.confirmPassword = true;
@@ -31,16 +38,47 @@ export default function SignUpPage() {
     setFieldErrors(errors);
 
     if (Object.values(errors).includes(true)) {
-      setErrorMessage("Please fill out all required fields");
+      setErrorMessage("Please fill out all required fields.");
       return;
     }
 
+    const passwordRegex = new RegExp("^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
+    const passwordValid = passwordRegex.test(password);
+
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
+      setErrorMessage("The two passwords do not match.");
 
       setFieldErrors({ ...errors, password: true, confirmPassword: true });
+    } else if (!passwordValid) {
+      setErrorMessage(
+        "Password Must Contain: At Least 8 Characters, 1 Uppercase, 1 Special Character."
+      );
     } else {
-      setErrorMessage("");
+      const response = await fetch("/api/auth/reset_password/reset_password", {
+        method: "POST",
+        body: JSON.stringify({ 
+          email: email ,
+          code: code,
+          password: password
+        }),
+      });
+
+      if (response.status == HttpStatusCode.BadRequest) {
+        setErrorMessage("Incorrect code. Contact your admin to get the code.");
+        return;
+      }
+
+      if (response.status == HttpStatusCode.UnprocessableEntity) {
+        setErrorMessage("The code is expired. Go back to the previous page to regenerate a new code.");
+        return;
+      }
+
+      if (response.status == HttpStatusCode.InternalServerError) {
+        setErrorMessage("Reset Password Failed");
+        return;
+      }
+
+      router.push("signin");
     }
   };
 
@@ -53,8 +91,17 @@ export default function SignUpPage() {
         <CardContent>
           <div className="flex gap-4">
             <Input
+              className={`mb-4 ${fieldErrors.email ? "border-customRed border-2" : ""}`}
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="flex gap-4">
+            <Input
               className={`mb-4 ${fieldErrors.code ? "border-customRed border-2" : ""}`}
-              placeholder="Code"
+              placeholder="Code (get this code from the system admin)"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
@@ -94,7 +141,7 @@ export default function SignUpPage() {
       <p>
         Back to{" "}
         <a href="/signin">
-          <b>sign in</b>
+          <b>Sign In</b>
         </a>
       </p>
     </div>

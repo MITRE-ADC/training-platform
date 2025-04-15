@@ -14,6 +14,8 @@ import {
   statusEnumSchema,
   AddUserCourse,
   User,
+  temporary_codes,
+  AddTemporaryCode,
 } from "./schema";
 import {
   CHECK_ADMIN,
@@ -98,6 +100,12 @@ export async function userEmailExists(email: string) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
     if (error instanceof NextResponse) return error;
   }
+  return exists;
+}
+
+export async function userEmailExistsNoAuth(email: string) {
+  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
+
   return exists;
 }
 
@@ -672,6 +680,13 @@ export async function getUserByName(user_name: string) {
   return { ...userFields };
 }
 
+export async function updateUserPassword(user_email: string, new_password: string) {
+  await db
+    .update(users)
+    .set({ pass: new_password })
+    .where(eq(users.email, user_email));
+}
+
 // export async function getUserIDByEmail(user_email: string) {
 //   // const { id, pass, ...userFields } = (
 //   const { user_id } = (
@@ -768,4 +783,14 @@ export async function addAssignment(assignment: AddAssignment) {
   if (err) return err;
 
   return await db.insert(assignments).values(assignment).returning();
+}
+
+export async function addCode(temporary_code: AddTemporaryCode) {
+  return await db.insert(temporary_codes).values(temporary_code).returning();
+}
+
+export async function getCode(email: string) {
+  const arr = await db.select().from(temporary_codes).where(eq(temporary_codes.user_email, email));
+  return arr[arr.length - 1]; // There might be more than one code associated with the same email; we only want the latest one
+  // eventually we'll want a cleanup method which deletes all expired code.
 }

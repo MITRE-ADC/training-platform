@@ -114,3 +114,18 @@ const sessionTable = pgTable("session", {
     mode: "date",
   }).notNull(),
 });
+
+export const temporary_codes = pgTable("temporary_codes", {
+  code_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_email: varchar({ length: 255 })
+    .notNull()
+    .references(() => users.email),
+  code: varchar({ length: 6 })
+    .notNull(),
+  expiration_time: timestamp("expiration_time")
+    .notNull()
+})
+
+export const selectTemporaryCodesSchema = createSelectSchema(temporary_codes);
+export type Temporary_Code = z.infer<typeof selectTemporaryCodesSchema>;
+export type AddTemporaryCode = Omit<Temporary_Code, "code_id">;

@@ -4,21 +4,23 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { HttpStatusCode } from "axios";
+import { useRouter } from "next/navigation";
 
 export default function RecoverPasswordPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [fieldErrors, setFieldErrors] = useState({
     email: false,
   });
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleReset = () => {
+  const handleReset = async () => {
     const errors = {
       email: false,
     };
 
     if (!email) errors.email = true;
-
     setFieldErrors(errors);
 
     if (Object.values(errors).includes(true)) {
@@ -26,7 +28,21 @@ export default function RecoverPasswordPage() {
       return;
     }
 
-    setErrorMessage("");
+    const response = await fetch("/api/auth/reset_password/check_email", {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+    });
+
+    if (response.status == HttpStatusCode.NotFound) {
+      setErrorMessage("Email not found.")
+      return;
+    }
+    if (response.status != HttpStatusCode.Ok) {
+      setErrorMessage("Temporary Code Generation Failed.")
+      return;
+    }
+
+    router.push("/reset_password")
   };
 
   return (
@@ -58,7 +74,7 @@ export default function RecoverPasswordPage() {
       <p>
         Back to{" "}
         <a href="/signin">
-          <b>sign in</b>
+          <b>Sign In</b>
         </a>
       </p>
     </div>

@@ -55,6 +55,13 @@ CREATE TABLE Accounts (
     session_state TEXT
 );
 
+CREATE TABLE Temporary_Codes (
+    code_id SERIAL PRIMARY KEY,
+    user_email VARCHAR(255) REFERENCES Users(email) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    expiration_time TIMESTAMP NOT NULL
+);
+
 INSERT INTO Courses(course_name) VALUES ('NONE COURSE');
 INSERT INTO Users(name, email, pass, webgoatusername, webgoatpassword) 
     VALUES ('Admin', 'admin@mitre.com', 'changeme', 'adminn', 'changeme');
