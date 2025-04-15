@@ -120,11 +120,9 @@ export const temporary_codes = pgTable("temporary_codes", {
   user_email: varchar({ length: 255 })
     .notNull()
     .references(() => users.email),
-  code: varchar({ length: 6 })
-    .notNull(),
-  expiration_time: timestamp("expiration_time")
-    .notNull()
-})
+  code: varchar({ length: 6 }).notNull(),
+  expiration_time: timestamp("expiration_time").notNull(),
+});
 
 export const selectTemporaryCodesSchema = createSelectSchema(temporary_codes);
 export type Temporary_Code = z.infer<typeof selectTemporaryCodesSchema>;

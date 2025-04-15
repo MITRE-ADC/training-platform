@@ -34,15 +34,15 @@ export default function RecoverPasswordPage() {
     });
 
     if (response.status == HttpStatusCode.NotFound) {
-      setErrorMessage("Email not found.")
+      setErrorMessage("Email not found.");
       return;
     }
     if (response.status != HttpStatusCode.Ok) {
-      setErrorMessage("Temporary Code Generation Failed.")
+      setErrorMessage("Temporary Code Generation Failed.");
       return;
     }
 
-    router.push("/reset_password")
+    router.push("/reset_password");
   };
 
   return (

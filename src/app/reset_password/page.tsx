@@ -56,10 +56,10 @@ export default function SignUpPage() {
     } else {
       const response = await fetch("/api/auth/reset_password/reset_password", {
         method: "POST",
-        body: JSON.stringify({ 
-          email: email ,
+        body: JSON.stringify({
+          email: email,
           code: code,
-          password: password
+          password: password,
         }),
       });
 
@@ -69,7 +69,9 @@ export default function SignUpPage() {
       }
 
       if (response.status == HttpStatusCode.UnprocessableEntity) {
-        setErrorMessage("The code is expired. Go back to the previous page to regenerate a new code.");
+        setErrorMessage(
+          "The code is expired. Go back to the previous page to regenerate a new code."
+        );
         return;
       }
 

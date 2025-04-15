@@ -104,7 +104,9 @@ export async function userEmailExists(email: string) {
 }
 
 export async function userEmailExistsNoAuth(email: string) {
-  const exists = (await db.$count(db.select().from(users).where(eq(users.email, email)))) > 0;
+  const exists =
+    (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
+    0;
 
   return exists;
 }
@@ -680,7 +682,10 @@ export async function getUserByName(user_name: string) {
   return { ...userFields };
 }
 
-export async function updateUserPassword(user_email: string, new_password: string) {
+export async function updateUserPassword(
+  user_email: string,
+  new_password: string
+) {
   await db
     .update(users)
     .set({ pass: new_password })
@@ -790,7 +795,10 @@ export async function addCode(temporary_code: AddTemporaryCode) {
 }
 
 export async function getCode(email: string) {
-  const arr = await db.select().from(temporary_codes).where(eq(temporary_codes.user_email, email));
+  const arr = await db
+    .select()
+    .from(temporary_codes)
+    .where(eq(temporary_codes.user_email, email));
   return arr[arr.length - 1]; // There might be more than one code associated with the same email; we only want the latest one
   // eventually we'll want a cleanup method which deletes all expired code.
 }

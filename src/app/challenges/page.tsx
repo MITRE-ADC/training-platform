@@ -338,27 +338,27 @@ export default function ChallengeHomepage() {
                 <div className="flex justify-between">
                   <H1>Dashboard</H1>
                   <DropdownMenu>
-            
                     <DropdownMenuTrigger className="cursor-pointer text-lg">
-                      <div className="flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
-                      {user ? user.name : ""}
+                      <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                        {user ? user.name : ""}
                       </div>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white text-black shadow-md z-50 mr-20">
+                    <DropdownMenuContent className="z-50 mr-20 bg-white text-black shadow-md">
                       {" "}
                       {/* Ensure solid background */}
-                      <DropdownMenuItem 
-                        onSelect={() => setCredentialsDialogOpen(true)}>
-                        <div className = "flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
-                        WebGoat Credentials
+                      <DropdownMenuItem
+                        onSelect={() => setCredentialsDialogOpen(true)}
+                      >
+                        <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                          WebGoat Credentials
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onSelect={onLogout}
                         className="text-red-500 cursor-pointer"
                       >
-                        <div className = "flex p-2 items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
-                        Logout
+                        <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                          Logout
                         </div>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -443,7 +443,7 @@ export default function ChallengeHomepage() {
                   >
                     <DialogContent>
                       <DialogHeader>
-                        <WebGoatCredentialPopup user={user as User}/>
+                        <WebGoatCredentialPopup user={user as User} />
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>

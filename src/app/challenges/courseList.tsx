@@ -22,13 +22,8 @@ import {
 } from "./courseServer";
 import { User } from "@/db/schema";
 
-export function WebGoatCredentialPopup ({
-  user,
-} : {
-  user: User;
-}) {
-
-  function openWG(){
+export function WebGoatCredentialPopup({ user }: { user: User }) {
+  function openWG() {
     const url = `http://localhost:8090/WebGoat/login`;
     window.open(url);
   }
@@ -39,35 +34,32 @@ export function WebGoatCredentialPopup ({
         <DialogDescription>WebGoat Credentials</DialogDescription>
       </VisuallyHidden>
       <DialogTitle>WebGoat Credentials</DialogTitle>
-      <div className="pb-2 text-sm text-muted-foreground">
-      </div>
-      <div className="pb-2 flex space-x-2">
-        <Button onClick={() => openWG()}>
-          To access WebGoat, click here
-        </Button>
+      <div className="pb-2 text-sm text-muted-foreground"></div>
+      <div className="flex space-x-2 pb-2">
+        <Button onClick={() => openWG()}>To access WebGoat, click here</Button>
       </div>
       <div className="mb-4">
-      <label className="text-sm font-medium text-foreground">Username</label>
-      <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
-        <code>{user.webgoatusername}</code>
+        <label className="text-sm font-medium text-foreground">Username</label>
+        <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
+          <code>{user.webgoatusername}</code>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="text-sm font-medium text-foreground">Password</label>
+        <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
+          <code>{user.webgoatpassword}</code>
+        </div>
+      </div>
+
+      <div className="flex space-x-2">
+        <DialogClose asChild>
+          <Button className="w-full rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600">
+            Close
+          </Button>
+        </DialogClose>
       </div>
     </div>
-
-    <div className="mb-4">
-      <label className="text-sm font-medium text-foreground">Password</label>
-      <div className="mt-1 rounded-md bg-gray-100 px-4 py-3 text-lg text-foreground">
-        <code>{user.webgoatpassword}</code>
-      </div>
-    </div>
-
-    <div className="flex space-x-2">
-      <DialogClose asChild>
-        <Button className="w-full rounded-md bg-slate-800 px-16 py-5 text-sm text-white hover:bg-slate-600">
-          Close
-        </Button>
-      </DialogClose>
-    </div>
-  </div>
   );
 }
 
