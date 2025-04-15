@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, lt } from "drizzle-orm";
 import { db } from "./index";
 import {
   users,
@@ -800,5 +800,14 @@ export async function getCode(email: string) {
     .from(temporary_codes)
     .where(eq(temporary_codes.user_email, email));
   return arr[arr.length - 1]; // There might be more than one code associated with the same email; we only want the latest one
-  // eventually we'll want a cleanup method which deletes all expired code.
+}
+
+export async function clearExpiredCodes() {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
+  const now = new Date();
+  return await db
+    .delete(temporary_codes)
+    .where(lt(temporary_codes.expiration_time, now));
 }
