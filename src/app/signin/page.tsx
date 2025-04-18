@@ -114,7 +114,7 @@ export default function SignInPage() {
             <p className="text-customRed mb-4 text-lg">{errorMessage}</p>
           )}
           <div className="mt-1">
-            <a className="text-lg" href="/recover_password">
+            <a className="text-lg font-bold" href="/recover_password">
               Forgot Password?
             </a>
           </div>

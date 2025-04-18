@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { HttpStatusCode } from "axios";
+import { ArrowLeft } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -87,6 +88,15 @@ export default function SignUpPage() {
   return (
     <div className="absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center">
       <Card className="mb-4 text-left">
+        <Button
+          variant={"ghost"}
+          className="ml-2 mt-2"
+          onClick={() => router.push("/recover_password")}
+        >
+          <ArrowLeft size={16} className="mr-4" />
+          Back to Email Entry
+        </Button>
+
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
         </CardHeader>

@@ -14,6 +14,7 @@ import axios from "axios";
 import { req } from "@/lib/utils";
 import { User } from "@/db/schema";
 import { removeAllListeners } from "process";
+import { Button } from "@/components/ui/button";
 
 interface analysisInterface {
   user_id: string;
@@ -99,6 +100,14 @@ const columns: ColumnDef<employeeOverview>[] = [
   {
     id: "expand",
     cell: ({ row }) => <EmployeePopup employeeId={row.original.id} />,
+  },
+  {
+    id: "remove",
+    cell: ({ row }) => (
+      <Button className="text-darkLight" variant="outline">
+        <i className="ri-delete-bin-5-line ri-1x"></i>
+      </Button>
+    ),
   },
 ];
 

@@ -8,9 +8,20 @@ import { AdvancedDashboardFilters } from "./advFilters";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
+import axios from "axios";
+import { User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import ValidationCodesPopup from "./validation-codes-popup";
 
 export default function AdminDashBoard() {
   const [searchFilter, setSearchFilter] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const search = useRef<HTMLInputElement | null>(null);
 
   const [advFilterReq, setAdvFilterReq] = useState<
@@ -22,6 +33,19 @@ export default function AdminDashBoard() {
 
     setSearchFilter(search.current.value);
   }
+
+  const onLogout = async () => {
+    try {
+      const response = await axios.post("api/auth/signout");
+
+      if (response.status === 200) {
+        console.log("Successfully signed out");
+        window.location.href = "/signin"; // Change as needed
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div>
@@ -44,7 +68,7 @@ export default function AdminDashBoard() {
             <TabsList className="flex h-12 items-start justify-between gap-2 rounded-none bg-white p-0">
               <TabsTrigger
                 value="employees"
-                className="data-[state=active]:tab-selected data-[state=inactive]:tab-unselected"
+                className="data-[state=active]:tab-selected data-[state=inactive]:tab-unselected cursor-default"
               >
                 <H3>Manage Employees</H3>
               </TabsTrigger>
@@ -58,7 +82,37 @@ export default function AdminDashBoard() {
             <div className="flex-grow border-[2px] border-highlight shadow-md">
               <TabsContent value="employees" className="h-full">
                 <div className="flex h-full w-full flex-col px-16 py-12">
-                  <H2>Manage Employees</H2>
+                  <div className="flex items-center justify-between">
+                    <H2>Manage Employees</H2>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="cursor-pointer text-lg">
+                        <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                          <User className="mr-2 text-darkLight" size={16} />
+                          <span className="text-sm text-darkLight">
+                            Profile
+                          </span>
+                        </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="z-50 mr-20 rounded-md bg-white text-black shadow-md">
+                        <DropdownMenuItem
+                          onSelect={onLogout}
+                          className="text-red-500 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-start p-2">
+                            Logout
+                          </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={() => setIsDialogOpen(true)}
+                          className="text-red-500 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-start p-2">
+                            See validation codes
+                          </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <div className="flex items-center justify-between">
                     <div className="mb-5 mt-4 flex w-[405px] items-center justify-start rounded-md border-[1px] border-highlight2 shadow-md">
                       <span className="ri-search-line ri-lg ml-4 text-[#73737B]"></span>
@@ -121,6 +175,15 @@ export default function AdminDashBoard() {
                       setSearchFilter={setSearchFilter}
                       filter={advFilterReq}
                     />
+                  </div>
+                  <div className="h-full">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogContent className="z-50 min-w-fit">
+                        <DialogHeader>
+                          <ValidationCodesPopup />
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               </TabsContent>
