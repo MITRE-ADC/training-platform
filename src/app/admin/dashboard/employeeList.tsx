@@ -103,9 +103,11 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     id: "remove",
-    cell: ({ row }) => <Button className="text-darkLight" variant="outline">
-      <i className="ri-delete-bin-5-line ri-1x"></i>
-    </Button>,
+    cell: ({ row }) => (
+      <Button className="text-darkLight" variant="outline">
+        <i className="ri-delete-bin-5-line ri-1x"></i>
+      </Button>
+    ),
   },
 ];
 
