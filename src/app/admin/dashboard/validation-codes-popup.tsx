@@ -17,7 +17,9 @@ type ValidationCode = {
 };
 
 const ValidationCodesPopup = () => {
-  const [validationCodes, setValidationCodes] = React.useState<ValidationCode[]>([]);
+  const [validationCodes, setValidationCodes] = React.useState<
+    ValidationCode[]
+  >([]);
   const [loading, setLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
 
@@ -36,7 +38,7 @@ const ValidationCodesPopup = () => {
 
       setValidationCodes(parsedData);
     } catch (err) {
-      setErrorMessage("Failed to fetch codes.")
+      setErrorMessage("Failed to fetch codes.");
     } finally {
       setLoading(false);
     }
@@ -44,16 +46,15 @@ const ValidationCodesPopup = () => {
 
   const handleDelete = async () => {
     const resp = await fetch("/api/auth/reset_password/clear_codes", {
-      method: "DELETE"
-    })
+      method: "DELETE",
+    });
 
     if (resp.status != HttpStatusCode.Ok) {
-      setErrorMessage("An error occurred while clearing the expired codes.")
+      setErrorMessage("An error occurred while clearing the expired codes.");
     }
 
     setLoading(true);
     await fetchCodes();
-
   };
 
   React.useEffect(() => {
@@ -79,9 +80,7 @@ const ValidationCodesPopup = () => {
         </Button>
       </div>
 
-      {errorMessage && (
-        <p className="text-customRed mb-4">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-customRed mb-4">{errorMessage}</p>}
 
       <div className="my-2 overflow-hidden rounded-md border border-gray-300">
         <table className="w-full">
@@ -97,7 +96,7 @@ const ValidationCodesPopup = () => {
           <tbody className="text-base text-darkLight">
             {loading ? (
               <tr>
-                <td colSpan={3} className="text-center py-4">
+                <td colSpan={3} className="py-4 text-center">
                   Loading...
                 </td>
               </tr>
@@ -106,17 +105,13 @@ const ValidationCodesPopup = () => {
                 const isExpired = new Date(code.expiration_time) < new Date();
 
                 const cellClass = `border-b border-gray-300 px-6 py-1 ${
-                  isExpired ? "text-red": ""
-                }`
+                  isExpired ? "text-red" : ""
+                }`;
 
                 return (
                   <tr key={index}>
-                    <td className={cellClass}>
-                      {code.user_email}
-                    </td>
-                    <td className={cellClass}>
-                      {code.code}
-                    </td>
+                    <td className={cellClass}>{code.user_email}</td>
+                    <td className={cellClass}>{code.code}</td>
                     <td className={cellClass}>
                       {new Date(code.expiration_time).toLocaleString()}
                     </td>
