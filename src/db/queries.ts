@@ -822,3 +822,24 @@ export async function clearExpiredCodes() {
     .delete(temporary_codes)
     .where(lt(temporary_codes.expiration_time, now));
 }
+
+export async function getCurrentCodes() {
+  const err = await CHECK_ADMIN();
+  if (err) return err;
+
+  const data = (
+    await db.execute(
+      `
+      SELECT DISTINCT ON (user_email)
+      user_email,
+      code,
+      expiration_time
+      FROM temporary_codes
+      ORDER BY user_email, expiration_time DESC
+    `
+    )
+  ).rows;
+
+  console.log(data);
+  return data;
+}
