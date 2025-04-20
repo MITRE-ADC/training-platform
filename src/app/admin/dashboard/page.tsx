@@ -34,8 +34,8 @@ export default function AdminDashBoard() {
     setSearchFilter(search.current.value);
   }
 
-
-  const onLogout = async () => { // ASK WILL TO IMPLEMENT A LOGOUT BUTTON HERE! 
+  const onLogout = async () => {
+    // ASK WILL TO IMPLEMENT A LOGOUT BUTTON HERE!
     try {
       const response = await axios.post("api/auth/signout");
 
@@ -47,7 +47,6 @@ export default function AdminDashBoard() {
       console.error("Logout failed:", error);
     }
   };
-    
 
   return (
     <div>

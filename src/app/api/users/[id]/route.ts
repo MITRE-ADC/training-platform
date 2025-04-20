@@ -5,7 +5,12 @@ import {
   CHECK_UNAUTHORIZED_BY_UID,
 } from "../../auth";
 import { NextRequest, NextResponse } from "next/server";
-import { deleteAllFromUser, getCompleteUser, getUser, userIdExists } from "@/db/queries";
+import {
+  deleteAllFromUser,
+  getCompleteUser,
+  getUser,
+  userIdExists,
+} from "@/db/queries";
 import { error, processCreateUserRequest, processUpdateUser } from "../../util";
 import { User } from "@/db/schema";
 import { deleteUser } from "@/app/admin/dashboard/dashboardServer";
@@ -75,21 +80,18 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user_id = (await context.params).id
+    const user_id = (await context.params).id;
     const exists = await userIdExists(user_id);
     if (exists instanceof NextResponse) {
       console.log("user id doesn't exist");
       return exists;
     }
     // IMPLEMENT IN QUERIES
-    await deleteAllFromUser(user_id)
-    return NextResponse.json(
-      {
-        status: HttpStatusCode.Ok,
-      }
-    );
-
-  } catch (e){
+    await deleteAllFromUser(user_id);
+    return NextResponse.json({
+      status: HttpStatusCode.Ok,
+    });
+  } catch (e) {
     return NextResponse.json(
       {
         message: `Error: ${e}\n`,
