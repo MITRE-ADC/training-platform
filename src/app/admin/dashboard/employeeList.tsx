@@ -15,6 +15,7 @@ import { req } from "@/lib/utils";
 import { User } from "@/db/schema";
 import { removeAllListeners } from "process";
 import { Button } from "@/components/ui/button";
+import { deleteUser } from "./dashboardServer";
 
 interface analysisInterface {
   user_id: string;
@@ -103,7 +104,7 @@ const columns: ColumnDef<employeeOverview>[] = [
   },
   {
     id: "remove",
-    cell: ({ row }) => <Button className="text-darkLight" variant="outline">
+    cell: ({ row }) => <Button onClick={() => deleteUser(row.original.id)} className="text-darkLight" variant="outline">
       <i className="ri-delete-bin-5-line ri-1x"></i>
     </Button>,
   },

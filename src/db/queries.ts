@@ -79,9 +79,20 @@ export async function updateUser(user: Omit<User, "pass">) {
 //     .where(eq(users.user_id, user.user_id));
 // }
 
-// export async function deleteUser(id: number) {
-//   return await db.delete(users).where(eq(users.user_id, id));
-// }
+export async function deleteAllFromUser(id: string) {
+  try {
+    
+    await db.delete(user_assignments).where(eq(user_assignments.user_id, id));
+    await db.delete(user_courses).where(eq(user_courses.user_id, id));
+    // REMEMBER TO UNCOMMENT THIS FOR PASSWORD RESET -> SESSION TABLE
+    // await db.delete(sessionTable).where(eq(sessionTable.userId, user_id)); 
+    return await db.delete(users).where(eq(users.id, id));
+
+  } catch (ex) {
+    console.error('Error deleting user:', ex);
+    return false;
+  }
+}
 
 export async function userIdExists(id: string) {
   const err = await CHECK_SESSION();

@@ -8,6 +8,7 @@ import { AdvancedDashboardFilters } from "./advFilters";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 export default function AdminDashBoard() {
   const [searchFilter, setSearchFilter] = useState<string>("");
@@ -22,6 +23,21 @@ export default function AdminDashBoard() {
 
     setSearchFilter(search.current.value);
   }
+
+
+  const onLogout = async () => { // ASK WILL TO IMPLEMENT A LOGOUT BUTTON HERE! 
+    try {
+      const response = await axios.post("api/auth/signout");
+
+      if (response.status === 200) {
+        console.log("Successfully signed out");
+        window.location.href = "/signin"; // Change as needed
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+    
 
   return (
     <div>

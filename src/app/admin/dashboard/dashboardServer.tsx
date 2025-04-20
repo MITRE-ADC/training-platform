@@ -14,6 +14,14 @@ export async function updateUser(id: string, email: string, name: string) {
   );
 }
 
+export async function deleteUser(user_id: string){
+  await axios.delete(req(`api/users/${user_id}/`), 
+  { params : {user_id : user_id}}
+
+
+  ).catch((e) => console.log(e.data));
+}
+
 export async function assignCourse(user_id: string, course_id: string) {
   const d = new Date();
   d.setMonth(d.getMonth() + 1);
