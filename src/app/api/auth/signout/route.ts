@@ -8,7 +8,9 @@ export async function POST() {
   try {
     deleteJwtCookie(); // Function to remove JWT cookie
     const cookieStore = cookies();
+
     const sessionCookie = cookieStore.get("webgoat-session")?.value ?? "";
+    console.log("webgoatSessionCookie: ", sessionCookie);
     logout_user(sessionCookie);
 
     console.log("Signed out");
