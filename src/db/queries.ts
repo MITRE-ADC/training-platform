@@ -660,8 +660,7 @@ export async function checkUserPassword(
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  /* REMOVE THIS WHEN HANDING OFF*/
-  if (user_email === "admin@mitre.com") {
+  if (user_email == process.env.ADMIN_USER_EMAIL) {
     return user.pass === user_password;
   } else {
     return await bcrypt.compare(user_password, user.pass);
