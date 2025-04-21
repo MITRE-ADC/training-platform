@@ -115,7 +115,7 @@ export default function AdminDashBoard() {
                           className="text-red-500 cursor-pointer"
                         >
                           <div className="flex items-center justify-start p-2">
-                            See validation codes
+                            See Validation Codes
                           </div>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -143,11 +143,18 @@ export default function AdminDashBoard() {
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogTitle>Instructions</DialogTitle>
                             <DialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete your account and remove your
-                              data from our servers. lorem
+                              This is where you will assign courses to users and monitor their progress.
+                              <br/><br/>
+                              You can assign a course to a user by clicking &quot;Expand&quot;, then &quot;Modify Courses&quot;. Assign the relevant courses to the user, then click &quot;Submit Changes&quot;.
+                              <br/><br/>
+                              You can adjust the due dates for individual courses by going back into the &quot;Modify Courses&quot; menu and clicking the pencil icon underneath each course name.
+                              <br/><br/>
+                              You can delete users by clicking the trash icon, but this deletion is permanent and cannot be undone.
+                              <br/><br/>
+                              When a user needs to reset their password, they will ask you (the admin) for the validation code. This can be found by clicking the &quot;Profile&quot; button, then &quot;See Validation Codes&quot;. Once the codes are generated, they will expire in one day, and will turn red once they are expired. Expired codes can be cleared by clicking the &quot;Clear Expired Codes&quot; button.
+
                             </DialogDescription>
                           </DialogHeader>
                         </DialogContent>
