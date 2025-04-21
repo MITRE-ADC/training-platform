@@ -16,7 +16,14 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 import axios from "axios";
 import { User } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import ValidationCodesPopup from "./validation-codes-popup";
 
 export default function AdminDashBoard() {
@@ -130,10 +137,7 @@ export default function AdminDashBoard() {
                     <div className="flex items-center gap-4">
                       <Dialog>
                         <DialogTrigger>
-                          <Button
-                            variant="outline"
-                            className="text-darkLight"
-                          >
+                          <Button variant="outline" className="text-darkLight">
                             <i className="ri-information-line ri-1x"></i>
                           </Button>
                         </DialogTrigger>
@@ -141,8 +145,9 @@ export default function AdminDashBoard() {
                           <DialogHeader>
                             <DialogTitle>Are you absolutely sure?</DialogTitle>
                             <DialogDescription>
-                              This action cannot be undone. This will permanently delete your account
-                              and remove your data from our servers. lorem
+                              This action cannot be undone. This will
+                              permanently delete your account and remove your
+                              data from our servers. lorem
                             </DialogDescription>
                           </DialogHeader>
                         </DialogContent>

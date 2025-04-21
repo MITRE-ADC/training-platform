@@ -32,7 +32,14 @@ import { CourseListData } from "./courseDefinitions";
 import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -376,27 +383,28 @@ export default function ChallengeHomepage() {
                   </div>
                   {/* This is the reload button that updates webgoat */}
                   <div className="mb-5 mt-4 flex gap-2">
-                  <Dialog>
-                    <DialogTrigger>
-                      <Button
-                        variant="outline"
-                        className="text-darkLight"
-                      >
-                        <i className="ri-information-line ri-1x"></i>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Instructions</DialogTitle>
-                        <DialogDescription>
-                          This is the WebGoat dashboard. Your admin will assign you courses and assignments, along with a due date for them.
-                          <br/>
-                          <br/>
-                          You can see your WebGoat credentials by clicking the &quot;Profile&quot; button and then &quot;WebGoat Credentials.&quot;
-                        </DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                      </Dialog>
+                    <Dialog>
+                      <DialogTrigger>
+                        <Button variant="outline" className="text-darkLight">
+                          <i className="ri-information-line ri-1x"></i>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Instructions</DialogTitle>
+                          <DialogDescription>
+                            This is the WebGoat dashboard. Your admin will
+                            assign you courses and assignments, along with a due
+                            date for them.
+                            <br />
+                            <br />
+                            You can see your WebGoat credentials by clicking the
+                            &quot;Profile&quot; button and then &quot;WebGoat
+                            Credentials.&quot;
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
                     <Button
                       variant="outline"
                       className="border-highlight2 text-darkLight"

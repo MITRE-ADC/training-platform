@@ -111,7 +111,7 @@ export default function EmployeeList({
       sortingFn: (_a, _b, _) => {
         const a = _a.getValue("tasks") as employeeTasks;
         const b = _b.getValue("tasks") as employeeTasks;
-  
+
         // sort by overdue, then todo, then completed
         if (a.overdue == b.overdue) {
           if (a.todo == b.todo) {
@@ -129,8 +129,10 @@ export default function EmployeeList({
       cell: ({ row }) => (
         <Button
           onClick={async () => {
-            await deleteUser(row.original.id)
-            setData(prev => prev.filter((employee) => employee.id !== row.original.id))
+            await deleteUser(row.original.id);
+            setData((prev) =>
+              prev.filter((employee) => employee.id !== row.original.id)
+            );
           }}
           className="text-darkLight"
           variant="outline"

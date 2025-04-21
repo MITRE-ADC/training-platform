@@ -83,7 +83,7 @@ export async function deleteAllFromUser(id: string) {
   try {
     await db.delete(user_assignments).where(eq(user_assignments.user_id, id));
     await db.delete(user_courses).where(eq(user_courses.user_id, id));
-    
+
     return await db.delete(users).where(eq(users.id, id));
   } catch (ex) {
     console.error("Error deleting user:", ex);
