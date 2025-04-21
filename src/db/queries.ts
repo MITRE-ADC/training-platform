@@ -83,12 +83,22 @@ export async function deleteAllFromUser(id: string) {
   try {
     await db.delete(user_assignments).where(eq(user_assignments.user_id, id));
     await db.delete(user_courses).where(eq(user_courses.user_id, id));
-    // REMEMBER TO UNCOMMENT THIS FOR PASSWORD RESET -> SESSION TABLE
-    // await db.delete(sessionTable).where(eq(sessionTable.userId, user_id));
+    const user_email = await getEmailFromId(id);
+
+    if (user_email) {
+      await db.delete(temporary_codes).where(eq(temporary_codes.user_email, user_email));
+    }
     return await db.delete(users).where(eq(users.id, id));
   } catch (ex) {
     console.error("Error deleting user:", ex);
     return false;
+  }
+}
+
+export async function getEmailFromId(id: string) {
+  if (await userIdExists(id)) {
+    const result = await db.select({ email: users.email }).from(users).where(eq(users.id, id)).limit(1);
+    return result[0]?.email ?? null;
   }
 }
 
