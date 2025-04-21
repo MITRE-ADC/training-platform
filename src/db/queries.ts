@@ -86,7 +86,9 @@ export async function deleteAllFromUser(id: string) {
     const user_email = await getEmailFromId(id);
 
     if (user_email) {
-      await db.delete(temporary_codes).where(eq(temporary_codes.user_email, user_email));
+      await db
+        .delete(temporary_codes)
+        .where(eq(temporary_codes.user_email, user_email));
     }
     return await db.delete(users).where(eq(users.id, id));
   } catch (ex) {
@@ -97,7 +99,11 @@ export async function deleteAllFromUser(id: string) {
 
 export async function getEmailFromId(id: string) {
   if (await userIdExists(id)) {
-    const result = await db.select({ email: users.email }).from(users).where(eq(users.id, id)).limit(1);
+    const result = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
     return result[0]?.email ?? null;
   }
 }
