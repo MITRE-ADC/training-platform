@@ -141,11 +141,9 @@ export default function SignUpPage() {
           </div>
           DO NOT SET YOUR PASSWORD TO BE THE SAME AS YOUR ACTUAL MITRE PASSWORD
           <br />
-
           {errorMessage && (
             <p className="text-customRed mb-4">{errorMessage}</p>
           )}
-
           <br />
           <Button className="w-full" onClick={handleReset}>
             Reset Password
