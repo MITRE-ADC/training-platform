@@ -3,8 +3,6 @@ CREATE TABLE Users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     pass VARCHAR(255) NOT NULL,
-    emailVerified TIMESTAMP,
-    image TEXT,
     webgoatusername VARCHAR(45) NOT NULL UNIQUE,
     webgoatpassword VARCHAR(10) NOT NULL
 );
@@ -38,20 +36,6 @@ CREATE TABLE User_Assignments (
     user_id TEXT REFERENCES Users(id),
     assignment_id int REFERENCES Assignments(assignment_id),
     completed BOOLEAN
-);
-
-CREATE TABLE Accounts (
-    userId TEXT REFERENCES Users(id) NOT NULL,
-    type TEXT NOT NULL,
-    provider TEXT NOT NULL,
-    providerAccountId TEXT NOT NULL,
-    refresh_token TEXT,
-    access_token TEXT,
-    expires_at INT,
-    token_type TEXT,
-    scope TEXT,
-    id_token TEXT,
-    session_state TEXT
 );
 
 CREATE TABLE Temporary_Codes (

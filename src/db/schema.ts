@@ -29,8 +29,6 @@ export const users = pgTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
   pass: varchar({ length: 255 }).notNull(),
-  emailVerified: timestamp("emailverified", { mode: "date" }),
-  image: text("image"),
   webgoatusername: varchar({ length: 45 }).notNull().unique(),
   webgoatpassword: varchar({ length: 10 }).notNull(),
 });
@@ -102,17 +100,6 @@ export const user_courses = pgTable("user_courses", {
 export const selectUserCoursesSchema = createSelectSchema(user_courses);
 export type User_Course = z.infer<typeof selectUserCoursesSchema>;
 export type AddUserCourse = Omit<User_Course, "user_course_id">;
-
-const sessionTable = pgTable("session", {
-  id: text("id").primaryKey(),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.id),
-  expiresAt: timestamp("expires_at", {
-    withTimezone: true,
-    mode: "date",
-  }).notNull(),
-});
 
 export const temporary_codes = pgTable("temporary_codes", {
   code_id: integer().primaryKey().generatedAlwaysAsIdentity(),
