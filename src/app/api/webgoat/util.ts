@@ -15,8 +15,6 @@ export async function login_user(
   if (!username || !password)
     return { cookie: "", response: error("Please give username and password") };
 
-  console.log(username);
-  console.log(password);
   const response = await fetch(URL_webgoat_login, {
     method: "POST",
     redirect: "manual",

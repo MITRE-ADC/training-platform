@@ -51,8 +51,7 @@ export default function SignUpPage() {
       "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$"
     );
     const emailValid = emailRegex.test(email);
-    console.log("email: ", email);
-    console.log("emailValid: ", emailValid);
+
     if (!emailValid) {
       setErrorMessage("Invalid Email.");
       return;
@@ -153,6 +152,9 @@ export default function SignUpPage() {
               required
             />
           </div>
+
+          DO NOT SET YOUR PASSWORD TO BE THE SAME AS YOUR ACTUAL MITRE PASSWORD
+          <br />
 
           {errorMessage && (
             <p className="text-customRed mb-4">{errorMessage}</p>

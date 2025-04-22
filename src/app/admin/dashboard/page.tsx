@@ -47,7 +47,6 @@ export default function AdminDashBoard() {
       const response = await axios.post("api/auth/signout");
 
       if (response.status === 200) {
-        console.log("Successfully signed out");
         window.location.href = "/signin";
       }
     } catch (error) {

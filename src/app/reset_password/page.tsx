@@ -139,6 +139,8 @@ export default function SignUpPage() {
               required
             />
           </div>
+          DO NOT SET YOUR PASSWORD TO BE THE SAME AS YOUR ACTUAL MITRE PASSWORD
+          <br />
 
           {errorMessage && (
             <p className="text-customRed mb-4">{errorMessage}</p>

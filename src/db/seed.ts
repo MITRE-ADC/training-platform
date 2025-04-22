@@ -11,6 +11,4 @@ await db.insert(users).values([
   },
 ]);
 
-console.log("Seeding complete. ");
-
 process.exit(0);

@@ -28,7 +28,6 @@ export async function POST(req: Request) {
         // Need to log the user into WebGoat here and then store the WG cookie
         const { cookie: webgoat_cookie, response: response2 } =
           await login_user(user.webgoatusername, user.webgoatpassword);
-        console.log("finished logging into wg");
         const jsessionId = webgoat_cookie.split(";")[0]; // Just the "JSESSIONID=..."
         await setWebGoatCookie(jsessionId, maxAge);
         await setJwtCookie(user.id, maxAge);

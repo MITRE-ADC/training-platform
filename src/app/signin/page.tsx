@@ -43,7 +43,7 @@ export default function SignInPage() {
     } else {
       setErrorMessage("Login Successful! Loading...");
       const json = await response.json();
-      console.log(json);
+
       if (json.isAdmin) {
         router.push("/admin/dashboard");
       } else {

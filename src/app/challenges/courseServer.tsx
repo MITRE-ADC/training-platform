@@ -36,6 +36,7 @@ export async function updateWebgoatUserCredentials(
 ) {
   const user = await getUser(user_id);
   if (user instanceof NextResponse) return user;
+
   const newUser: Omit<User, "pass"> = {
     ...user,
     id: user_id,
@@ -43,7 +44,6 @@ export async function updateWebgoatUserCredentials(
     webgoatpassword: password,
   };
   await updateUser(newUser);
-  console.log(await getUser(user_id));
 
   return undefined;
 }
