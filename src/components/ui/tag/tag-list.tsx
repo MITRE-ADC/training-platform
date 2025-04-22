@@ -56,7 +56,6 @@ export const TagList: React.FC<TagListProps> = ({
         <div
           className={cn(
             "w-full rounded-md",
-            // className,
             {
               "flex flex-wrap gap-2": direction === "row",
               "flex flex-col gap-2": direction === "column",
@@ -67,7 +66,6 @@ export const TagList: React.FC<TagListProps> = ({
           {draggable ? (
             <SortableList
               onSortEnd={onSortEnd}
-              // className="flex flex-wrap gap-2 list"
               className={`list flex flex-wrap gap-2 ${classStyleProps?.tagListClasses?.sortableList}`}
               dropTarget={<DropTarget />}
             >

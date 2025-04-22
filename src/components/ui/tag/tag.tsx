@@ -135,18 +135,13 @@ export const Tag: React.FC<TagProps> = ({
       onClick={(e) => {
         onRemoveTag(tagObj.id);
 
-        // onTagClick?.(tagObj)
       }}
     >
       {tagObj.text}
       <Button
         type="button"
         variant="ghost"
-        onClick={(e) => {
-          //e.stopPropagation(); // Prevent event from bubbling up to the tag span
-          //onRemoveTag(tagObj.id);
-          //e.preventDefault();
-        }}
+        onClick={(e) => {}}
         disabled={true}
         className={cn(
           `z-50 h-full px-3 py-1 hover:bg-transparent`,

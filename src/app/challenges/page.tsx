@@ -31,7 +31,6 @@ import {
 import { CourseListData } from "./courseDefinitions";
 import axios from "axios";
 import { MountStatus } from "../admin/dashboard/employeeDefinitions";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -201,7 +200,6 @@ export default function ChallengeHomepage() {
           console.log(e.response.data.error);
           if (e.response.data.error.includes("Invalid username/password"))
             setCredentialsDialogOpen(true);
-          //TODO: trigger webgoat credentials modal
           else console.error(e);
         })
         .then(console.log);

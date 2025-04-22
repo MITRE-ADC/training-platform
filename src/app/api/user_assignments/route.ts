@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { getAllUserAssignments } from "@/db/queries";
 import { processLinkAssignmentRequest } from "../util";
-import { CHECK_ADMIN } from "../auth";
 
-// GET method for all trainings
 export async function GET() {
   try {
     const data = await getAllUserAssignments();

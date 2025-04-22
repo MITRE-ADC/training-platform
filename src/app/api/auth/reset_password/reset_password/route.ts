@@ -36,7 +36,6 @@ export async function POST(req: Request) {
 
         await updateUserPassword(email, hashedpassword);
       } catch (error) {
-        console.log(error);
         return NextResponse.json(
           { error: "Error While Trying to Reset Password" },
           { status: HttpStatusCode.InternalServerError }
@@ -47,7 +46,6 @@ export async function POST(req: Request) {
 
       return response;
     } catch (error) {
-      console.log(error);
       return NextResponse.json(
         { error: "Reset Password Failed" },
         { status: HttpStatusCode.InternalServerError }

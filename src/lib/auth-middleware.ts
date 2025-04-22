@@ -30,17 +30,15 @@ export async function validateJwtToken(
       userID: string;
       exp: number;
     };
-    // console.log("THE USER ID IS " + decoded.userID);
+
     const result = await db
       .select()
       .from(users)
       .where(eq(users.id, decoded.userID));
 
     if (result.length < 1) {
-      console.log("User not found");
       return { user: null };
     }
-    // console.log("User found");
 
     const user: Omit<User, "pass"> = result[0];
 
@@ -55,8 +53,7 @@ export async function validateJwtToken(
 
     return { user: user };
   } catch (error) {
-    // Token verification failed or token expired
-    console.log(error);
+    console.error(error);
     return { user: null };
   }
 }
@@ -66,7 +63,6 @@ export async function setJwtCookie(
   maxAge: number
 ): Promise<void> {
   const cookieStore = await cookies();
-  console.log("THE USER ID IS " + userID);
   const expiresIn = 1000 * 60 * 60 * 24 * 30;
   const token = jwt.sign({ userID: userID }, JWT_SECRET, { expiresIn });
   cookieStore.set("session", token, {
@@ -79,7 +75,7 @@ export async function setJwtCookie(
 }
 
 export async function deleteJwtCookie(): Promise<void> {
-  const cookieStore = await cookies();
+  const cookieStore =await  cookies();
   cookieStore.set("session", "", {
     httpOnly: true,
     sameSite: "lax",
@@ -118,9 +114,7 @@ export async function deleteWebGoatCookie(): Promise<void> {
 export async function getCurrentUser(
   cookieStore: ReadonlyRequestCookies | RequestCookies
 ): Promise<SessionValidationResult> {
-  // const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value ?? null;
-  // console.log("I AM YOUR TOKEN!" + token);
   if (token == null) {
     return { user: null };
   }
@@ -132,18 +126,13 @@ export async function getCurrentUser(
 export async function getCurrentUserAndAdmin(
   cookieStore: ReadonlyRequestCookies | RequestCookies
 ): Promise<SessionValidationAdminResult> {
-  // const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value ?? null;
-  // console.log("I AM YOUR TOKEN!" + token);
   if (token == null) {
     return { user: null, isAdmin: false };
   }
-  // console.log("entering validateJwtToken");
   const result = await validateJwtToken(token);
-  // console.log("exiting validateJwtToken");
 
   if (result.user == null) {
-    console.log("user is null");
     return { user: null, isAdmin: false };
   }
 

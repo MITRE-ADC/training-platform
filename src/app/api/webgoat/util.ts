@@ -8,7 +8,6 @@ export const URL_webgoat_logout = "http://localhost:8090/WebGoat/logout";
 export const URL_webgoat_lessonmenu =
   "http://localhost:8090/WebGoat/service/lessonmenu.mvc";
 
-// DANGER: password in plaintext over hopefully https but otherwise http
 export async function login_user(
   username: string | null,
   password: string | null
@@ -27,7 +26,6 @@ export async function login_user(
     },
   });
 
-  console.log(`loggin in...`);
 
   const redirect_loc = response.headers.get("location");
   if (!redirect_loc)
@@ -46,7 +44,6 @@ export async function register_user(
   webgoat_username: string,
   webgoat_password: string
 ) {
-  console.log(`registering user...`);
 
   const response = await fetch(URL_webgoat_register, {
     method: "POST",
@@ -70,7 +67,6 @@ export async function register_user(
 }
 
 export async function logout_user(cookie: string) {
-  console.log(`logging out...`);
   const response = await fetch(URL_webgoat_logout, {
     method: "POST",
     redirect: "follow",
@@ -78,6 +74,5 @@ export async function logout_user(cookie: string) {
       Cookie: cookie, // WebGoat will recognize the session through the cookie
     },
   });
-  console.log("finished signing out");
   return response;
 }

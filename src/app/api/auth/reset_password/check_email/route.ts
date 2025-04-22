@@ -28,7 +28,6 @@ export async function POST(req: Request) {
           expiration_time: expiration_time,
         });
       } catch (error) {
-        console.log(error);
         return NextResponse.json(
           { error: "Code Generation Failed " },
           { status: HttpStatusCode.BadRequest }
@@ -39,7 +38,6 @@ export async function POST(req: Request) {
 
       return response;
     } catch (error) {
-      console.log(error);
       return NextResponse.json(
         { error: "Email Validation Failed" },
         { status: HttpStatusCode.BadRequest }

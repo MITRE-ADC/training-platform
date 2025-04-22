@@ -13,7 +13,6 @@ export default function Navigation({ name }: { name: string }) {
         </SheetTrigger>
         <SheetContent side="left" className="w-64">
           <div className="flex h-full w-full flex-col gap-4">
-            {/* TODO: have differing menus based on user type? */}
             <div>{name}</div>
             <div>
               <b>Navigation</b>

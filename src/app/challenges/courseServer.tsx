@@ -21,25 +21,10 @@ export async function updateWebgoatUserCredentialsAndData(
       password
     );
     if (updateRes)
-      // indicates error
       res = "Error updating user data";
 
     const loginRes = await login_user(username, password);
     if (loginRes) res = "Invalid username/password";
-
-    // await axios.post(`api/webgoat/assignments`, {
-    //   user_id: r.data.user.id,
-    // }).catch((e) => {
-    //   console.log(e)
-    //   console.log(e.response.data.error);
-    //   if (e.response.data.error.includes("Invalid username/password"))
-    //   res =  ("Invalid username/password after validation (internal server error)");
-    //   else console.error(e);
-    // }).then((r) => {
-    //   if(r){
-    //     console.log(r);
-    //   }
-    // });
   });
 
   return res;
@@ -69,15 +54,12 @@ export async function getAssignmentDataTest(): Promise<Course[]> {
     const authResponse = await axios.get(req("api/auth"));
     const id = authResponse.data.user.id;
 
-    console.log("User ID:", id);
     const assignmentsResponse = await axios.get(req("api/user_assignments"), {
       params: { userId: id },
     });
     const assignments: Course[] = assignmentsResponse.data;
-    console.log("Assignments:", assignments);
     return assignments;
   } catch (error) {
-    console.error("Error fetching assignment data:", error);
     return [];
   }
 }

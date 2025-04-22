@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { HttpStatusCode } from "axios";
 import { cookies } from "next/headers";
 
-//make env
 const admin_email = process.env.ADMIN_USER_EMAIL;
 
 export async function GET(req: NextRequest) {

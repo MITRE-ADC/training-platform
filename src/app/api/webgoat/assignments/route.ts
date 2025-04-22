@@ -12,18 +12,12 @@ import {
   courseNameExists,
   getAssignmentByWebgoatId,
   getCompleteUser,
-  getCompleteUserByName,
   getCourseByName,
   getUserAssignmentByWebgoatId,
-  getUserByName,
   updateUserAssignment,
   userAssignmentWebgoatIdExists,
-  userNameExists,
 } from "@/db/queries";
-import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
-
-// export const autopopulate_courses_from_webgoat = true;
-// export const assign_all_assignments_in_webgoat = true;
+import { CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
 /**
  * Updates data in the DB for a user's progress
@@ -32,7 +26,6 @@ import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log("rithvik is cool");
     let user_id = request.nextUrl.searchParams?.get("user_id");
     if (!user_id) user_id = (await request.json()).user_id;
     if (!user_id) return error("Please provide a user_id query parameter");
@@ -41,12 +34,7 @@ export async function POST(request: NextRequest) {
     const user = await getCompleteUser(user_id);
     if (user instanceof NextResponse) return user;
 
-    // const autopopulate_courses_from_webgoat = request.nextUrl.searchParams?.get(
-    //   "autopopulate_courses"
-    // );
     const autopopulate_courses_from_webgoat = true;
-    // console.log("autopopulate_courses_from_webgoat: ", autopopulate_courses_from_webgoat);
-    // autopopulate_courses_from_webgoat = true;
     const assign_all_assignments_in_webgoat =
       request.nextUrl.searchParams?.get("assign_all");
 
@@ -86,17 +74,14 @@ export async function POST(request: NextRequest) {
     let course_creations = 0;
 
     const courses = await response2.json();
-    console.log(courses);
     for (const course in courses) {
       // UPDATE COURSE RECORD
       if (
         autopopulate_courses_from_webgoat &&
         !(await courseNameExists(courses[course].name))
       ) {
-        console.log("entered processCreateCourse");
         const res = await processCreateCourse(courses[course].name);
         if (res.status != HttpStatusCode.Created) {
-          console.error(res);
           return res;
         }
         console.log(
@@ -109,26 +94,20 @@ export async function POST(request: NextRequest) {
         : 1;
       for (const assignment in courses[course].children) {
         // UDPATE ASSIGNMENT RECORD
-        console.log(courses[course].children[assignment].name);
         const assignment_name =
           labels[courses[course].children[assignment].name];
-        console.log(assignment_name);
-        console.log(courses[course].children[assignment]);
-        // const webgoat_name: string = courses[course].children[assignment].name;
         const webgoat_name: string = assignment_name;
         const complete: boolean = courses[course].children[assignment].complete;
         const webgoat_link: string = courses[course].children[assignment].link;
-        // console.log("webgoat_link: ", webgoat_link, webgoat_link.substring(8));
 
         if (!(await assignmentWebgoatIdExists(webgoat_name))) {
           const res = await processCreateAssignment(
             webgoat_name,
-            webgoat_name, // I have no clue why webgoat_name is being used for webgoat_url, but I cannot manage to change it
+            webgoat_name,
             course_id,
             webgoat_link
           ); // assignment is created with webgoat_name as name as well as id by default
           if (res.status != HttpStatusCode.Created) {
-            console.error(res);
             return res;
           }
           console.log(
@@ -145,7 +124,6 @@ export async function POST(request: NextRequest) {
         ) {
           const res = await processLinkAssignment(user_id, assignment_id);
           if (res.status != HttpStatusCode.Created) {
-            console.error(res);
             return res;
           }
 
@@ -155,7 +133,6 @@ export async function POST(request: NextRequest) {
           assignment_linkages++;
         }
 
-        // const assignmentObj = await getAssignmentByWebgoatId(webgoat_name);
         const user_assignment = await getUserAssignmentByWebgoatId(
           user_id,
           webgoat_name

@@ -48,7 +48,7 @@ export default function AdminDashBoard() {
 
       if (response.status === 200) {
         console.log("Successfully signed out");
-        window.location.href = "/signin"; // Change as needed
+        window.location.href = "/signin";
       }
     } catch (error) {
       console.error("Logout failed:", error);
@@ -80,12 +80,6 @@ export default function AdminDashBoard() {
               >
                 <H3>Manage Employees</H3>
               </TabsTrigger>
-              {/*<TabsTrigger
-                value="course"
-                className="data-[state=active]:tab-selected data-[state=inactive]:tab-unselected"
-              >
-                <H3>Manage Courses</H3>
-              </TabsTrigger>*/}
             </TabsList>
             <div className="flex-grow border-[2px] border-highlight shadow-md">
               <TabsContent value="employees" className="h-full">

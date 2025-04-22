@@ -26,8 +26,6 @@ import {
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
-// Users
-
 /**
  * gets complete (including sensitive) data on ALL uesrs -- must be admin to use
  *
@@ -46,7 +44,7 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
-// since we need email not id this is a quick fix
+
 export async function getAssignmentsByUser(user_id: string) {
   const user = (await db.select().from(users).where(eq(users.id, user_id)))[0];
 
@@ -63,21 +61,9 @@ export async function getAssignmentsByUser(user_id: string) {
     .where(eq(user_assignments.user_id, user_id));
 }
 
-// // Update a user
 export async function updateUser(user: Omit<User, "pass">) {
   return await db.update(users).set(user).where(eq(users.id, user.id));
 }
-
-// export async function userEmailExists(email: string) {
-//   return await db.select().from(users).where(eq(users.email, email)).limit(1);
-// }
-
-// export async function updateUser(user: User) {
-//   return await db
-//     .update(users)
-//     .set(user)
-//     .where(eq(users.user_id, user.user_id));
-// }
 
 export async function deleteAllFromUser(id: string) {
   try {
@@ -119,8 +105,6 @@ export async function userEmailExists(email: string) {
   const exists =
     (await db.$count(db.select().from(users).where(eq(users.email, email)))) >
     0;
-  console.log("exists: ");
-  // console.log(exists);
   if (exists) {
     const error = getUserByEmail(email); // will check unauthorized and return err if that's the case
     if (error instanceof NextResponse) return error;
@@ -148,7 +132,6 @@ export async function userNameExists(name: string) {
 }
 
 export async function courseIdExists(id: number) {
-  // TODO: see below
   return (
     (await db.$count(
       db.select().from(courses).where(eq(courses.course_id, id))
@@ -159,7 +142,6 @@ export async function courseIdExists(id: number) {
 export async function courseNameExists(course_name: string) {
   const err = await CHECK_SESSION();
   if (err) return err;
-  // TODO: see below
   return (
     (await db.$count(
       db.select().from(courses).where(eq(courses.course_name, course_name))
@@ -270,9 +252,6 @@ export async function aggregateUserCoursesStatusByUser() {
 }
 
 export async function assignmentWebgoatIdExists(webgoat_info: string) {
-  // const err = await CHECK_SESSION();
-  // if (err) return err;
-  // TODO: see below
   return (
     (await db.$count(
       db
@@ -284,7 +263,6 @@ export async function assignmentWebgoatIdExists(webgoat_info: string) {
 }
 
 export async function userAssignmentIdExists(id: number) {
-  // TODO: determine which auth check to run -- generally auth'd in?
   return (
     (await db.$count(
       db
@@ -372,15 +350,14 @@ export async function getUserAssignmentByWebgoatId(
   )[0];
 }
 
-// Courses
 export async function getAllCourses() {
   return await db.select().from(courses);
 }
 
 export async function getCoursesByUser(user_id: string) {
   const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
-  // if (err) return err; TODO:
-
+  if (err) return err;
+  
   return await db
     .select()
     .from(user_courses)
@@ -603,17 +580,13 @@ export async function getCourseByName(course_name: string) {
  * gets CURRENTLY LOGGED IN user's complete (including sensitive) data given their email
  */
 export async function getUserByEmail(user_email: string) {
-  // console.log("\ngetUserByEmail\n");
   const { id, pass, ...userFields } = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
 
-  // console.log("const { id, pass, ...userFields } = ");
-  // console.log({ id, pass, ...userFields });
-
   const err = await CHECK_SESSION();
   if (err) return err;
-  // console.log({ ...userFields });
+
   return { ...userFields };
 }
 
@@ -621,7 +594,6 @@ export async function getUserIDByEmailNoAuth(user_email: string) {
   const { id, ...userFields } = (
     await db.select().from(users).where(eq(users.email, user_email))
   )[0];
-  // console.log(id);
 
   return { id, ...userFields };
 }
@@ -716,27 +688,8 @@ export async function updateUserPassword(
     .where(eq(users.email, user_email));
 }
 
-// export async function getUserIDByEmail(user_email: string) {
-//   // const { id, pass, ...userFields } = (
-//   const { user_id } = (
-//     await db.select({user_id: users.id}).from(users).where(eq(users.email, user_email))
-//   )[0];
-
-//   const err = await CHECK_SESSION();
-//   if (err) {
-//     console.log("getUserIDByEmailError")
-//     return err;
-//   }
-
-//   // return { ...userFields };
-//   console.log("user_id:");
-//   console.log(user_id);
-//   return user_id;
-// }
-
 /**
  * gets ANY user's complete (including sensitive) data given their user_name
- * only user can see their own or admin
  */
 export async function getCompleteUserByName(user_name: string) {
   const user = (
@@ -823,7 +776,7 @@ export async function getCode(email: string) {
     .select()
     .from(temporary_codes)
     .where(eq(temporary_codes.user_email, email));
-  return arr[arr.length - 1]; // There might be more than one code associated with the same email; we only want the latest one
+  return arr[arr.length - 1]; // There might be more than one temporary code associated with the same email; we only want the latest one
 }
 
 export async function clearExpiredCodes() {
@@ -852,7 +805,6 @@ export async function getCurrentCodes() {
     `
     )
   ).rows;
-
-  console.log(data);
+  
   return data;
 }

@@ -25,7 +25,6 @@ export default function SignUpPage() {
   });
 
   const handleSignUp = async () => {
-    // console.log("entered handleSignUp")
     const errors = {
       firstName: false,
       lastName: false,
@@ -82,29 +81,12 @@ export default function SignUpPage() {
       });
 
       if (response.status != HttpStatusCode.Ok) {
-        // console.log("shit's fucked up")
         setErrorMessage("Signup Unsuccessful. Check Fields and Try Again.");
         return;
       } else {
-        // console.log("shit's not fucked up maybe?")
         setErrorMessage("Signup Successful");
-        // const data = new URLSearchParams();
-        // data.append("name", firstName + " " + lastName);
-        // data.append("password", password);
-        // console.log(data);
-        // const paramsString = "email="+email;
-        // const data = new URLSearchParams(paramsString);
-        // console.log("data:")
-        // console.log(data);
 
-        // const res = await fetch("/api/webgoat/register", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/x-www-form-urlencoded",
-        //   },
-        //   body: data,
-        // });
-        const res = await fetch("/api/webgoat/register", {
+        await fetch("/api/webgoat/register", {
           method: "POST",
           body: JSON.stringify({
             email: email,

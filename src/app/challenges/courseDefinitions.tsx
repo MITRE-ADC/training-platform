@@ -1,7 +1,3 @@
-import { req } from "@/lib/utils";
-import axios from "axios";
-import { MountStatus } from "../admin/dashboard/employeeDefinitions";
-
 export type courseAssignment = {
   name: string;
   status: "overdue" | "todo" | "done";

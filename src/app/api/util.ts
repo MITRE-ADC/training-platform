@@ -2,9 +2,7 @@ import { db } from "@/db";
 import { HttpStatusCode } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import {
-  // User_Course,
   users,
-  // user_courses,
   User,
   AddUserCourse,
   AddCourse,
@@ -26,7 +24,6 @@ import {
   assignmentIdExists,
 } from "@/db/queries";
 import {
-  CHECK_ADMIN,
   CHECK_SESSION,
   CHECK_UNAUTHORIZED,
   CHECK_UNAUTHORIZED_BY_UID,
@@ -76,8 +73,6 @@ export async function processLinkAssignment(
 
   const exists = await userIdExists(_user_id);
   if (exists instanceof NextResponse) return exists;
-
-  // if (!(await userIdExists(_user_id))) return error("User not found");
 
   if (!(await assignmentIdExists(_assignment_id)))
     return error("Assignment not found");
@@ -227,9 +222,6 @@ export async function processCreateUserRequest(request: NextRequest) {
       HttpStatusCode.Conflict
     );
 
-  // TODO: password: special finagling with auth
-  // Pick out (only) initialization data for use
-
   return await db
     .insert(users)
     .values({
@@ -273,18 +265,14 @@ export async function processCreateCourseRequest(request: NextRequest) {
 }
 
 export async function processCreateCourse(course_name: string) {
-  console.log("entering process Create Course for course ", course_name);
   const err = await CHECK_SESSION();
   if (err) return err;
   if (await courseNameExists(course_name)) return error("Course exists");
-  console.log("passed courseNameExists for course", course_name);
   const result = await addCourse({
     course_name: course_name,
   });
-  console.log("passed addCourse");
   if (result instanceof NextResponse) return result;
   else {
-    console.log("returning without error");
     return NextResponse.json(
       { data: result[0] },
       { status: HttpStatusCode.Created }
@@ -374,9 +362,4 @@ export async function processCreateAssignment(
       { data: result[0] },
       { status: HttpStatusCode.Created }
     );
-  /* const [first] = await addAssignment({
-    course_id: course_id,
-    assignment_name: assignment_name,
-    webgoat_info: webgoat_info,
-  }); */
 }

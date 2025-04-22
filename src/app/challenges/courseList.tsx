@@ -1,25 +1,14 @@
-import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import "remixicon/fonts/remixicon.css";
-import { Input } from "@/components/ui/input";
 import { CourseListData } from "./courseDefinitions";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import axios from "axios";
-import { req } from "@/lib/utils";
-import {
-  updateWebgoatUserCredentials,
-  updateWebgoatUserCredentialsAndData,
-} from "./courseServer";
 import { User } from "@/db/schema";
 
 export function WebGoatCredentialPopup({ user }: { user: User }) {
@@ -70,7 +59,6 @@ export function CourseList({
   data: CourseListData[];
   user: User;
 }) {
-  const [credentialsOpen, setCredentialsOpen] = useState(false);
 
   function linkToLesson(assignment_index: number) {
     const username = user.webgoatusername;

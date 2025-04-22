@@ -1,7 +1,7 @@
 "use client";
 
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
-import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import EmployeePopup from "./employeePopup";
 import {
   MountStatus,
@@ -16,7 +16,6 @@ import { User } from "@/db/schema";
 import { removeAllListeners } from "process";
 import { Button } from "@/components/ui/button";
 import { deleteUser } from "./dashboardServer";
-import { useRouter } from "next/navigation";
 
 interface analysisInterface {
   user_id: string;
@@ -146,7 +145,6 @@ export default function EmployeeList({
   useEffect(() => {
     setMount(MountStatus.isFirstMounted);
 
-    // moving signals out of data tables is very annoying, so just use events instead
     removeAllListeners("request_employee_list_reload");
     addEventListener("request_employee_list_reload", () => load());
   }, []);
@@ -223,7 +221,6 @@ export default function EmployeeList({
 
           if (f.length == 0) return true;
 
-          // scuffed
           const match = (
             ((((row.getValue("firstName") as string) +
               row.getValue("lastName")) as string) +

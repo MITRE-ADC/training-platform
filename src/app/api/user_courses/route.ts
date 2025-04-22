@@ -22,11 +22,6 @@ export async function GET() {
   }
 }
 
-//// Create new user
-//export async function PUT(request: NextRequest) {
-//  return await processLinkCourseRequest(request);
-//}
-//
 // Modify user data -- detailed
 export async function POST(request: NextRequest) {
   return processLinkCourseRequest(request);

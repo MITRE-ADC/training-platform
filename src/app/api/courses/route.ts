@@ -3,7 +3,6 @@ import { processCreateCourseRequest } from "@/app/api/util";
 import { HttpStatusCode } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET assignment info
 export async function GET() {
   try {
     return NextResponse.json(

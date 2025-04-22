@@ -16,18 +16,9 @@ export async function POST(request: NextRequest) {
     try {
       const err2 = await CHECK_SESSION();
       if (err2) return err2;
-      console.log("Registering user in webgoat");
-      // const webgoat_username = request.nextUrl.searchParams?.get("name");
-      // const webgoat_password = request.nextUrl.searchParams?.get("password");
-      // console.log(webgoat_username);
-      // console.log(webgoat_password);
-      // const email = request.nextUrl.searchParams?.get("email")
-      // console.log(request.nextUrl);
-      // console.log(email);
+
       const { email } = await request.json();
-      console.log(email);
-      // if (!webgoat_username || !webgoat_password)
-      //   return error("Please specify a name and password");
+
       if (!email) {
         return error("Please specify an email.");
       }
@@ -36,13 +27,7 @@ export async function POST(request: NextRequest) {
       const webgoat_username = user.webgoatusername;
       const webgoat_password = user.webgoatpassword;
 
-      console.log("\nwebgoat_username, webgoat_password: \n");
-      console.log(webgoat_username);
-      console.log(webgoat_password);
-
-      console.log("entering register_user");
       const err = await register_user(webgoat_username, webgoat_password);
-      console.log("exiting register_user");
       if (err) return err;
 
       return NextResponse.json(

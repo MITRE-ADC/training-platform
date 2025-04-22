@@ -1,7 +1,6 @@
 import { HttpStatusCode } from "axios";
 import {
   CHECK_ADMIN,
-  CHECK_UNAUTHORIZED,
   CHECK_UNAUTHORIZED_BY_UID,
 } from "../../auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,9 +12,7 @@ import {
 } from "@/db/queries";
 import { error, processCreateUserRequest, processUpdateUser } from "../../util";
 import { User } from "@/db/schema";
-import { deleteUser } from "@/app/admin/dashboard/dashboardServer";
 
-// GET assignment info
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -83,10 +80,9 @@ export async function DELETE(
     const user_id = (await context.params).id;
     const exists = await userIdExists(user_id);
     if (exists instanceof NextResponse) {
-      console.log("user id doesn't exist");
       return exists;
     }
-    // IMPLEMENT IN QUERIES
+
     await deleteAllFromUser(user_id);
     return NextResponse.json({
       status: HttpStatusCode.Ok,

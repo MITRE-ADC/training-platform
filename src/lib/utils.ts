@@ -1,11 +1,3 @@
-import { employee } from "@/app/admin/dashboard/employeeDefinitions";
-import {
-  Assignment,
-  Course,
-  User,
-  User_Assignment,
-  User_Course,
-} from "@/db/schema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

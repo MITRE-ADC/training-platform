@@ -69,7 +69,7 @@ export const user_assignments = pgTable("user_assignments", {
   completed: boolean().notNull(),
   user_id: text()
     .notNull()
-    .references(() => users.id), // Foreign key to users table
+    .references(() => users.id),
   assignment_id: integer()
     .notNull()
     .references(() => assignments.assignment_id),
@@ -85,7 +85,6 @@ const statusEnum = pgEnum("c_status", [
   "Completed",
 ]);
 
-// https://github.com/drizzle-team/drizzle-orm/discussions/1914
 export const statusEnumSchema = z.enum(statusEnum.enumValues);
 
 export const user_courses = pgTable("user_courses", {

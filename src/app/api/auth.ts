@@ -19,7 +19,6 @@ export async function CHECK_ADMIN() {
  * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_email matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
-  // admin also can see this
   if ((await CHECK_ADMIN()) === undefined) {
     return undefined;
   }
@@ -34,7 +33,6 @@ export async function CHECK_UNAUTHORIZED(user_email: string) {
 }
 
 export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
-  // admin also can see this
   if ((await CHECK_ADMIN()) === undefined) {
     return undefined;
   }
@@ -48,29 +46,11 @@ export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 
-// export async function CHECK_UNAUTHORIZED_BY_NAME(username: string) {
-//   // admin also can see this
-//   if (!CHECK_ADMIN()) {
-//     return undefined;
-//   }
-//   const result = await fetch("/api/auth");
-//   if (result && result.status == HttpStatusCode.Ok) {
-//     const body = await result.json();
-//     if (body && body.user && body.user.name == username) {
-//       return undefined;
-//     }
-//   }
-//   return error(`unauthorized`, HttpStatusCode.Unauthorized);
-// }
-
 /**
  * returns a response to send to user if they are not logged in as a valid user, undefined if they are ANY user
  */
 export async function CHECK_SESSION() {
-  // console.log("entered checksession")
-  // console.log("entered cookies");
   const cookieStore = await cookies();
-  // console.log("exited cookies");
   const result = await getCurrentUserAndAdmin(cookieStore);
   if (result.user != null) {
     return undefined;

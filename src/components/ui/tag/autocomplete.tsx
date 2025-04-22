@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-// import { Command, CommandList, CommandItem, CommandGroup, CommandEmpty } from '../ui/command';
 import { TagInputStyleClassesProps, type Tag as TagType } from "./tag-input";
 import { cn } from "@/lib/utils";
 import {
@@ -67,9 +66,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       );
     }
 
-    // hack: we want to call this function after all of emlor as updated, however that is not
-    // guaranteed (likely something about event registration order?). There doesn't really seem
-    // to be any way around this besides implementing a small pause, hence setTimeout(..., 50)
     setTimeout(() => {
       if (scrollAreaRef.current) {
         const thumb = scrollAreaRef.current.querySelector(
@@ -277,7 +273,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                 setIsPopoverOpen(!isPopoverOpen);
               }}
             >
-              {/*<div className="w-[1px] h-3/4 bg-highlight mr-3 ml-2"></div>*/}
               <P className="mx-2 translate-y-[1px] text-darkBlue">
                 {classStyleProps?.popoverTriggerName}
               </P>
@@ -318,7 +313,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           style={{
             top: `${popooverContentTop}px`,
             width: `240px`,
-            minWidth: `240px` /* OVERRIDE */,
+            minWidth: `240px`,
             zIndex: 9999,
           }}
         >

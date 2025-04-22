@@ -33,7 +33,6 @@ export interface CourseSelectorData {
   children: CourseSelectorChildData[];
 }
 
-// note that CourseSelectorData can just be done recursively, but that doesn't play nice with how we render the data - via .map()
 export interface CourseSelectorChildData {
   name: string;
   id: string;

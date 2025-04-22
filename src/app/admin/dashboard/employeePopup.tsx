@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Table, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { DataTable, SortableColumn } from "@/components/ui/dataTable";
 import { Close } from "@radix-ui/react-dialog";
-import { DatePopup, StringPopup } from "@/components/ui/custom/editPopup";
 import {
   employeeAssignment,
   employee,
@@ -20,7 +19,6 @@ import {
 } from "./employeeDefinitions";
 import { H2, P } from "@/components/ui/custom/text";
 import CourseSelectorPopup, {
-  CourseSelectorChildData,
   CourseSelectorData,
 } from "@/components/ui/custom/courseSelectorPopup";
 import { forwardRef, useRef, useState } from "react";

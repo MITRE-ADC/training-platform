@@ -3,7 +3,6 @@ import { HttpStatusCode } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { processCreateAssignmentRequest } from "../util";
 
-// GET all assignments info
 export async function GET() {
   try {
     return NextResponse.json(
