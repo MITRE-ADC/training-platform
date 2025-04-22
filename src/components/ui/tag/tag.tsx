@@ -134,7 +134,6 @@ export const Tag: React.FC<TagProps> = ({
       )}
       onClick={(e) => {
         onRemoveTag(tagObj.id);
-
       }}
     >
       {tagObj.text}

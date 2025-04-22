@@ -2,10 +2,7 @@ import { db } from "@/db/index";
 import { users } from "@/db/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import {
-  getUserIDByEmailNoAuth,
-  userEmailExists,
-} from "@/db/queries";
+import { getUserIDByEmailNoAuth, userEmailExists } from "@/db/queries";
 import { setJwtCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
@@ -68,7 +65,7 @@ export async function POST(req: NextRequest) {
       });
 
       const user = (await getUserIDByEmailNoAuth(email)) as User;
-      
+
       const maxAge = 24 * 3600 * 7;
       setJwtCookie(user.id, maxAge);
 

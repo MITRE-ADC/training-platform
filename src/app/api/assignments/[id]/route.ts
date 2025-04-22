@@ -1,7 +1,4 @@
-import {
-  assignmentIdExists,
-  getAssignment,
-} from "@/db/queries";
+import { assignmentIdExists, getAssignment } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { error } from "../../util";

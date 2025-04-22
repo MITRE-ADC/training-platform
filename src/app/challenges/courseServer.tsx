@@ -20,8 +20,7 @@ export async function updateWebgoatUserCredentialsAndData(
       username,
       password
     );
-    if (updateRes)
-      res = "Error updating user data";
+    if (updateRes) res = "Error updating user data";
 
     const loginRes = await login_user(username, password);
     if (loginRes) res = "Invalid username/password";

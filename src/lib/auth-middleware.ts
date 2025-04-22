@@ -75,7 +75,7 @@ export async function setJwtCookie(
 }
 
 export async function deleteJwtCookie(): Promise<void> {
-  const cookieStore =await  cookies();
+  const cookieStore = await cookies();
   cookieStore.set("session", "", {
     httpOnly: true,
     sameSite: "lax",

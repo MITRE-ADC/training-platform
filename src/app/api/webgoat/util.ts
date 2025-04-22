@@ -26,7 +26,6 @@ export async function login_user(
     },
   });
 
-
   const redirect_loc = response.headers.get("location");
   if (!redirect_loc)
     return { cookie: "", response: error("Invalid username/password") };
@@ -44,7 +43,6 @@ export async function register_user(
   webgoat_username: string,
   webgoat_password: string
 ) {
-
   const response = await fetch(URL_webgoat_register, {
     method: "POST",
     redirect: "follow",

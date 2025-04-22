@@ -693,9 +693,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                   onFocus={handleInputFocus}
                   onBlur={handleInputBlur}
                   {...inputProps}
-                  className={cn(
-                    styleClasses?.input
-                  )}
+                  className={cn(styleClasses?.input)}
                   autoComplete={enableAutocomplete ? "on" : "off"}
                   list={enableAutocomplete ? "autocomplete-options" : undefined}
                   disabled={
@@ -751,10 +749,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
                     disabled ||
                     (maxTags !== undefined && tags.length >= maxTags)
                   }
-                  className={cn(
-                    "w-full border-0",
-                    styleClasses?.input
-                  )}
+                  className={cn("w-full border-0", styleClasses?.input)}
                 />
               </TagPopover>
             )}

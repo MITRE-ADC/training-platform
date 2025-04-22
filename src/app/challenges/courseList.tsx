@@ -2,10 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import "remixicon/fonts/remixicon.css";
 import { CourseListData } from "./courseDefinitions";
-import {
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -59,7 +56,6 @@ export function CourseList({
   data: CourseListData[];
   user: User;
 }) {
-
   function linkToLesson(assignment_index: number) {
     const username = user.webgoatusername;
 

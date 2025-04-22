@@ -44,7 +44,6 @@ export async function addUser(user: AddUser) {
   return await db.insert(users).values(user).returning();
 }
 
-
 export async function getAssignmentsByUser(user_id: string) {
   const user = (await db.select().from(users).where(eq(users.id, user_id)))[0];
 
@@ -357,7 +356,7 @@ export async function getAllCourses() {
 export async function getCoursesByUser(user_id: string) {
   const err = await CHECK_UNAUTHORIZED_BY_UID(user_id);
   if (err) return err;
-  
+
   return await db
     .select()
     .from(user_courses)
@@ -805,6 +804,6 @@ export async function getCurrentCodes() {
     `
     )
   ).rows;
-  
+
   return data;
 }

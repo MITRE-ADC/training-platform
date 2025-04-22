@@ -1,8 +1,5 @@
 import { HttpStatusCode } from "axios";
-import {
-  CHECK_ADMIN,
-  CHECK_UNAUTHORIZED_BY_UID,
-} from "../../auth";
+import { CHECK_ADMIN, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 import { NextRequest, NextResponse } from "next/server";
 import {
   deleteAllFromUser,
