@@ -363,8 +363,14 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
           <div className="flex h-full w-full flex-col gap-4 px-16 pb-8 pt-12">
             <H2>Employee Information</H2>
             <Table>
-              <TableBody className="whitespace-nowrap font-sans">
-                <EmployeeInfo
+              <TableBody className="whitespace-nowrap font-sans flex flex-col gap-2">
+                <p>
+                <strong>Name:</strong> {data.firstName && data.lastName
+                      ? data.firstName + " " + data.lastName
+                      : ""}
+                </p>
+                <p> <strong>Email:</strong> {data.email}</p>
+                {/* <EmployeeInfo
                   ref={nameInput}
                   title="Name"
                   value={
@@ -377,7 +383,7 @@ export default function EmployeePopup({ employeeId }: { employeeId: string }) {
                   ref={emailInput}
                   title="Email"
                   value={data.email}
-                />
+                /> */}
               </TableBody>
             </Table>
             <div className="h-2"></div>

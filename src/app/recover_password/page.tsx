@@ -59,6 +59,11 @@ export default function RecoverPasswordPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if(e.key === "Enter") {
+                  handleReset()
+                }
+              }}
               required
             />
           </div>

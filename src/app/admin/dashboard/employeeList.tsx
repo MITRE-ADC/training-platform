@@ -16,6 +16,8 @@ import { User } from "@/db/schema";
 import { removeAllListeners } from "process";
 import { Button } from "@/components/ui/button";
 import { deleteUser } from "./dashboardServer";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface analysisInterface {
   user_id: string;
@@ -126,18 +128,33 @@ export default function EmployeeList({
     {
       id: "remove",
       cell: ({ row }) => (
-        <Button
-          onClick={async () => {
-            await deleteUser(row.original.id);
-            setData((prev) =>
-              prev.filter((employee) => employee.id !== row.original.id)
-            );
-          }}
-          className="text-darkLight"
-          variant="outline"
-        >
-          <i className="ri-delete-bin-5-line ri-1x"></i>
-        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <div
+            className="text-darkLight hover:bg-accent hover:text-accent-foreground p-2 rounded-md"
+          >
+            <i className="ri-delete-bin-5-line ri-1x"></i>
+          </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you sure you want to delete this user?</DialogTitle>
+              <DialogDescription className="flex flex-col gap-4">
+                This action is irreversible!
+                <Button
+                onClick={async () => {
+                  await deleteUser(row.original.id);
+                  setData((prev) =>
+                    prev.filter((employee) => employee.id !== row.original.id)
+                  );
+                }}
+                >
+                  Delete User
+                </Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       ),
     },
   ];

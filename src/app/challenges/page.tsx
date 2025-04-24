@@ -353,7 +353,7 @@ export default function ChallengeHomepage() {
                       <DropdownMenuItem
                         onSelect={() => setCredentialsDialogOpen(true)}
                       >
-                        <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                        <div className="flex items-center justify-start rounded-t-md border-[1px] border-highlight2 p-2 cursor-pointer">
                           WebGoat Credentials
                         </div>
                       </DropdownMenuItem>
@@ -361,7 +361,7 @@ export default function ChallengeHomepage() {
                         onSelect={onLogout}
                         className="text-red-500 cursor-pointer"
                       >
-                        <div className="flex items-center justify-start rounded-md border-[1px] border-highlight2 p-2 shadow-md">
+                        <div className="flex items-center justify-start rounded-b-md border-[1px] border-highlight2 p-2 shadow-md">
                           Logout
                         </div>
                       </DropdownMenuItem>

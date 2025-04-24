@@ -149,6 +149,11 @@ export default function SignUpPage() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if(e.key === "Enter") {
+                  handleSignUp()
+                }
+              }}
               required
             />
           </div>
