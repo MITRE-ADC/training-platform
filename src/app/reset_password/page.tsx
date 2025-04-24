@@ -137,8 +137,8 @@ export default function SignUpPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               onKeyDown={(e) => {
-                if(e.key === "Enter") {
-                  handleReset()
+                if (e.key === "Enter") {
+                  handleReset();
                 }
               }}
               required

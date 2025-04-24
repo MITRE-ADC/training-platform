@@ -353,7 +353,7 @@ export default function ChallengeHomepage() {
                       <DropdownMenuItem
                         onSelect={() => setCredentialsDialogOpen(true)}
                       >
-                        <div className="flex items-center justify-start rounded-t-md border-[1px] border-highlight2 p-2 cursor-pointer">
+                        <div className="flex cursor-pointer items-center justify-start rounded-t-md border-[1px] border-highlight2 p-2">
                           WebGoat Credentials
                         </div>
                       </DropdownMenuItem>

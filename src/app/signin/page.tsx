@@ -77,11 +77,11 @@ export default function SignInPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => {
-                setPassword(e.target.value)
+                setPassword(e.target.value);
               }}
               onKeyDown={(e) => {
-                if(e.key === "Enter") {
-                  handleSignIn()
+                if (e.key === "Enter") {
+                  handleSignIn();
                 }
               }}
               required
