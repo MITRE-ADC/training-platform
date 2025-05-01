@@ -10,6 +10,16 @@ import {
 import { error, processCreateUserRequest, processUpdateUser } from "../../util";
 import { User } from "@/db/schema";
 
+/**
+ * Handles the GET request to retrieve user data by ID.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object containing the user data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -32,7 +42,14 @@ export async function GET(
   }
 }
 
-// Create new user
+/*
+* Handles the PUT request to create a new user.
+*
+* @param request - The incoming HTTP request object.
+*
+* @returns A `NextResponse` object containing the created user data in JSON format with an HTTP status of 201 (Created),
+*          or an error response in case of failure.
+*/
 export async function PUT(request: NextRequest) {
   const err = await CHECK_ADMIN();
   if (err) return err;
@@ -40,7 +57,15 @@ export async function PUT(request: NextRequest) {
   return await processCreateUserRequest(request);
 }
 
-// Modify user data -- detailed
+/* 
+* Handles the POST request to update user data by ID.
+*
+* @param request - The incoming HTTP request object.
+* @param context - The context object containing route parameters.
+* @param context.params - A promise resolving to an object with the `id` parameter.
+* @returns A `NextResponse` object containing the updated user data in JSON format with an HTTP status of 200 (OK),
+*          or an error response in case of failure.
+*/
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -57,7 +82,6 @@ export async function POST(
 
     if (!exists) return processCreateUserRequest(request);
     else {
-      // fill in non-updated info
       let user = await getCompleteUser(user_id);
       if (user instanceof NextResponse) return user;
 
@@ -69,6 +93,16 @@ export async function POST(
   }
 }
 
+/**
+ * Handles the DELETE request to delete all data associated with a user by ID.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object indicating the status of the deletion operation,
+ *          or an error response in case of failure.
+ */
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

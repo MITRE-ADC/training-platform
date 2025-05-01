@@ -10,6 +10,16 @@ import { CHECK_ADMIN, CHECK_UNAUTHORIZED } from "@/app/api/auth";
 import { error, processLinkCourse } from "../../util";
 import { AddUserCourse } from "@/db/schema";
 
+/**
+ * Handles the GET request to retrieve courses for a user by ID.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object containing the user courses data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -32,10 +42,21 @@ export async function GET(
   }
 }
 
+/**
+ * Handles the POST request to link a course to a user.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object containing the linked course data in JSON format with an HTTP status of 201 (Created),
+ *          or an error response in case of failure.
+ */
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  // Check if the user is authorized to link a course
   const user_id = (await context.params).id;
   const err = await CHECK_ADMIN();
   if (err) return err;
@@ -52,11 +73,13 @@ export async function POST(
     console.log(`Error reading request body: ${ex}`);
   }
 
+  // Check if user_id and course_id are provided in the request body or parameters
   if ((!user_id || !course_id) && (!body || !body.user_id || !body.course_id))
     return error(
       `Request requires user_id and course_id in body or request parameters`
     );
 
+  // Check if the parameters exist in the request body, and if not, use the values from the request parameters
   const _user_id = body?.user_id ?? user_id!;
   const _course_id = body?.course_id ?? parseInt(course_id!);
   const _assigned_date =
@@ -74,13 +97,24 @@ export async function POST(
   });
 }
 
+/**
+ * Handles the DELETE request to unassign a course from a user.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object containing the unassigned course data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Check if the user is authorized to unassign a course
     const user_id = (await context.params).id;
-    const err = await CHECK_ADMIN(); // only admin should be able to unassign work -- users could use this to cheat
+    const err = await CHECK_ADMIN();
     if (err) return err;
 
     const { course_id } = await request.json();
@@ -115,6 +149,16 @@ export async function DELETE(
   }
 }
 
+/**
+ * Handles the PUT request to update a user's course due date.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ *
+ * @returns A `NextResponse` object containing the updated course data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
