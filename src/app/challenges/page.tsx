@@ -358,11 +358,32 @@ export default function ChallengeHomepage() {
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onSelect={onLogout}
                         className="text-red-500 cursor-pointer"
+                        onSelect={(e) => e.preventDefault()}
                       >
-                        <div className="flex items-center justify-start rounded-b-md border-[1px] border-highlight2 p-2 shadow-md">
-                          Logout
+                        <div className="w-full">
+                          <Dialog>
+                            <DialogTrigger className="w-full ">
+                              <div className="w-full flex items-center justify-start rounded-b-md border-[1px] border-highlight2 p-2 shadow-md">
+                                Logout
+                              </div>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Log out of WebGoat!
+                                </DialogTitle>
+                                <DialogDescription className="flex flex-col gap-4">
+                                  Please make sure you log out of WebGoat! 
+                                  <Button
+                                    onClick={onLogout}
+                                  >
+                                    Logout
+                                  </Button>
+                                </DialogDescription>
+                              </DialogHeader>
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
