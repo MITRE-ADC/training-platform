@@ -4,11 +4,11 @@ import { HttpStatusCode } from "axios";
 import { error } from "../../util";
 
 /*
-  * GET /api/assignments/:id
-  * @param {number} id - The ID of the assignment to retrieve.
-  * @returns {Promise<NextResponse>} - A JSON response containing the assignment data or an error message.
-  * @throws {Error} - If the assignment does not exist or if there is an internal server error.
-  */
+ * GET /api/assignments/:id
+ * @param {number} id - The ID of the assignment to retrieve.
+ * @returns {Promise<NextResponse>} - A JSON response containing the assignment data or an error message.
+ * @throws {Error} - If the assignment does not exist or if there is an internal server error.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: number }> }

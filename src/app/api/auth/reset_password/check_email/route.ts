@@ -30,21 +30,17 @@ export async function POST(req: Request) {
         );
       }
 
-      
       const code = Math.floor(100000 + Math.random() * 900000).toString();
       const now = new Date();
       const expiration_time = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
       try {
-       
         await addCode({
           code: code,
           user_email: email,
           expiration_time: expiration_time,
         });
-
       } catch (error) {
-        
         return NextResponse.json(
           { error: "Code Generation Failed " },
           { status: HttpStatusCode.BadRequest }
@@ -53,14 +49,13 @@ export async function POST(req: Request) {
 
       const response = NextResponse.json({ status: HttpStatusCode.Ok });
 
-      return response; 
+      return response;
     } catch (error) {
       return NextResponse.json(
         { error: "Email Validation Failed" },
         { status: HttpStatusCode.BadRequest }
       );
     }
-
   } else {
     return NextResponse.json(
       { error: "405 (custom) Method Not Allowed" },
