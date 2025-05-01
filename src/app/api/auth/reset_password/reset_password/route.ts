@@ -3,6 +3,18 @@ import { HttpStatusCode } from "axios";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
+/**
+ * Handles the POST request to reset a user's password.
+ *
+ * This function attempts to reset a user's password by verifying the provided code
+ * and updating the password in the database. If the operation is successful, it returns
+ * a JSON response with an HTTP status code of 200 (OK). If an error occurs (e.g., incorrect
+ * code, expired code, or database error), it returns a JSON response with an appropriate
+ * error message and HTTP status code.
+ *
+ * @returns {Promise<NextResponse>} A promise that resolves to a JSON response indicating
+ * the result of the operation.
+ */
 export async function POST(req: Request) {
   if (req.method == "POST") {
     const { email, code, password } = await req.json();
