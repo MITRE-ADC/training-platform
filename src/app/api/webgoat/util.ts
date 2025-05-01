@@ -63,12 +63,11 @@ export async function register_user(
 }
 
 export async function logout_user(cookie: string) {
-  const response = await fetch(URL_webgoat_logout, {
-    method: "POST",
+  console.log(`logging out...`);
+  const response = await fetch("http://localhost:8090/WebGoat/logout", {
+    method: "GET",
+    credentials: "include", // Let browser send session cookie
     redirect: "follow",
-    headers: {
-      Cookie: cookie, // WebGoat will recognize the session through the cookie
-    },
   });
   return response;
 }
