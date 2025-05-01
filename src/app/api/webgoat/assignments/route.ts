@@ -19,10 +19,40 @@ import {
 } from "@/db/queries";
 import { CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
-/**
- * Updates data in the DB for a user's progress
- * @param request
- * @returns
+/*
+ * @swagger
+ * /api/webgoat/assignments:
+ *   post:
+ *     summary: Update user assignment statuses in WebGoat
+ *     description: Update user assignment statuses in WebGoat based on the provided user_id.
+ *     tags:
+ *       - webgoat
+ *     parameters:
+ *       - in: query
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user_id of the user to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *                 description: The user_id of the user to update.
+ *     responses:
+ *       200:
+ *         description: User assignment statuses updated successfully.
+ *       400:
+ *         description: Bad Request. Missing or invalid parameters.
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Internal Server Error. An error occurred while processing the request.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -45,6 +75,7 @@ export async function POST(request: NextRequest) {
 
     if (response) return response;
 
+    //gets webgoat's lesson menu
     const response2 = await fetch(URL_webgoat_lessonmenu, {
       method: "POST",
       redirect: "follow",

@@ -3,7 +3,12 @@ import { HttpStatusCode } from "axios";
 import { processLinkCourseRequest } from "../util";
 import { getAllUserCourses } from "@/db/queries";
 
-// Get data for a single user -- detailed
+/*
+ * Handles the GET request to retrieve all user courses.
+ *
+ * @returns A `NextResponse` object containing the user courses data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function GET() {
   try {
     const res = await getAllUserCourses();
@@ -22,7 +27,14 @@ export async function GET() {
   }
 }
 
-// Modify user data -- detailed
+/*
+ * Handles the POST request to link a course to a user.
+ *
+ * @param request - The incoming HTTP request object.
+ *
+ * @returns A `NextResponse` object containing the linked course data in JSON format with an HTTP status of 201 (Created),
+ *          or an error response in case of failure.
+ */
 export async function POST(request: NextRequest) {
   return processLinkCourseRequest(request);
 }

@@ -5,7 +5,8 @@ import { cookies } from "next/headers";
 import { error } from "./util";
 
 /**
- * returns a response to send to user if they are not admin, undefined if admin
+ *
+ * @returns undefined if user is admin, error response if not
  */
 export async function CHECK_ADMIN() {
   const cookieStore = await cookies();
@@ -16,7 +17,7 @@ export async function CHECK_ADMIN() {
   return error(`unauthorized as admin`, HttpStatusCode.Unauthorized);
 }
 /**
- * returns a response to send to user if they are unauthoried, undefined if authorized (passed user_email matches current session)
+ * @returns a response to send to user if they are unauthoried, undefined if authorized (passed user_email matches current session)
  */
 export async function CHECK_UNAUTHORIZED(user_email: string) {
   if ((await CHECK_ADMIN()) === undefined) {
@@ -32,6 +33,9 @@ export async function CHECK_UNAUTHORIZED(user_email: string) {
   return error(`unauthorized`, HttpStatusCode.Unauthorized);
 }
 
+/**
+ * @returns a response to send to user if they are unauthoried, undefined if authorized (passed user_id matches current session)
+ */
 export async function CHECK_UNAUTHORIZED_BY_UID(user_id: string) {
   if ((await CHECK_ADMIN()) === undefined) {
     return undefined;

@@ -1,8 +1,19 @@
 import { deleteAssignmentForUser, getAssignmentsByUser } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
-import { CHECK_UNAUTHORIZED, CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
+import { CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
+/**
+ * Handles the GET request to retrieve assignments for a specific user.
+ *
+ * @param request - The incoming Next.js request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter, representing the user ID.
+ *
+ * @returns A `NextResponse` object containing:
+ * - A JSON response with the user's assignments and a status of `HttpStatusCode.Ok` (200) if successful.
+ * - An error response with a status of `HttpStatusCode.InternalServerError` (500) if an exception occurs.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -25,6 +36,18 @@ export async function GET(
   }
 }
 
+/**
+ * Handles the DELETE request to remove an assignment for a specific user.
+ *
+ * @param request - The incoming Next.js request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter, representing the user ID.
+ *
+ * @returns A `NextResponse` object containing:
+ * - A JSON response with the result of the deletion and a status of `HttpStatusCode.Ok` (200) if successful.
+ * - An error response with a status of `HttpStatusCode.BadRequest` (400) if the assignment ID is missing.
+ * - An error response with a status of `HttpStatusCode.InternalServerError` (500) if an exception occurs.
+ */
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

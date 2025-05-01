@@ -8,6 +8,12 @@ export const URL_webgoat_logout = "http://localhost:8090/WebGoat/logout";
 export const URL_webgoat_lessonmenu =
   "http://localhost:8090/WebGoat/service/lessonmenu.mvc";
 
+/**
+ * @param username
+ * @param password
+ * @returns {Promise<{cookie: string, response: NextResponse | null}>}
+ * @description Logs in the user to WebGoat and returns the cookie and response.
+ */
 export async function login_user(
   username: string | null,
   password: string | null
@@ -15,6 +21,7 @@ export async function login_user(
   if (!username || !password)
     return { cookie: "", response: error("Please give username and password") };
 
+  // Makes API call to WebGoat to login the user
   const response = await fetch(URL_webgoat_login, {
     method: "POST",
     redirect: "manual",
@@ -37,10 +44,17 @@ export async function login_user(
   return { cookie: response.headers.get("set-cookie") ?? "", response: null };
 }
 
+/**
+ * @param webgoat_username
+ * @param webgoat_password
+ * @returns {Promise<undefined | NextResponse>}
+ * @description Registers the user to WebGoat and returns the response.
+ */
 export async function register_user(
   webgoat_username: string,
   webgoat_password: string
 ) {
+  // Makes API call to WebGoat to register the user
   const response = await fetch(URL_webgoat_register, {
     method: "POST",
     redirect: "follow",
@@ -62,6 +76,11 @@ export async function register_user(
   return undefined;
 }
 
+/**
+ * @param cookie
+ * @returns {Promise<NextResponse>}
+ * @description Logs out the user from WebGoat and returns the response.
+ */
 export async function logout_user(cookie: string) {
   console.log(`logging out...`);
   const response = await fetch("http://localhost:8090/WebGoat/logout", {
