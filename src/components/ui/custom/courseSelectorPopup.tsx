@@ -20,9 +20,8 @@ import { z } from "zod";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { H2, H3, P, Small } from "./text";
+import { H2, P, Small } from "./text";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { DatePopup } from "./editPopup";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Calendar } from "../calendar";
 

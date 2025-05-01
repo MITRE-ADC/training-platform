@@ -53,21 +53,6 @@ const frameworks = [
   { value: "Due Last", label: "Due Last" },
 ];
 
-export function UserDropdown({ user }: { user?: { name: string } }) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="cursor-pointer text-lg">
-        {user ? user.name : "Guest"}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Logout</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 export default function ChallengeHomepage() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(frameworks[0].value);
@@ -411,7 +396,7 @@ export default function ChallengeHomepage() {
                             <br />
                             <br />
                             You can see your WebGoat credentials by clicking the
-                            &quot;Profile&quot; button and then &quot;WebGoat
+                            button with your name, and then &quot;WebGoat
                             Credentials.&quot;
                           </DialogDescription>
                         </DialogHeader>

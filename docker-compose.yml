@@ -4,21 +4,16 @@ services:
     container_name: postgres_db
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${PG_PORT}:${PG_PORT}"
     environment:
-      POSTGRES_DB: mitre_db
-      POSTGRES_USER: mitre_admin
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
       - ./postgres_init:/docker-entrypoint-initdb.d
-  # web-app:
-  #   # we will change this after we have the gitlab ci stuff so that it uses that image name
-  #   build: .
-  #   container_name: web-app
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8080:8080"
+
   webgoat:
     image: webgoat/webgoat:latest
     container_name: webgoat

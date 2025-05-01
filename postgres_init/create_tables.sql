@@ -46,4 +46,8 @@ CREATE TABLE Temporary_Codes (
 );
 
 INSERT INTO Users(name, email, pass, webgoatusername, webgoatpassword) 
-    VALUES ('Admin', 'admin@mitre.com', 'changeme', 'adminn', 'changeme');
+    VALUES ('Admin', 'admin@mitre.com', 'changed', 'adminn', 'changed');
+-- VERY IMPORTANT
+-- email == env.ADMIN_USER_EMAIL
+-- pass == env.ADMIN_PASSWORD
+

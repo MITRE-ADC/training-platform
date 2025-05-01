@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-const admin_email = "admin@mitre.com";
+const admin_email = process.env.ADMIN_USER_EMAIL || "";
 
 export default async function DashboardLayout({
   children,
