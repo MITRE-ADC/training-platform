@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
-
 /**
  * Handles the GET request to retrieve assignments for a specific user.
  *

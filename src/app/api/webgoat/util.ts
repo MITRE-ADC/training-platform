@@ -9,11 +9,11 @@ export const URL_webgoat_lessonmenu =
   "http://localhost:8090/WebGoat/service/lessonmenu.mvc";
 
 /**
-* @param username
-* @param password
-* @returns {Promise<{cookie: string, response: NextResponse | null}>}
-* @description Logs in the user to WebGoat and returns the cookie and response.
-*/
+ * @param username
+ * @param password
+ * @returns {Promise<{cookie: string, response: NextResponse | null}>}
+ * @description Logs in the user to WebGoat and returns the cookie and response.
+ */
 export async function login_user(
   username: string | null,
   password: string | null

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { error } from "./util";
 
 /**
- * 
+ *
  * @returns undefined if user is admin, error response if not
  */
 export async function CHECK_ADMIN() {

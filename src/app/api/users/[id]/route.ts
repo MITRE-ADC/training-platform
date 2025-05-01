@@ -43,13 +43,13 @@ export async function GET(
 }
 
 /*
-* Handles the PUT request to create a new user.
-*
-* @param request - The incoming HTTP request object.
-*
-* @returns A `NextResponse` object containing the created user data in JSON format with an HTTP status of 201 (Created),
-*          or an error response in case of failure.
-*/
+ * Handles the PUT request to create a new user.
+ *
+ * @param request - The incoming HTTP request object.
+ *
+ * @returns A `NextResponse` object containing the created user data in JSON format with an HTTP status of 201 (Created),
+ *          or an error response in case of failure.
+ */
 export async function PUT(request: NextRequest) {
   const err = await CHECK_ADMIN();
   if (err) return err;
@@ -57,15 +57,15 @@ export async function PUT(request: NextRequest) {
   return await processCreateUserRequest(request);
 }
 
-/* 
-* Handles the POST request to update user data by ID.
-*
-* @param request - The incoming HTTP request object.
-* @param context - The context object containing route parameters.
-* @param context.params - A promise resolving to an object with the `id` parameter.
-* @returns A `NextResponse` object containing the updated user data in JSON format with an HTTP status of 200 (OK),
-*          or an error response in case of failure.
-*/
+/*
+ * Handles the POST request to update user data by ID.
+ *
+ * @param request - The incoming HTTP request object.
+ * @param context - The context object containing route parameters.
+ * @param context.params - A promise resolving to an object with the `id` parameter.
+ * @returns A `NextResponse` object containing the updated user data in JSON format with an HTTP status of 200 (OK),
+ *          or an error response in case of failure.
+ */
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

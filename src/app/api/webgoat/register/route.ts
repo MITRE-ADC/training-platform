@@ -7,30 +7,30 @@ import { getUserByEmail } from "@/db/queries";
 import type { User } from "@/db/schema";
 
 /*
-* @swagger
-* /api/webgoat/register:
-*   post:
-*     summary: Register a user in WebGoat
-*     description: Register a user in WebGoat with the provided email.
-*     tags:
-*       - webgoat
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               email:
-*                 type: string
-*                 format: email
-*                 description: The email of the user to register.
-*     responses:
-*       201:
-*         description: User registered successfully.
-*       400:
-*         description: Bad Request. Missing or invalid parameters.
-*/
+ * @swagger
+ * /api/webgoat/register:
+ *   post:
+ *     summary: Register a user in WebGoat
+ *     description: Register a user in WebGoat with the provided email.
+ *     tags:
+ *       - webgoat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: The email of the user to register.
+ *     responses:
+ *       201:
+ *         description: User registered successfully.
+ *       400:
+ *         description: Bad Request. Missing or invalid parameters.
+ */
 export async function POST(request: NextRequest) {
   if (request.method == "POST") {
     try {

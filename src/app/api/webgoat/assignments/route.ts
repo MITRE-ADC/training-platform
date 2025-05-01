@@ -20,40 +20,40 @@ import {
 import { CHECK_UNAUTHORIZED_BY_UID } from "../../auth";
 
 /*
-* @swagger
-* /api/webgoat/assignments:
-*   post:
-*     summary: Update user assignment statuses in WebGoat
-*     description: Update user assignment statuses in WebGoat based on the provided user_id.
-*     tags:
-*       - webgoat
-*     parameters:
-*       - in: query
-*         name: user_id
-*         required: true
-*         schema:
-*           type: string
-*         description: The user_id of the user to update.
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               user_id:
-*                 type: string
-*                 description: The user_id of the user to update.
-*     responses:
-*       200:
-*         description: User assignment statuses updated successfully.
-*       400:
-*         description: Bad Request. Missing or invalid parameters.
-*       401:
-*         description: Unauthorized. User is not logged in.
-*       500:
-*         description: Internal Server Error. An error occurred while processing the request.
-*/
+ * @swagger
+ * /api/webgoat/assignments:
+ *   post:
+ *     summary: Update user assignment statuses in WebGoat
+ *     description: Update user assignment statuses in WebGoat based on the provided user_id.
+ *     tags:
+ *       - webgoat
+ *     parameters:
+ *       - in: query
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user_id of the user to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *                 description: The user_id of the user to update.
+ *     responses:
+ *       200:
+ *         description: User assignment statuses updated successfully.
+ *       400:
+ *         description: Bad Request. Missing or invalid parameters.
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *       500:
+ *         description: Internal Server Error. An error occurred while processing the request.
+ */
 export async function POST(request: NextRequest) {
   try {
     let user_id = request.nextUrl.searchParams?.get("user_id");

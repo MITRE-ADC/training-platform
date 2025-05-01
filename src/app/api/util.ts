@@ -59,7 +59,6 @@ export async function processLinkAssignmentRequest(request: NextRequest) {
     console.log(`Error reading request body: ${ex}`);
   }
 
-
   if (
     (!user_id || !assignment_id) &&
     (!body || !body.user_id || !body.assignment_id)
