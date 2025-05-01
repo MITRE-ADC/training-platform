@@ -9,6 +9,15 @@ import { setJwtCookie, setWebGoatCookie } from "@/lib/auth-middleware";
 import { cookies } from "next/headers";
 import { login_user } from "@/app/api/webgoat/util";
 
+/*
+  This route handles the login process for users. It checks if the user exists
+  and if the password is correct. If both are valid, it sets the JWT and WebGoat
+  cookies for the user.
+
+  @param {Request} req - The request object containing the user's email and password.
+  @returns {NextResponse} - A response object indicating success or failure.
+*/
+
 export async function POST(req: Request) {
   if (req.method === "POST") {
     const { email, password } = await req.json();

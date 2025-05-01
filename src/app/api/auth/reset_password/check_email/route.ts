@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   if (req.method == "POST") {
     const { email } = await req.json();
     try {
-      // Checking whether the email exists in the database.
       const exists = await userEmailExistsNoAuth(email);
       if (!exists) {
         return NextResponse.json(
@@ -15,19 +14,21 @@ export async function POST(req: Request) {
         );
       }
 
-      // Generating the code and entering it into the database.
+      
       const code = Math.floor(100000 + Math.random() * 900000).toString();
-
       const now = new Date();
       const expiration_time = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
       try {
+       
         await addCode({
           code: code,
           user_email: email,
           expiration_time: expiration_time,
         });
+
       } catch (error) {
+        
         return NextResponse.json(
           { error: "Code Generation Failed " },
           { status: HttpStatusCode.BadRequest }
@@ -36,13 +37,14 @@ export async function POST(req: Request) {
 
       const response = NextResponse.json({ status: HttpStatusCode.Ok });
 
-      return response;
+      return response; 
     } catch (error) {
       return NextResponse.json(
         { error: "Email Validation Failed" },
         { status: HttpStatusCode.BadRequest }
       );
     }
+
   } else {
     return NextResponse.json(
       { error: "405 (custom) Method Not Allowed" },
