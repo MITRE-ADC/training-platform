@@ -8,7 +8,7 @@ export const client = new Client({
   port: parseInt(process.env.PG_PORT || "5432"),
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
-  database: process.env.PG_DATABASE
+  database: process.env.PG_DATABASE,
 });
 
 async function connectDB() {
