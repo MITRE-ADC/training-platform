@@ -2,7 +2,6 @@ import { clearExpiredCodes } from "@/db/queries";
 import { HttpStatusCode } from "axios";
 import { NextResponse } from "next/server";
 
-
 export async function DELETE() {
   try {
     await clearExpiredCodes();
