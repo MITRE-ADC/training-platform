@@ -363,23 +363,17 @@ export default function ChallengeHomepage() {
                       >
                         <div className="w-full">
                           <Dialog>
-                            <DialogTrigger className="w-full ">
-                              <div className="w-full flex items-center justify-start rounded-b-md border-[1px] border-highlight2 p-2 shadow-md">
+                            <DialogTrigger className="w-full">
+                              <div className="flex w-full items-center justify-start rounded-b-md border-[1px] border-highlight2 p-2 shadow-md">
                                 Logout
                               </div>
                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
-                                <DialogTitle>
-                                  Log out of WebGoat!
-                                </DialogTitle>
+                                <DialogTitle>Log out of WebGoat!</DialogTitle>
                                 <DialogDescription className="flex flex-col gap-4">
-                                  Please make sure you log out of WebGoat! 
-                                  <Button
-                                    onClick={onLogout}
-                                  >
-                                    Logout
-                                  </Button>
+                                  Please make sure you log out of WebGoat!
+                                  <Button onClick={onLogout}>Logout</Button>
                                 </DialogDescription>
                               </DialogHeader>
                             </DialogContent>
