@@ -5,3 +5,5 @@ package-lock.json
 postgres_data/
 .env
 ./reset.sh
+.DS_Store
+.env
