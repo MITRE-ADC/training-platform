@@ -11,8 +11,11 @@ import { inArray, and, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { CHECK_ADMIN } from "@/app/api/auth";
 
-// Main API endpoint for filtering on admin dash
-// example URL: localhost:3000/api/filters?query="John Doe"&course_filters="Course 4,Course3"&status_filters="In Progress"
+/*
+  * @description This route is used to filter users based on course, assignment, and status.
+  * @route GET /api/filters
+  * @returns {object} - The filtered list of users.
+  */
 export async function GET(request: NextRequest) {
   if (await CHECK_ADMIN()) {
     return NextResponse.json(
@@ -20,6 +23,7 @@ export async function GET(request: NextRequest) {
       { status: HttpStatusCode.MethodNotAllowed }
     );
   }
+  // Get the filters from the request
   let course_filter =
     request.nextUrl.searchParams
       ?.get("course_filter")
@@ -36,6 +40,7 @@ export async function GET(request: NextRequest) {
       ?.replaceAll('"', "")
       .split(",") || [];
 
+  // if the filter is empty, set it to an empty array
   if (course_filter.length == 1 && course_filter[0].length == 0)
     course_filter = [];
   if (assignment_filter.length == 1 && assignment_filter[0].length == 0)
@@ -45,6 +50,8 @@ export async function GET(request: NextRequest) {
 
   let query;
   const conditions = [];
+
+  // If course_filter is not empty, filter users based on courses
   if (course_filter.length > 0) {
     const courseIds = await db
       .select({ course_id: courses.course_id })
@@ -52,6 +59,7 @@ export async function GET(request: NextRequest) {
       .where(inArray(courses.course_name, course_filter))
       .execute();
 
+    // Find the course IDs of the specified courses
     const filteredCourseIds = courseIds.map((row) => row.course_id);
     const userCourses = await db
       .select({ user_id: user_courses.user_id })
@@ -62,11 +70,13 @@ export async function GET(request: NextRequest) {
         sql`COUNT(DISTINCT ${user_courses.course_id}) = ${filteredCourseIds.length}`
       )
       .execute();
-
+    // Get the user IDs of users taking all specified courses
     const filteredUserIdsForCourses = userCourses.map((row) => row.user_id);
+    // Add the condition to filter users based on the filtered user IDs
     conditions.push(inArray(users.id, filteredUserIdsForCourses));
   }
 
+  // If assignment_filter is not empty, filter users based on assignments
   if (assignment_filter.length > 0) {
     const assignmentIds = await db
       .select({ assignment_id: assignments.assignment_id })
@@ -74,8 +84,9 @@ export async function GET(request: NextRequest) {
       .where(inArray(assignments.assignment_name, assignment_filter))
       .execute();
 
+    // Find the assignment IDs of the specified assignments
     const filteredAssignmentIds = assignmentIds.map((row) => row.assignment_id);
-
+    // Get the user IDs of users who have all specified assignments
     const userAssignments = await db
       .select({ user_id: user_assignments.user_id })
       .from(user_assignments)
@@ -89,6 +100,7 @@ export async function GET(request: NextRequest) {
     const filteredUserIdsForAssignments = userAssignments.map(
       (row) => row.user_id
     );
+    // Add the condition to filter users based on the filtered user IDs
     conditions.push(inArray(users.id, filteredUserIdsForAssignments));
   }
 
@@ -97,6 +109,7 @@ export async function GET(request: NextRequest) {
     const validStatusFilters: ("Not Started" | "In Progress" | "Completed")[] =
       status_filter as ("Not Started" | "In Progress" | "Completed")[];
 
+    // Get the user IDs of users who have the specified status
     const userCoursesWithStatus = await db
       .select({
         user_id: user_courses.user_id,
@@ -111,6 +124,7 @@ export async function GET(request: NextRequest) {
     conditions.push(inArray(users.id, filteredUserIdsForStatus));
   }
 
+  // If there are conditions, create the query with the conditions
   if (conditions.length > 0) {
     query = db
       .select()
@@ -118,6 +132,7 @@ export async function GET(request: NextRequest) {
       .where(and(...conditions));
   }
 
+  // If no filters are provided, return all users
   if (query === undefined) {
     const usersResult = db.select().from(users).execute();
     return NextResponse.json(
@@ -126,6 +141,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Execute the query and return the filtered users
   const usersResult = await query.execute();
   return NextResponse.json(
     { data: usersResult },

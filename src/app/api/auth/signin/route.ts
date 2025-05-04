@@ -40,7 +40,7 @@ export async function POST(req: Request) {
         const jsessionId = webgoat_cookie.split(";")[0]; // Just the "JSESSIONID=..."
         await setWebGoatCookie(jsessionId, maxAge);
         await setJwtCookie(user.id, maxAge);
-        const isAdmin = email == process.env.ADMIN_USER_EMAIL;
+        const isAdmin = email == process.env.ADMIN_USER_EMAIL
         await cookies();
         const response = NextResponse.json(
           { email: email, isAdmin: isAdmin },

@@ -3,6 +3,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { HttpStatusCode } from "axios";
 import { cookies } from "next/headers";
 
+/*
+ * @description This route is used to get the current user and check if the user is an admin.
+ * @route GET /api/auth/whoami
+ * @returns {object} - The current user object and a boolean indicating if the user is an admin.
+ */
 const admin_email = process.env.ADMIN_USER_EMAIL;
 
 export async function GET(req: NextRequest) {

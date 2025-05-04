@@ -4,6 +4,11 @@ import { deleteJwtCookie } from "@/lib/auth-middleware";
 import { logout_user } from "@/app/api/webgoat/util";
 import { cookies } from "next/headers";
 
+/*
+  * POST /api/auth/signout
+  * @description This route is used to sign out the user by deleting the JWT cookie and logging out the user from the server.
+  * @returns {NextResponse} - A JSON response indicating the success or failure of the signout operation.
+  */
 export async function POST() {
   try {
     deleteJwtCookie();

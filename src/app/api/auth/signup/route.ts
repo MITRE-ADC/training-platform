@@ -10,6 +10,11 @@ import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 
+/*
+  * POST /api/auth/signup
+  * @description This route is used to sign up a new user by creating a new user in the database and setting a JWT cookie.
+  * @returns {NextResponse} - A JSON response indicating the success or failure of the signup operation.
+*/
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
@@ -22,7 +27,7 @@ export async function POST(req: NextRequest) {
           { status: HttpStatusCode.BadRequest }
         );
       }
-
+      // Generate a random alphanumeric string of a given length
       function generateRandom(length: number) {
         return randomBytes(length)
           .toString("base64url")
@@ -39,7 +44,7 @@ export async function POST(req: NextRequest) {
         .where(eq(users.webgoatusername, webgoatusername))
         .limit(1);
 
-      // Collision checking for username
+      // Collision checking for webgoat username
       while (existingUser.length > 0) {
         webgoatusername = generateRandom(Math.floor(Math.random() * 4) + 10);
         existingUser = await db
