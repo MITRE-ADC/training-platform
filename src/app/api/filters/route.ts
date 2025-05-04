@@ -12,10 +12,10 @@ import { db } from "@/db";
 import { CHECK_ADMIN } from "@/app/api/auth";
 
 /*
-  * @description This route is used to filter users based on course, assignment, and status.
-  * @route GET /api/filters
-  * @returns {object} - The filtered list of users.
-  */
+ * @description This route is used to filter users based on course, assignment, and status.
+ * @route GET /api/filters
+ * @returns {object} - The filtered list of users.
+ */
 export async function GET(request: NextRequest) {
   if (await CHECK_ADMIN()) {
     return NextResponse.json(

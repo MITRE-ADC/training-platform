@@ -7,11 +7,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { HttpStatusCode } from "axios";
 import { error } from "../../util";
 
-/* 
-  * @description This route is used to get all assignments for a user.
-  * @route GET /api/courses/[id]
-  * @returns {object} - The list of assignments for the user.
-  */
+/*
+ * @description This route is used to get all assignments for a user.
+ * @route GET /api/courses/[id]
+ * @returns {object} - The list of assignments for the user.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -41,10 +41,10 @@ export async function GET(
 }
 
 /*
-  * @description This route is used to update the due date of a course.
-  * @route PUT /api/courses/[id]
-  * @returns {object} - The updated course object.
-  */
+ * @description This route is used to update the due date of a course.
+ * @route PUT /api/courses/[id]
+ * @returns {object} - The updated course object.
+ */
 
 export async function PUT(
   request: NextRequest,

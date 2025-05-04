@@ -11,10 +11,10 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 
 /*
-  * POST /api/auth/signup
-  * @description This route is used to sign up a new user by creating a new user in the database and setting a JWT cookie.
-  * @returns {NextResponse} - A JSON response indicating the success or failure of the signup operation.
-*/
+ * POST /api/auth/signup
+ * @description This route is used to sign up a new user by creating a new user in the database and setting a JWT cookie.
+ * @returns {NextResponse} - A JSON response indicating the success or failure of the signup operation.
+ */
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     const { name, email, password } = await req.json();
