@@ -30,10 +30,10 @@ pnpm install
 ```
 
 This application is supported on Next.js version 14.2.18. This can be checked by running:
+
 ```
 npx next --version
 ```
-
 
 ## Environment Variables
 
