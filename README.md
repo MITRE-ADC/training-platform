@@ -1,8 +1,10 @@
 # WebGoat Training Platform
 
+## Please read through this whole document before starting the application!
+
 ## Tech Stack
 
-We are using React + Next.js, with a PostgreSQL database.
+We are using React + Next.js, with a PostgreSQL database. The package manager is pnpm.
 
 ## Docker
 
@@ -26,6 +28,12 @@ The package manager is pnpm. Install all the dependencies using
 ```
 pnpm install
 ```
+
+This application is supported on Next.js version 14.2.18. This can be checked by running:
+```
+npx next --version
+```
+
 
 ## Environment Variables
 

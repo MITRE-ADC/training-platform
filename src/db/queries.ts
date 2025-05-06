@@ -24,7 +24,7 @@ import {
   CHECK_UNAUTHORIZED_BY_UID,
 } from "@/app/api/auth";
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 /**
  * gets complete (including sensitive) data on ALL uesrs -- must be admin to use

@@ -1,7 +1,7 @@
 import { getCode, updateUserPassword } from "@/db/queries";
 import { HttpStatusCode } from "axios";
 import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 /**
  * Handles the POST request to reset a user's password.

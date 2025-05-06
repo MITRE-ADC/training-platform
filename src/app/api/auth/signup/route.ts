@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import type { User } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomBytes } from "crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 /*
  * POST /api/auth/signup
